@@ -78,6 +78,7 @@ a { color: inherit; }
 .card,
 .facts > div,
 .steps li,
+.service,
 .panel,
 .filters button,
 .float-chat {
@@ -89,10 +90,10 @@ a { color: inherit; }
 }
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .header-grid, .card, .facts > div, .steps li, .panel, .filters button { background: rgba(255, 255, 255, 0.92); }
+  .header-grid, .card, .facts > div, .steps li, .service, .panel, .filters button { background: rgba(255, 255, 255, 0.92); }
 }
 @media (prefers-reduced-transparency: reduce) {
-  .header-grid, .card, .facts > div, .steps li, .panel, .filters button { background: #fff; -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .header-grid, .card, .facts > div, .steps li, .service, .panel, .filters button { background: #fff; -webkit-backdrop-filter: none; backdrop-filter: none; }
 }
 
 /* Boutons en pilule */
@@ -378,3 +379,17 @@ main > section.hero { padding: 0.75rem 0 0; }
 .legal li + li { margin-top: 0.4rem; }
 .back { display: inline-block; margin-bottom: 1.25rem; color: var(--muted); font-weight: 600; text-decoration: none; }
 .back:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
+
+/* Services */
+.services { display: grid; gap: 1rem; margin-top: 1.5rem; grid-template-columns: 1fr; }
+@media (min-width: 560px) { .services { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 900px) { .services { grid-template-columns: repeat(3, 1fr); } }
+.service { display: flex; flex-direction: column; gap: 0.5rem; padding: 1.25rem; border-radius: 20px; }
+.service p { color: var(--muted); flex: 1; }
+.service .btn { margin-top: 0.75rem; align-self: flex-start; }
+
+/* Adresse */
+.contact-address { font-style: normal; font-size: 1.1rem; margin-top: 0.75rem; }
+.map-link { display: inline-block; margin-top: 0.35rem; color: var(--accent-dark); font-weight: 700; text-underline-offset: 4px; }
+.contact-address + .contact-line { margin-top: 1rem; }
+.contact-line + .contact-line { margin-top: -0.5rem; }
