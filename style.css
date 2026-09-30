@@ -541,3 +541,10 @@ body { padding-bottom: 8.5rem; }
 /* Vignettes photo : fond blanc, comme sur une fiche produit */
 .card-media.has-img { background: #fff; }
 .product-media { background: #fff; }
+
+/* Résultat d'estimation */
+.estimate { margin-top: 1.25rem; padding: 1rem 1.25rem; border-radius: 24px; background: rgba(132, 25, 203, 0.12); border: 1px solid rgba(132, 25, 203, 0.25); }
+.estimate .ref { font-size: 0.9rem; font-weight: 700; color: var(--muted); }
+.estimate strong { display: block; margin-top: 0.3rem; font-size: 1.2rem; line-height: 1.3; color: var(--accent-dark); }
+.estimate p { margin-top: 0.4rem; font-weight: 600; }
+.quiz .recap + .aide { margin-top: 1rem; }

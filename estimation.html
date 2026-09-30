@@ -44,6 +44,7 @@
   </div>
 </footer>
 <script src="products.js"></script>
+<script src="tarifs.js"></script>
 <script src="site.js"></script>
 <script>
 (function () {
@@ -160,21 +161,89 @@
     window.scrollTo({ top: 0 });
   }
 
+  var PREFIXE = { vendre: "VTE", echange: "ECH", retrograder: "RET" };
+
+  function reference() {
+    var b = new Uint8Array(4);
+    (window.crypto || window.msCrypto).getRandomValues(b);
+    return PREFIXE[type] + "-" + Array.prototype.map.call(b, function (x) { return ("0" + x.toString(16)).slice(-2); }).join("").toUpperCase();
+  }
+  function fcfa(n) { return n.toLocaleString("fr-FR") + " FCFA"; }
+
+  function estimer() {
+    var G = window.TARIFS || {};
+    var base = (G.rachat || {})[rep.modele];
+    if (base && typeof base === "object") base = base[rep.stockage];
+    if (typeof base !== "number") return null;
+    var v = base;
+    ["batterie", "ecran", "dos", "fonction", "boite"].forEach(function (k) {
+      var d = ((G.deductions || {})[k] || {})[rep[k]];
+      if (typeof d === "number") v = v * (1 - d);
+    });
+    var pas = G.arrondi || 1000;
+    return Math.max(0, Math.round(v / pas) * pas);
+  }
+  function prixCatalogue(nom) {
+    var p = (window.PRODUCTS || []).filter(function (x) { return x.nom === nom; })[0];
+    return p && typeof p.prix === "number" ? p.prix : null;
+  }
+
   function recap() {
+    var ref = reference();
+    var est = estimer();
+    var neuf = rep.nouveau ? prixCatalogue(rep.nouveau) : null;
+    var libelle = type === "vendre" ? "Estimation de rachat de votre " + rep.modele
+                                     : "Valeur de reprise estimée de votre " + rep.modele;
+    var lignes = [T.ouverture, "Réf : " + ref];
+    etapes.forEach(function (e) { lignes.push("- " + e.court + " : " + rep[e.id]); });
+
     quiz.innerHTML = "";
-    quiz.appendChild(el("h2", "", "Récapitulatif"));
-    quiz.appendChild(el("p", "aide", "Vérifiez vos réponses, puis envoyez-les sur WhatsApp. Nous vous répondons avec une offre."));
+    quiz.appendChild(el("h2", "", "Merci pour votre confiance !"));
+    quiz.appendChild(el("p", "aide", "Votre demande n’est enregistrée que lorsque vous l’envoyez sur WhatsApp."));
+
+    var boite = el("div", "estimate");
+    boite.appendChild(el("span", "ref", "Réf : " + ref));
+    if (est === null) {
+      boite.appendChild(el("strong", "", "Estimation confirmée par notre équipe"));
+      boite.appendChild(el("p", "", "Nous vous répondons sur WhatsApp avec une estimation pour votre " + rep.modele + "."));
+      lignes.push("Estimation : à confirmer par la boutique.");
+    } else {
+      boite.appendChild(el("strong", "", libelle + " : " + fcfa(est)));
+      lignes.push(libelle + " : " + fcfa(est) + " (à confirmer en boutique).");
+      if (rep.nouveau) {
+        if (neuf === null) {
+          boite.appendChild(el("p", "", "Le prix du " + rep.nouveau + " vous est confirmé sur WhatsApp."));
+        } else {
+          boite.appendChild(el("p", "", rep.nouveau + " : " + fcfa(neuf)));
+          var diff = neuf - est;
+          var phrase;
+          if (type === "echange") {
+            phrase = diff >= 0 ? "Différence à régler : " + fcfa(diff) : "Différence en votre faveur : " + fcfa(-diff);
+          } else {
+            phrase = diff <= 0 ? "Vous recevez la différence en cash : " + fcfa(-diff)
+                               : "Ce modèle coûte plus cher que la reprise. Choisissez plutôt l’échange.";
+          }
+          boite.appendChild(el("p", "", phrase));
+          lignes.push(rep.nouveau + " : " + fcfa(neuf) + ". " + phrase);
+        }
+      }
+    }
+    quiz.appendChild(boite);
+
     var ul = el("ul", "recap");
-    var lignes = [T.ouverture];
     etapes.forEach(function (e) {
       var li = el("li", ""); li.appendChild(el("b", "", e.court)); li.appendChild(el("span", "", rep[e.id]));
       ul.appendChild(li);
-      lignes.push("- " + e.court + " : " + rep[e.id]);
     });
-    lignes.push("Merci de me faire une offre.");
     quiz.appendChild(ul);
+
+    var texte = "Notre équipe va vous contacter pour confirmation. Le prix final sera déterminé à la boutique après inspection physique de votre appareil.";
+    if (type === "vendre") texte += " Le paiement se fera par Wave à la remise de l’appareil.";
+    quiz.appendChild(el("p", "aide", texte));
+
+    lignes.push("Merci de me contacter pour confirmation.");
     var actions = el("div", "quiz-actions");
-    var envoyer = el("a", "btn btn-block", "Envoyer sur WhatsApp");
+    var envoyer = el("a", "btn btn-block", "Envoyer ma demande sur WhatsApp");
     envoyer.href = KYR.lien(lignes.join("\n")); envoyer.target = "_blank"; envoyer.rel = "noopener";
     var modifier = el("button", "btn btn-outline", "Modifier mes réponses"); modifier.type = "button";
     modifier.addEventListener("click", function () { i = 0; question(); });
