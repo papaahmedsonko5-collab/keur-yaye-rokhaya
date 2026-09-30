@@ -54,7 +54,7 @@
     echange: {
       titre: "Échange iPhone",
       intro: "Décrivez votre iPhone actuel et choisissez votre nouveau modèle. Notre équipe vous contactera avec une offre.",
-      note: "L’offre finale sera communiquée après évaluation de votre appareil en boutique.",
+      note: "Estimation finale en boutique, après inspection de votre appareil.",
       ouverture: "Bonjour, je souhaite échanger mon iPhone.",
       aide1: "Sélectionnez le modèle exact de votre iPhone actuel.",
       nouveau: "Quel iPhone souhaitez-vous obtenir ?"
@@ -62,14 +62,14 @@
     vendre: {
       titre: "Vendre mon iPhone",
       intro: "Vendez votre iPhone et soyez payé immédiatement.",
-      note: "L’offre finale est confirmée après évaluation de votre appareil.",
+      note: "Estimation finale en boutique, après inspection de votre appareil.",
       ouverture: "Bonjour, je souhaite vendre mon iPhone.",
       aide1: "Sélectionnez le modèle d’iPhone que vous vendez."
     },
     retrograder: {
       titre: "Rétrograder mon iPhone",
       intro: "Passez à un modèle moins cher et recevez la différence en cash.",
-      note: "L’offre finale est confirmée après évaluation de votre appareil en boutique.",
+      note: "Estimation finale en boutique, après inspection de votre appareil.",
       ouverture: "Bonjour, je souhaite rétrograder mon iPhone (passer à un modèle moins cher).",
       aide1: "Sélectionnez le modèle d’iPhone que vous donnez.",
       nouveau: "Vers quel modèle moins cher voulez-vous passer ?"
@@ -237,11 +237,11 @@
     });
     quiz.appendChild(ul);
 
-    var texte = "Notre équipe va vous contacter pour confirmation. Le prix final sera déterminé à la boutique après inspection physique de votre appareil.";
+    var texte = "Notre équipe va vous répondre sur WhatsApp, puis vous invitera à passer à la boutique pour l’estimation finale. Le prix final est déterminé après inspection physique de votre appareil.";
     if (type === "vendre") texte += " Le paiement se fera par Wave à la remise de l’appareil.";
     quiz.appendChild(el("p", "aide", texte));
 
-    lignes.push("Merci de me contacter pour confirmation.");
+    lignes.push("Je passerai à la boutique pour l’estimation finale. Merci de me confirmer.");
     var actions = el("div", "quiz-actions");
     var envoyer = el("a", "btn btn-block", "Envoyer ma demande sur WhatsApp");
     envoyer.href = KYR.lien(lignes.join("\n")); envoyer.target = "_blank"; envoyer.rel = "noopener";

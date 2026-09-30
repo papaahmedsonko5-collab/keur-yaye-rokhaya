@@ -548,3 +548,13 @@ body { padding-bottom: 8.5rem; }
 .estimate strong { display: block; margin-top: 0.3rem; font-size: 1.2rem; line-height: 1.3; color: var(--accent-dark); }
 .estimate p { margin-top: 0.4rem; font-weight: 600; }
 .quiz .recap + .aide { margin-top: 1rem; }
+
+/* Pastille de couleur sur la photo produit */
+.product-media { position: relative; }
+.color-chip { position: absolute; top: 0.75rem; right: 0.75rem; display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0.85rem; border-radius: 999px; font-size: 0.85rem; font-weight: 700; color: var(--ink); background: rgba(255, 255, 255, 0.88); border: 1px solid var(--glass-edge); box-shadow: var(--glass-shadow); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.color-chip i { width: 12px; height: 12px; border-radius: 50%; box-shadow: 0 0 0 1px var(--line); }
+
+/* Description du produit */
+.description { margin-top: 2rem; }
+.description h2 { font-size: 1.05rem; margin-bottom: 0.5rem; }
+.description p { color: var(--muted); max-width: 62ch; }

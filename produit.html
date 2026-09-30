@@ -83,6 +83,23 @@
     img.src = p.image; img.alt = p.nom;
     media.appendChild(img);
   } else { media.textContent = p.nom; }
+  var majPastille = function () {};
+  var photo = media.querySelector("img");
+  if (opt.couleurs) {
+    var pastille = el("span", "color-chip");
+    var point = document.createElement("i");
+    var nomCouleur = document.createElement("span");
+    pastille.appendChild(point); pastille.appendChild(nomCouleur);
+    media.appendChild(pastille);
+    majPastille = function (c) {
+      if (c.image) {
+        if (photo) photo.src = c.image;
+        point.style.background = c.hex; nomCouleur.textContent = c.nom;
+        pastille.style.display = "";
+      } else { pastille.style.display = "none"; }
+    };
+    majPastille(opt.couleurs[0]);
+  }
   grille.appendChild(media);
 
   var info = el("div", "product-info");
@@ -130,7 +147,7 @@
       var pastille = document.createElement("i"); pastille.style.setProperty("--c", c.hex);
       b.appendChild(pastille); b.appendChild(el("span", "", c.nom));
       b.setAttribute("aria-pressed", i === 0 ? "true" : "false");
-      b.addEventListener("click", function () { choix.couleur = c.nom; activer(rang, b); majLien(); });
+      b.addEventListener("click", function () { choix.couleur = c.nom; majPastille(c); activer(rang, b); majLien(); });
       rang.appendChild(b);
     });
   });
@@ -185,6 +202,12 @@
     });
     sol.appendChild(liste);
     contenu.appendChild(sol);
+  }
+  if (p.description) {
+    var desc = el("section", "description");
+    desc.appendChild(el("h2", "", "Description"));
+    desc.appendChild(el("p", "", p.description));
+    contenu.appendChild(desc);
   }
 })();
 </script>
