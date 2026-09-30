@@ -76,23 +76,28 @@
       <div class="services">
         <article class="service">
           <h3>Échange iPhone</h3>
-          <p>Vous voulez passer à un autre modèle ? Dites-nous quel iPhone vous avez et lequel vous souhaitez.</p>
-          <a class="btn btn-outline btn-small" href="https://wa.me/221784852982?text=Bonjour%2C%20je%20souhaite%20%C3%A9changer%20mon%20iPhone." target="_blank" rel="noopener">Demander sur WhatsApp</a>
+          <p>Décrivez votre iPhone actuel et choisissez votre nouveau modèle. Notre équipe vous contacte avec une offre.</p>
+          <a class="btn btn-outline btn-small" href="estimation.html?type=echange">Faire une estimation</a>
         </article>
         <article class="service">
           <h3>Vendre mon iPhone</h3>
-          <p>Vous voulez vendre votre iPhone ? Envoyez-nous son modèle et son état, nous vous répondons sur WhatsApp.</p>
-          <a class="btn btn-outline btn-small" href="https://wa.me/221784852982?text=Bonjour%2C%20je%20souhaite%20vendre%20mon%20iPhone." target="_blank" rel="noopener">Demander sur WhatsApp</a>
+          <p>Vendez votre iPhone et soyez payé immédiatement.</p>
+          <a class="btn btn-outline btn-small" href="estimation.html?type=vendre">Faire une estimation</a>
+        </article>
+        <article class="service">
+          <h3>Rétrograder mon iPhone</h3>
+          <p>Passez à un modèle moins cher et recevez la différence en cash.</p>
+          <a class="btn btn-outline btn-small" href="estimation.html?type=retrograder">Faire une estimation</a>
         </article>
         <article class="service">
           <h3>Réparation</h3>
           <p>Votre téléphone a un problème ? Décrivez la panne sur WhatsApp et nous vous répondons.</p>
           <a class="btn btn-outline btn-small" href="https://wa.me/221784852982?text=Bonjour%2C%20je%20souhaite%20faire%20r%C3%A9parer%20mon%20t%C3%A9l%C3%A9phone." target="_blank" rel="noopener">Demander sur WhatsApp</a>
         </article>
-        <article class="service">
+        <article class="service" id="epargne">
           <h3>Coffre Épargne</h3>
-          <p>Demandez-nous comment fonctionne le Coffre Épargne.</p>
-          <a class="btn btn-outline btn-small" href="https://wa.me/221784852982?text=Bonjour%2C%20je%20souhaite%20en%20savoir%20plus%20sur%20le%20Coffre%20%C3%89pargne." target="_blank" rel="noopener">Demander sur WhatsApp</a>
+          <p>Payez en plusieurs tranches : épargnez et payez à votre rythme dans votre coffre.</p>
+          <a class="btn btn-outline btn-small" href="https://wa.me/221784852982?text=Bonjour%2C%20je%20souhaite%20ouvrir%20un%20Coffre%20%C3%89pargne." target="_blank" rel="noopener">Ouvrir mon coffre</a>
         </article>
         <article class="service">
           <h3>Fonds d’écran HD</h3>
@@ -166,27 +171,19 @@
       <a href="cgu.html">Conditions d’utilisation</a>
       <a href="confidentialite.html">Confidentialité</a>
     </nav>
+    <p class="credit">Site conçu par Sultan Agency</p>
   </div>
 </footer>
 
-<a class="float-chat" href="https://wa.me/221784852982?text=Bonjour%2C%20je%20souhaite%20commander%20un%20produit%20chez%20Keur%20Yaye%20Rokhaya." target="_blank" rel="noopener" aria-label="Discuter sur WhatsApp">
-  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.7-1.2A9 9 0 1 0 12 3z"/></svg>
-  Discuter
-</a>
-
 <script src="products.js"></script>
+<script src="site.js"></script>
 <script>
 (function () {
-  var NUMERO = "221784852982";
   var CATEGORIES = ["iPhone", "iPad", "MacBook", "AirPods", "Accessoires"];
   var produits = Array.isArray(window.PRODUCTS) ? window.PRODUCTS : [];
   var grid = document.getElementById("grid");
   var filters = document.getElementById("filters");
   var actif = "Tous";
-
-  function lien(message) {
-    return "https://wa.me/" + NUMERO + "?text=" + encodeURIComponent(message);
-  }
 
   function el(tag, cls, text) {
     var n = document.createElement(tag);
@@ -195,24 +192,19 @@
     return n;
   }
 
-  function carte(opts) {
+  function prixTexte(p) {
+    if (typeof p === "number" && p > 0) return p.toLocaleString("fr-FR") + " FCFA";
+    return "Prix sur WhatsApp";
+  }
+
+  function carteCategorie(cat) {
     var c = el("article", "card");
-    var media = el("div", opts.image ? "card-media has-img" : "card-media");
-    if (opts.image) {
-      var img = document.createElement("img");
-      img.src = opts.image;
-      img.alt = opts.nom;
-      img.loading = "lazy";
-      media.appendChild(img);
-    } else {
-      media.textContent = opts.nom;
-    }
+    var media = el("div", "card-media", cat);
     var body = el("div", "card-body");
-    body.appendChild(el("h3", "", opts.nom));
-    body.appendChild(el("p", "cat", opts.sousTitre));
-    if (opts.prix !== undefined) body.appendChild(el("p", "price", opts.prix));
-    var a = el("a", "btn btn-outline btn-small", opts.bouton);
-    a.href = lien(opts.message);
+    body.appendChild(el("h3", "", cat));
+    body.appendChild(el("p", "cat", "Demandez les modèles et les prix disponibles."));
+    var a = el("a", "btn btn-outline btn-small", "Demander sur WhatsApp");
+    a.href = KYR.lien("Bonjour, je souhaite connaître les modèles " + cat + " disponibles chez Keur Yaye Rokhaya.");
     a.target = "_blank";
     a.rel = "noopener";
     body.appendChild(a);
@@ -221,11 +213,29 @@
     return c;
   }
 
-  function prixTexte(p) {
-    if (typeof p === "number" && p > 0) {
-      return p.toLocaleString("fr-FR") + " FCFA";
+  function carteProduit(p) {
+    var c = el("article", "card");
+    var lien = el("a", "card-link");
+    lien.href = "produit.html?p=" + encodeURIComponent(KYR.slug(p.nom));
+    var media = el("div", p.image ? "card-media has-img" : "card-media");
+    if (p.image) {
+      var img = document.createElement("img");
+      img.src = p.image;
+      img.alt = p.nom;
+      img.loading = "lazy";
+      media.appendChild(img);
+    } else {
+      media.appendChild(document.createTextNode(p.nom));
     }
-    return "Prix sur WhatsApp";
+    media.appendChild(el("span", "tag-pill", p.categorie));
+    var body = el("div", "card-body");
+    body.appendChild(el("h3", "", p.nom));
+    body.appendChild(el("p", "price", prixTexte(p.prix)));
+    body.appendChild(el("span", "pill-link", "Détails →"));
+    lien.appendChild(media);
+    lien.appendChild(body);
+    c.appendChild(lien);
+    return c;
   }
 
   function noms() {
@@ -240,27 +250,10 @@
     grid.innerHTML = "";
     var visibles = produits.filter(function (p) { return actif === "Tous" || p.categorie === actif; });
     if (visibles.length === 0) {
-      var listeCat = actif === "Tous" ? CATEGORIES : [actif];
-      listeCat.forEach(function (cat) {
-        grid.appendChild(carte({
-          nom: cat,
-          sousTitre: "Demandez les modèles et les prix disponibles.",
-          bouton: "Demander sur WhatsApp",
-          message: "Bonjour, je souhaite connaître les modèles " + cat + " disponibles chez Keur Yaye Rokhaya."
-        }));
-      });
+      (actif === "Tous" ? CATEGORIES : [actif]).forEach(function (cat) { grid.appendChild(carteCategorie(cat)); });
       return;
     }
-    visibles.forEach(function (p) {
-      grid.appendChild(carte({
-        nom: p.nom,
-        image: p.image,
-        sousTitre: p.categorie,
-        prix: prixTexte(p.prix),
-        bouton: "Commander",
-        message: "Bonjour, je souhaite commander : " + p.nom + "."
-      }));
-    });
+    visibles.forEach(function (p) { grid.appendChild(carteProduit(p)); });
   }
 
   function boutonsFiltres() {

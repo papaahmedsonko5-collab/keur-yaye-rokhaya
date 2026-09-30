@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Produit | Keur Yaye Rokhaya</title>
+  <meta name="theme-color" content="#8419CB">
+  <link rel="icon" href="favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="header-grid">
+    <a class="brand" href="index.html"><img src="logo.png" alt="" width="30" height="36">Keur Yaye Rokhaya</a>
+    <nav class="nav" aria-label="Navigation principale">
+      <a href="index.html#nos-produits">Boutique</a>
+      <a href="index.html#services">Services</a>
+      <a href="index.html#a-propos">À propos</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+    <a class="btn btn-small" href="https://wa.me/221784852982?text=Bonjour%2C%20je%20souhaite%20commander%20un%20produit%20chez%20Keur%20Yaye%20Rokhaya." target="_blank" rel="noopener">Commander</a>
+  </div>
+</header>
+<main class="product-page">
+  <div class="wrap" id="page">
+    <a class="back" href="index.html#nos-produits">Retour à la boutique</a>
+    <div id="contenu"></div>
+  </div>
+</main>
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <p>© 2026 Keur Yaye Rokhaya</p>
+    <nav aria-label="Informations légales">
+      <a href="cgu.html">Conditions d’utilisation</a>
+      <a href="confidentialite.html">Confidentialité</a>
+    </nav>
+    <p class="credit">Site conçu par Sultan Agency</p>
+  </div>
+</footer>
+<script src="products.js"></script>
+<script src="site.js"></script>
+<script>
+(function () {
+  var contenu = document.getElementById("contenu");
+  var slug = new URLSearchParams(location.search).get("p");
+  var produits = Array.isArray(window.PRODUCTS) ? window.PRODUCTS : [];
+  var p = produits.filter(function (x) { return KYR.slug(x.nom) === slug; })[0];
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text) n.textContent = text;
+    return n;
+  }
+  function prixTexte(v) {
+    return (typeof v === "number" && v > 0) ? v.toLocaleString("fr-FR") + " FCFA" : "Prix sur WhatsApp";
+  }
+
+  if (!p) {
+    contenu.appendChild(el("h1", "", "Produit introuvable"));
+    var lien = el("a", "btn", "Voir la boutique");
+    lien.href = "index.html#nos-produits";
+    lien.style.marginTop = "1rem";
+    contenu.appendChild(lien);
+    return;
+  }
+  document.title = p.nom + " | Keur Yaye Rokhaya";
+
+  var marque = ({ "iPhone": "Apple", "Apple Watch": "Apple", "Samsung": "Samsung", "Google Pixel": "Google" })[p.categorie] || "";
+  var opt = p.options || {};
+  var choix = {
+    couleur: opt.couleurs ? opt.couleurs[0].nom : "",
+    stockage: opt.stockages ? opt.stockages[0] : "",
+    etat: opt.etats ? opt.etats[0] : null,
+    sim: opt.sims ? opt.sims[0] : null
+  };
+
+  var grille = el("div", "product-grid");
+  var media = el("div", "product-media");
+  if (p.image) {
+    var img = document.createElement("img");
+    img.src = p.image; img.alt = p.nom;
+    media.appendChild(img);
+  } else { media.textContent = p.nom; }
+  grille.appendChild(media);
+
+  var info = el("div", "product-info");
+  var pills = el("ul", "pill-row");
+  var li1 = el("li", "pill", p.categorie); pills.appendChild(li1);
+  if (marque) { var li2 = el("li", "pill pill-accent", marque); pills.appendChild(li2); }
+  info.appendChild(pills);
+  info.appendChild(el("h1", "", p.nom));
+  info.appendChild(el("p", "product-price", prixTexte(p.prix)));
+
+  var zoneOptions = el("div", "");
+  zoneOptions.style.display = "grid"; zoneOptions.style.gap = "1.25rem";
+  info.appendChild(zoneOptions);
+
+  var bouton = el("a", "btn btn-block", "Commander sur WhatsApp");
+  bouton.target = "_blank"; bouton.rel = "noopener";
+
+  function message() {
+    var parts = [];
+    if (choix.couleur) parts.push("couleur " + choix.couleur);
+    if (choix.stockage) parts.push(choix.stockage);
+    if (choix.etat) parts.push(choix.etat.nom + (choix.etat.detail ? " (" + choix.etat.detail.toLowerCase() + ")" : ""));
+    if (choix.sim) parts.push(choix.sim.nom);
+    var m = "Bonjour, je souhaite commander : " + p.nom + (parts.length ? ", " + parts.join(", ") : "") + ".";
+    if (typeof p.prix === "number" && p.prix > 0) m += " Prix affiché : " + prixTexte(p.prix) + ".";
+    return m;
+  }
+  function majLien() { bouton.href = KYR.lien(message()); }
+
+  function groupe(titre, construire) {
+    var g = el("div", "opt-group");
+    g.appendChild(el("h2", "", titre));
+    var rang = el("div", "opt-row");
+    construire(rang);
+    g.appendChild(rang);
+    zoneOptions.appendChild(g);
+  }
+  function activer(rang, bouton, sel) {
+    Array.prototype.forEach.call(rang.children, function (b) { b.setAttribute("aria-pressed", b === bouton ? "true" : "false"); });
+  }
+
+  if (opt.couleurs) groupe("Couleur", function (rang) {
+    opt.couleurs.forEach(function (c, i) {
+      var b = el("button", "swatch"); b.type = "button";
+      var pastille = document.createElement("i"); pastille.style.setProperty("--c", c.hex);
+      b.appendChild(pastille); b.appendChild(el("span", "", c.nom));
+      b.setAttribute("aria-pressed", i === 0 ? "true" : "false");
+      b.addEventListener("click", function () { choix.couleur = c.nom; activer(rang, b); majLien(); });
+      rang.appendChild(b);
+    });
+  });
+  if (opt.stockages) groupe("Capacité de stockage", function (rang) {
+    opt.stockages.forEach(function (s, i) {
+      var b = el("button", "pill-btn", s); b.type = "button";
+      b.setAttribute("aria-pressed", i === 0 ? "true" : "false");
+      b.addEventListener("click", function () { choix.stockage = s; activer(rang, b); majLien(); });
+      rang.appendChild(b);
+    });
+  });
+  if (opt.etats) groupe("État du produit", function (rang) {
+    opt.etats.forEach(function (e, i) {
+      var b = el("button", "pill-btn rond"); b.type = "button";
+      b.appendChild(document.createTextNode(e.nom));
+      if (e.detail) b.appendChild(el("small", "", e.detail));
+      b.setAttribute("aria-pressed", i === 0 ? "true" : "false");
+      b.addEventListener("click", function () { choix.etat = e; activer(rang, b); majLien(); });
+      rang.appendChild(b);
+    });
+  });
+  if (opt.sims) groupe("Type de SIM", function (rang) {
+    opt.sims.forEach(function (s, i) {
+      var b = el("button", "pill-btn rond"); b.type = "button";
+      b.appendChild(document.createTextNode(s.nom));
+      if (s.detail) b.appendChild(el("small", "", s.detail));
+      b.setAttribute("aria-pressed", i === 0 ? "true" : "false");
+      b.addEventListener("click", function () { choix.sim = s; activer(rang, b); majLien(); });
+      rang.appendChild(b);
+    });
+  });
+
+  if (opt.stockages) info.appendChild(el("p", "note", "Le prix peut varier selon la capacité. Il est confirmé sur WhatsApp avant toute commande."));
+  else info.appendChild(el("p", "note", "Le prix et la disponibilité sont confirmés sur WhatsApp avant toute commande."));
+  majLien();
+  info.appendChild(bouton);
+  grille.appendChild(info);
+  contenu.appendChild(grille);
+
+  if (p.categorie === "iPhone") {
+    var sol = el("section", "solutions");
+    sol.appendChild(el("h2", "", "Options et solutions"));
+    var liste = el("div", "solution-list");
+    [
+      ["Échanger ce produit", "Estimez votre iPhone actuel et changez rapidement.", "estimation.html?type=echange&nouveau=" + encodeURIComponent(p.nom)],
+      ["Revendre votre iPhone", "Faites estimer l’iPhone que vous voulez vendre.", "estimation.html?type=vendre"],
+      ["Payer en plusieurs tranches", "Épargnez et payez à votre rythme dans votre coffre.", "index.html#epargne"]
+    ].forEach(function (s) {
+      var a = el("a", "solution"); a.href = s[2];
+      a.appendChild(el("strong", "", s[0])); a.appendChild(el("span", "", s[1]));
+      liste.appendChild(a);
+    });
+    sol.appendChild(liste);
+    contenu.appendChild(sol);
+  }
+})();
+</script>
+</body>
+</html>

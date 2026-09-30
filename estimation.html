@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Estimation | Keur Yaye Rokhaya</title>
+  <meta name="theme-color" content="#8419CB">
+  <link rel="icon" href="favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-no-chat>
+<header class="site-header">
+  <div class="header-grid">
+    <a class="brand" href="index.html"><img src="logo.png" alt="" width="30" height="36">Keur Yaye Rokhaya</a>
+    <nav class="nav" aria-label="Navigation principale">
+      <a href="index.html#nos-produits">Boutique</a>
+      <a href="index.html#services">Services</a>
+      <a href="index.html#a-propos">À propos</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+    <a class="btn btn-small" href="https://wa.me/221784852982?text=Bonjour%2C%20je%20souhaite%20commander%20un%20produit%20chez%20Keur%20Yaye%20Rokhaya." target="_blank" rel="noopener">Commander</a>
+  </div>
+</header>
+<main>
+  <div class="wrap">
+    <div class="page-head">
+      <h1 id="titre"></h1>
+      <p class="lead" id="intro"></p>
+    </div>
+    <div class="panel quiz" id="quiz" aria-live="polite"></div>
+    <p class="note" id="note" style="margin-top:1rem;text-align:center"></p>
+    <p style="text-align:center"><a class="link" href="index.html#nos-produits" style="font-weight:700;color:var(--accent-dark)">Voir notre boutique →</a></p>
+  </div>
+</main>
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <p>© 2026 Keur Yaye Rokhaya</p>
+    <nav aria-label="Informations légales">
+      <a href="cgu.html">Conditions d’utilisation</a>
+      <a href="confidentialite.html">Confidentialité</a>
+    </nav>
+    <p class="credit">Site conçu par Sultan Agency</p>
+  </div>
+</footer>
+<script src="products.js"></script>
+<script src="site.js"></script>
+<script>
+(function () {
+  var params = new URLSearchParams(location.search);
+  var type = params.get("type");
+  var TYPES = {
+    echange: {
+      titre: "Échange iPhone",
+      intro: "Décrivez votre iPhone actuel et choisissez votre nouveau modèle. Notre équipe vous contactera avec une offre.",
+      note: "L’offre finale sera communiquée après évaluation de votre appareil en boutique.",
+      ouverture: "Bonjour, je souhaite échanger mon iPhone.",
+      aide1: "Sélectionnez le modèle exact de votre iPhone actuel.",
+      nouveau: "Quel iPhone souhaitez-vous obtenir ?"
+    },
+    vendre: {
+      titre: "Vendre mon iPhone",
+      intro: "Vendez votre iPhone et soyez payé immédiatement.",
+      note: "L’offre finale est confirmée après évaluation de votre appareil.",
+      ouverture: "Bonjour, je souhaite vendre mon iPhone.",
+      aide1: "Sélectionnez le modèle d’iPhone que vous vendez."
+    },
+    retrograder: {
+      titre: "Rétrograder mon iPhone",
+      intro: "Passez à un modèle moins cher et recevez la différence en cash.",
+      note: "L’offre finale est confirmée après évaluation de votre appareil en boutique.",
+      ouverture: "Bonjour, je souhaite rétrograder mon iPhone (passer à un modèle moins cher).",
+      aide1: "Sélectionnez le modèle d’iPhone que vous donnez.",
+      nouveau: "Vers quel modèle moins cher voulez-vous passer ?"
+    }
+  };
+  if (!TYPES[type]) type = "echange";
+  var T = TYPES[type];
+  document.title = T.titre + " | Keur Yaye Rokhaya";
+  document.getElementById("titre").textContent = T.titre;
+  document.getElementById("intro").textContent = T.intro;
+  document.getElementById("note").textContent = T.note;
+
+  var MODELES = ["iPhone X", "iPhone XR", "iPhone XS", "iPhone XS Max", "iPhone 11", "iPhone 11 Pro", "iPhone 11 Pro Max", "iPhone 12 mini", "iPhone 12", "iPhone 12 Pro", "iPhone 12 Pro Max", "iPhone 13 mini", "iPhone 13", "iPhone 13 Pro", "iPhone 13 Pro Max", "iPhone 14", "iPhone 14 Plus", "iPhone 14 Pro", "iPhone 14 Pro Max", "iPhone 15", "iPhone 15 Plus", "iPhone 15 Pro", "iPhone 15 Pro Max", "iPhone 16e", "iPhone 16", "iPhone 16 Plus", "iPhone 16 Pro", "iPhone 16 Pro Max", "iPhone 17", "iPhone 17 Air", "iPhone 17 Pro", "iPhone 17 Pro Max", "iPhone 18 Pro", "iPhone 18 Pro Max"];
+  var boutique = (window.PRODUCTS || []).filter(function (p) { return p.categorie === "iPhone"; }).map(function (p) { return p.nom; });
+
+  var etapes = [
+    { id: "modele", court: "Modèle actuel", titre: "Quel est le modèle de votre iPhone actuel ?", aide: T.aide1, genre: "select", options: MODELES },
+    { id: "stockage", court: "Stockage", titre: "Quelle est sa capacité de stockage ?", aide: "Réglages, Général, Informations : la capacité est indiquée.", genre: "choix", options: ["64 Go", "128 Go", "256 Go", "512 Go", "1 To", "2 To"] },
+    { id: "batterie", court: "Batterie", titre: "Quel est l’état de la batterie ?", aide: "Réglages, Batterie, État de la batterie.", genre: "choix", options: ["Plus de 90 %", "80 à 90 %", "Moins de 80 %", "Je ne sais pas"] },
+    { id: "ecran", court: "Écran", titre: "Dans quel état est l’écran ?", aide: "", genre: "choix", options: ["Comme neuf", "Petites rayures", "Écran fissuré"] },
+    { id: "dos", court: "Dos et contours", titre: "Dans quel état sont le dos et les contours ?", aide: "", genre: "choix", options: ["Comme neuf", "Rayures légères", "Chocs ou dos cassé"] },
+    { id: "fonction", court: "Fonctionnement", titre: "Est-ce que tout fonctionne ?", aide: "Face ID, caméras, son, boutons, recharge.", genre: "choix", options: ["Tout fonctionne", "Un ou plusieurs problèmes"] },
+    { id: "boite", court: "Accessoires", titre: "Que donnez-vous avec l’iPhone ?", aide: "", genre: "choix", options: ["Boîte d’origine et chargeur", "Chargeur seulement", "Téléphone seul"] }
+  ];
+  if (T.nouveau) {
+    etapes.push({ id: "nouveau", court: "Modèle souhaité", titre: T.nouveau, aide: "Choisissez dans les modèles de la boutique.", genre: "select", options: boutique.length ? boutique : MODELES });
+  }
+
+  var rep = {};
+  var i = 0;
+  var pre = params.get("nouveau");
+  if (pre && T.nouveau && boutique.indexOf(pre) !== -1) rep.nouveau = pre;
+  var quiz = document.getElementById("quiz");
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text) n.textContent = text;
+    return n;
+  }
+
+  function question() {
+    var e = etapes[i];
+    quiz.innerHTML = "";
+    var pct = Math.round(((i + 1) / etapes.length) * 100);
+    var haut = el("div", "progress-top");
+    haut.appendChild(el("span", "", "Question " + (i + 1) + " sur " + etapes.length));
+    haut.appendChild(el("span", "", pct + " % complété"));
+    quiz.appendChild(haut);
+    var barre = el("div", "progress"); var rempli = document.createElement("div"); rempli.style.width = pct + "%";
+    barre.appendChild(rempli); quiz.appendChild(barre);
+    quiz.appendChild(el("h2", "", (i + 1) + ". " + e.titre));
+    if (e.aide) quiz.appendChild(el("p", "aide", e.aide));
+
+    var suivant = el("button", "btn btn-block", i === etapes.length - 1 ? "Voir le récapitulatif" : "Suivant");
+    suivant.type = "button";
+    suivant.disabled = !rep[e.id];
+
+    if (e.genre === "select") {
+      var s = document.createElement("select");
+      s.setAttribute("aria-label", e.titre);
+      var vide = el("option", "", "Sélectionnez le modèle"); vide.value = ""; s.appendChild(vide);
+      e.options.forEach(function (o) { var op = el("option", "", o); op.value = o; if (rep[e.id] === o) op.selected = true; s.appendChild(op); });
+      s.addEventListener("change", function () { rep[e.id] = s.value; suivant.disabled = !s.value; });
+      quiz.appendChild(s);
+    } else {
+      var liste = el("div", "choices");
+      e.options.forEach(function (o) {
+        var b = el("button", "choice", o); b.type = "button";
+        b.setAttribute("aria-pressed", rep[e.id] === o ? "true" : "false");
+        b.addEventListener("click", function () {
+          rep[e.id] = o; suivant.disabled = false;
+          Array.prototype.forEach.call(liste.children, function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+        });
+        liste.appendChild(b);
+      });
+      quiz.appendChild(liste);
+    }
+
+    var actions = el("div", "quiz-actions");
+    suivant.addEventListener("click", function () { if (!rep[e.id]) return; if (i < etapes.length - 1) { i++; question(); } else { recap(); } });
+    actions.appendChild(suivant);
+    if (i > 0) {
+      var retour = el("button", "btn btn-outline", "Précédent"); retour.type = "button";
+      retour.addEventListener("click", function () { i--; question(); });
+      actions.appendChild(retour);
+    }
+    quiz.appendChild(actions);
+    window.scrollTo({ top: 0 });
+  }
+
+  function recap() {
+    quiz.innerHTML = "";
+    quiz.appendChild(el("h2", "", "Récapitulatif"));
+    quiz.appendChild(el("p", "aide", "Vérifiez vos réponses, puis envoyez-les sur WhatsApp. Nous vous répondons avec une offre."));
+    var ul = el("ul", "recap");
+    var lignes = [T.ouverture];
+    etapes.forEach(function (e) {
+      var li = el("li", ""); li.appendChild(el("b", "", e.court)); li.appendChild(el("span", "", rep[e.id]));
+      ul.appendChild(li);
+      lignes.push("- " + e.court + " : " + rep[e.id]);
+    });
+    lignes.push("Merci de me faire une offre.");
+    quiz.appendChild(ul);
+    var actions = el("div", "quiz-actions");
+    var envoyer = el("a", "btn btn-block", "Envoyer sur WhatsApp");
+    envoyer.href = KYR.lien(lignes.join("\n")); envoyer.target = "_blank"; envoyer.rel = "noopener";
+    var modifier = el("button", "btn btn-outline", "Modifier mes réponses"); modifier.type = "button";
+    modifier.addEventListener("click", function () { i = 0; question(); });
+    actions.appendChild(envoyer); actions.appendChild(modifier);
+    quiz.appendChild(actions);
+    window.scrollTo({ top: 0 });
+  }
+
+  question();
+})();
+</script>
+</body>
+</html>

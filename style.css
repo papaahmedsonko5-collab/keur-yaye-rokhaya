@@ -393,3 +393,151 @@ main > section.hero { padding: 0.75rem 0 0; }
 .map-link { display: inline-block; margin-top: 0.35rem; color: var(--accent-dark); font-weight: 700; text-underline-offset: 4px; }
 .contact-address + .contact-line { margin-top: 1rem; }
 .contact-line + .contact-line { margin-top: -0.5rem; }
+
+/* ===== Navigation en pilules, fiche produit, estimations ===== */
+
+/* En-tête : une seule pilule sur mobile */
+.header-grid { grid-template-areas: "brand cta"; padding: 0.5rem 0.6rem 0.5rem 1rem; border-radius: 999px; }
+.nav { display: none; }
+@media (min-width: 820px) {
+  .header-grid { grid-template-areas: "brand nav cta"; }
+  .nav { display: flex; }
+}
+
+body { padding-bottom: 8.5rem; }
+@media (min-width: 820px) { body { padding-bottom: 5.5rem; } }
+
+/* Barre d'onglets flottante (mobile) */
+.tabbar {
+  position: fixed;
+  left: 0.75rem;
+  right: 0.75rem;
+  bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+  z-index: 50;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.15rem;
+  padding: 0.4rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-shadow);
+  -webkit-backdrop-filter: var(--blur);
+  backdrop-filter: var(--blur);
+}
+.tabbar a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.4rem 0;
+  border-radius: 999px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.tabbar a[aria-current="page"] { background: rgba(132, 25, 203, 0.14); color: var(--accent-dark); }
+@media (min-width: 820px) { .tabbar { display: none; } }
+@media (max-width: 819px) { .float-chat { bottom: calc(5.75rem + env(safe-area-inset-bottom, 0px)); } }
+
+/* Pilules */
+.tag-pill {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--accent-dark);
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--glass-edge);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+.card-media { position: relative; }
+.pill-row { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.pill { display: inline-block; padding: 0.3rem 0.85rem; border-radius: 999px; font-size: 0.9rem; font-weight: 600; background: var(--glass-strong); border: 1px solid var(--glass-edge); color: var(--muted); }
+.pill-accent { background: rgba(132, 25, 203, 0.12); color: var(--accent-dark); border-color: rgba(132, 25, 203, 0.25); }
+.pill-link { display: inline-flex; align-items: center; gap: 0.35rem; margin-top: 0.75rem; align-self: flex-start; padding: 0.5rem 1rem; border-radius: 999px; font-weight: 700; font-size: 0.95rem; color: var(--accent-dark); background: #fff; border: 1px solid var(--glass-edge); box-shadow: var(--glass-shadow); }
+.card-link { display: flex; flex-direction: column; flex: 1; text-decoration: none; color: inherit; }
+.card-link:hover .pill-link { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+.btn-block { display: block; width: 100%; }
+
+/* Fiche produit */
+.product-page { padding: 1.5rem 0 1rem; }
+.product-grid { display: grid; gap: 1.25rem; margin-top: 0.5rem; }
+@media (min-width: 820px) { .product-grid { grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: start; } }
+.product-media { display: flex; align-items: center; justify-content: center; aspect-ratio: 1 / 1; border-radius: 28px; padding: 1.25rem; background: var(--glass-strong); border: 1px solid var(--glass-edge); box-shadow: var(--glass-shadow); font-size: 2rem; font-weight: 800; text-align: center; color: var(--accent-dark); }
+.product-media img { width: 100%; height: 100%; object-fit: contain; }
+.product-info { display: flex; flex-direction: column; gap: 1rem; }
+.product-info h1 { font-size: clamp(1.9rem, 6vw, 2.8rem); }
+.product-price { font-size: clamp(1.6rem, 5vw, 2.2rem); font-weight: 800; color: var(--accent-dark); letter-spacing: -0.02em; }
+.opt-group h2 { font-size: 1.05rem; letter-spacing: -0.01em; margin-bottom: 0.6rem; }
+.opt-row { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.pill-btn {
+  font: inherit; font-weight: 700; cursor: pointer; color: var(--ink);
+  padding: 0.65rem 1.1rem; border-radius: 999px;
+  background: var(--glass-strong); border: 1px solid var(--glass-edge); box-shadow: var(--glass-shadow);
+  text-align: left;
+}
+.pill-btn small { display: block; font-weight: 500; color: var(--muted); }
+.pill-btn[aria-pressed="true"], .choice[aria-pressed="true"] { border-color: var(--accent); background: rgba(132, 25, 203, 0.12); color: var(--accent-dark); box-shadow: 0 0 0 2px rgba(132, 25, 203, 0.25); }
+.pill-btn.rond { border-radius: 26px; padding: 0.7rem 1.25rem; }
+.swatch { display: flex; flex-direction: column; align-items: center; gap: 0.35rem; min-width: 4.5rem; background: none; border: 0; font: inherit; font-size: 0.85rem; color: var(--muted); cursor: pointer; }
+.swatch i { display: block; width: 46px; height: 46px; border-radius: 50%; background: var(--c); border: 2px solid #fff; box-shadow: 0 0 0 1px var(--line); }
+.swatch[aria-pressed="true"] i { box-shadow: 0 0 0 3px var(--accent); }
+.swatch[aria-pressed="true"] span { color: var(--accent-dark); font-weight: 700; }
+.note { color: var(--muted); font-size: 0.95rem; }
+.solutions { margin-top: 2.5rem; }
+.solutions h2 { font-size: 1.05rem; letter-spacing: 0.02em; text-transform: none; margin-bottom: 0.75rem; }
+.solution-list { display: grid; gap: 0.75rem; }
+@media (min-width: 820px) { .solution-list { grid-template-columns: repeat(3, 1fr); } }
+.solution { display: block; padding: 1rem 1.25rem; border-radius: 22px; text-decoration: none; background: var(--glass); border: 1px solid var(--glass-edge); box-shadow: var(--glass-shadow); }
+.solution strong { display: block; font-size: 1.05rem; color: var(--accent-dark); }
+.solution span { color: var(--muted); font-size: 0.95rem; }
+.solution:hover { background: var(--glass-strong); }
+
+/* Estimations (échange, vente, rétrogradation) */
+.page-head { padding: 1.5rem 0 0.5rem; }
+.page-head h1 { font-size: clamp(2rem, 7vw, 3rem); }
+.page-head .lead { margin-top: 0.75rem; color: var(--muted); font-size: 1.1rem; max-width: 52ch; }
+.quiz { margin-top: 1.25rem; padding: 1.5rem 1.25rem 1.75rem; border-radius: 28px; }
+.progress-top { display: flex; justify-content: space-between; gap: 1rem; font-weight: 700; font-size: 0.95rem; }
+.progress { height: 10px; border-radius: 999px; background: rgba(26, 18, 34, 0.08); margin: 0.6rem 0 1.5rem; overflow: hidden; }
+.progress > div { height: 100%; border-radius: 999px; background: var(--accent); width: 0; }
+.quiz h2 { font-size: clamp(1.4rem, 5vw, 1.9rem); }
+.quiz .aide { color: var(--muted); margin-top: 0.5rem; }
+.quiz select {
+  width: 100%; margin-top: 1.25rem; padding: 1rem 1.25rem; font: inherit; font-size: 1.05rem;
+  color: var(--ink); background: #fff; border: 1px solid var(--glass-edge); border-radius: 999px; box-shadow: var(--glass-shadow);
+}
+.choices { display: grid; gap: 0.6rem; margin-top: 1.25rem; }
+.choice {
+  font: inherit; font-weight: 700; font-size: 1.02rem; text-align: left; cursor: pointer; color: var(--ink);
+  padding: 0.95rem 1.25rem; border-radius: 999px; background: #fff; border: 1px solid var(--glass-edge); box-shadow: var(--glass-shadow);
+}
+.quiz-actions { display: grid; gap: 0.6rem; margin-top: 1.5rem; }
+.quiz .btn[disabled] { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
+.recap { list-style: none; margin: 1.25rem 0 0; padding: 0; display: grid; gap: 0.5rem; }
+.recap li { display: flex; justify-content: space-between; gap: 1rem; padding: 0.75rem 1rem; border-radius: 18px; background: rgba(255, 255, 255, 0.7); border: 1px solid var(--glass-edge); }
+.recap b { color: var(--muted); font-weight: 600; }
+.recap span { font-weight: 700; text-align: right; }
+.quiz .link { display: inline-block; margin-top: 1.25rem; font-weight: 700; color: var(--accent-dark); text-underline-offset: 4px; }
+
+/* Numéros plus petits */
+.card-body .price { font-size: 1rem; }
+.contact-line { font-size: clamp(1.15rem, 4.5vw, 1.4rem); margin: 0.4rem 0 0.9rem; }
+.contact-line + .contact-line { margin-top: -0.4rem; }
+.product-price { font-size: clamp(1.3rem, 4.5vw, 1.7rem); }
+
+/* Mention en bas de page */
+.credit { flex-basis: 100%; text-align: center; margin-top: 0.75rem; font-size: 0.9rem; color: var(--muted); }
+
+
+/* Vignettes photo : fond blanc, comme sur une fiche produit */
+.card-media.has-img { background: #fff; }
+.product-media { background: #fff; }
