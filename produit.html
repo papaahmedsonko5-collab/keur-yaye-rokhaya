@@ -4,6 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Produit | Keur Yaye Rokhaya</title>
+  <meta name="description" content="Fiche produit Keur Yaye Rokhaya : prix, options et commande sur WhatsApp. Boutique à Dakar, livraison partout au Sénégal.">
+  <link rel="canonical" href="https://papaahmedsonko5-collab.github.io/keur-yaye-rokhaya/produit.html">
+  <meta property="og:image" content="https://papaahmedsonko5-collab.github.io/keur-yaye-rokhaya/og-image.jpg">
+  <meta property="og:site_name" content="Keur Yaye Rokhaya">
   <meta name="theme-color" content="#8419CB">
   <link rel="icon" href="favicon.png" type="image/png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -19,7 +23,7 @@
       <a href="index.html#a-propos">À propos</a>
       <a href="index.html#contact">Contact</a>
     </nav>
-    <a class="btn btn-small" href="https://wa.me/221784852982?text=Bonjour%2C%20je%20souhaite%20commander%20un%20produit%20chez%20Keur%20Yaye%20Rokhaya." target="_blank" rel="noopener">Commander</a>
+    <a class="btn btn-small" href="#" data-wa="Bonjour, je souhaite commander un produit chez Keur Yaye Rokhaya.">Commander</a>
   </div>
 </header>
 <main class="product-page">
@@ -66,12 +70,21 @@
     return;
   }
   document.title = p.nom + " | Keur Yaye Rokhaya";
+  (function () {
+    var d = document.querySelector('meta[name="description"]');
+    if (d) d.setAttribute("content", p.nom + " chez Keur Yaye Rokhaya à Dakar. " + (p.description || "") + " Commande sur WhatsApp, livraison partout au Sénégal.");
+    var c = document.querySelector('link[rel="canonical"]');
+    if (c) c.setAttribute("href", c.getAttribute("href") + "?p=" + encodeURIComponent(slug));
+  })();
 
   var marque = ({ "iPhone": "Apple", "Apple Watch": "Apple", "Samsung": "Samsung", "Google Pixel": "Google" })[p.categorie] || "";
   var opt = p.options || {};
+  function nomStock(s) { return typeof s === "object" ? s.nom : s; }
+  function prixStock(s) { return (typeof s === "object" && typeof s.prix === "number") ? s.prix : p.prix; }
   var choix = {
     couleur: opt.couleurs ? opt.couleurs[0].nom : "",
-    stockage: opt.stockages ? opt.stockages[0] : "",
+    stockage: opt.stockages ? nomStock(opt.stockages[0]) : "",
+    prix: opt.stockages ? prixStock(opt.stockages[0]) : p.prix,
     etat: opt.etats ? opt.etats[0] : null,
     sim: opt.sims ? opt.sims[0] : null
   };
@@ -108,7 +121,8 @@
   if (marque) { var li2 = el("li", "pill pill-accent", marque); pills.appendChild(li2); }
   info.appendChild(pills);
   info.appendChild(el("h1", "", p.nom));
-  info.appendChild(el("p", "product-price", prixTexte(p.prix)));
+  var prixEl = el("p", "product-price", prixTexte(choix.prix));
+  info.appendChild(prixEl);
 
   var zoneOptions = el("div", "");
   zoneOptions.style.display = "grid"; zoneOptions.style.gap = "1.25rem";
@@ -124,7 +138,7 @@
     if (choix.etat) parts.push(choix.etat.nom + (choix.etat.detail ? " (" + choix.etat.detail.toLowerCase() + ")" : ""));
     if (choix.sim) parts.push(choix.sim.nom);
     var m = "Bonjour, je souhaite commander : " + p.nom + (parts.length ? ", " + parts.join(", ") : "") + ".";
-    if (typeof p.prix === "number" && p.prix > 0) m += " Prix affiché : " + prixTexte(p.prix) + ".";
+    if (typeof choix.prix === "number" && choix.prix > 0) m += " Prix affiché : " + prixTexte(choix.prix) + ".";
     return m;
   }
   function majLien() { bouton.href = KYR.lien(message()); }
@@ -153,9 +167,9 @@
   });
   if (opt.stockages) groupe("Capacité de stockage", function (rang) {
     opt.stockages.forEach(function (s, i) {
-      var b = el("button", "pill-btn", s); b.type = "button";
+      var b = el("button", "pill-btn", nomStock(s)); b.type = "button";
       b.setAttribute("aria-pressed", i === 0 ? "true" : "false");
-      b.addEventListener("click", function () { choix.stockage = s; activer(rang, b); majLien(); });
+      b.addEventListener("click", function () { choix.stockage = nomStock(s); choix.prix = prixStock(s); prixEl.textContent = prixTexte(choix.prix); activer(rang, b); majLien(); });
       rang.appendChild(b);
     });
   });
@@ -180,7 +194,7 @@
     });
   });
 
-  if (opt.stockages) info.appendChild(el("p", "note", "Le prix peut varier selon la capacité. Il est confirmé sur WhatsApp avant toute commande."));
+  if (opt.stockages) info.appendChild(el("p", "note", KYR.aPrixParCapacite(p) ? "Le prix change selon la capacité choisie. Il est confirmé sur WhatsApp avant toute commande." : "Le prix peut varier selon la capacité. Il est confirmé sur WhatsApp avant toute commande."));
   else info.appendChild(el("p", "note", "Le prix et la disponibilité sont confirmés sur WhatsApp avant toute commande."));
   majLien();
   info.appendChild(bouton);

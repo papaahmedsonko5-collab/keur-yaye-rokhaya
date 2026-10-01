@@ -7,6 +7,7 @@
     image       : nom du fichier photo. Vide : la carte affiche le nom.
     description : texte affiché sur la fiche produit.
     options     : (facultatif) choix de la fiche produit : couleurs, stockages, etats, sims.
+      - stockages : "128 Go" (même prix) ou { nom: "256 Go", prix: 419000 } (prix propre à la capacité).
       - Les couleurs et capacités viennent des gammes officielles : supprimez celles que la boutique n'a pas.
       - etats : à renseigner produit par produit (par exemple Scellé). Sans "etats", le groupe n'apparaît pas.
       - Une couleur avec image: affiche la pastille de couleur sur la photo.
@@ -107,7 +108,7 @@ window.PRODUCTS = [
         { nom: "Rose", hex: "#F2C6D0" },
         { nom: "Bleu sarcelle", hex: "#7FB2B5" }
       ],
-      stockages: ["128 Go", "256 Go", "512 Go"],
+      stockages: [{ nom: "128 Go", prix: 390000 }, { nom: "256 Go", prix: 419000 }, { nom: "512 Go", prix: 435000 }],
       sims: [{ nom: "eSIM", detail: "SIM intégrée" }, { nom: "SIM physique", detail: "Carte SIM" }]
     }
   },
@@ -309,5 +310,41 @@ window.PRODUCTS = [
   {
     nom: "Apple Watch Series 10", categorie: "Apple Watch", prix: 220000, image: "apple-watch-serie-10.webp",
     description: "Apple Watch avec grand écran, boîtier fin et suivi santé et sport."
+  },
+  {
+    nom: "Coque / Pochette", categorie: "Accessoires", prix: 2000, image: "coque-pochette.webp",
+    description: "Coque ou pochette pour protéger votre téléphone. Modèles et couleurs confirmés sur WhatsApp."
+  },
+  {
+    nom: "Verre blindé", categorie: "Accessoires", prix: 1000, image: "verre-blinde.webp",
+    description: "Verre trempé pour protéger l’écran. Modèle compatible confirmé sur WhatsApp."
+  },
+  {
+    nom: "Clavier iPad", categorie: "Accessoires", prix: 49000, image: "clavier-ipad.webp",
+    description: "Clavier pour iPad. Modèle compatible confirmé sur WhatsApp."
+  },
+  {
+    nom: "Tête de chargeur (adaptateur secteur)", categorie: "Accessoires", prix: 5000, image: "tete-chargeur.webp",
+    description: "Adaptateur secteur avec port USB-C."
+  },
+  {
+    nom: "Clavier iPhone", categorie: "Accessoires", prix: 70000, image: "clavier-iphone.webp",
+    description: "Clavier physique pour iPhone. Modèle compatible confirmé sur WhatsApp."
+  },
+  {
+    nom: "Chargeur iPhone 35W", categorie: "Accessoires", prix: 10000, image: "chargeur-iphone-35w.webp",
+    description: "Chargeur secteur 35 W pour iPhone."
+  },
+  {
+    nom: "Chargeur MacBook", categorie: "Accessoires", prix: 30000, image: "chargeur-macbook.webp",
+    description: "Chargeur secteur pour MacBook."
+  },
+  {
+    nom: "Câble iPhone", categorie: "Accessoires", prix: 2500, image: "cable-iphone.webp",
+    description: "Câble de charge pour iPhone."
+  },
+  {
+    nom: "Apple Pencil", categorie: "Accessoires", prix: 50000, image: "apple-pencil.webp",
+    description: "Stylet pour iPad. Modèle compatible confirmé sur WhatsApp."
   }
 ];

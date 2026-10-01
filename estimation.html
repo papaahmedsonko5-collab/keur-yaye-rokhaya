@@ -4,6 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Estimation | Keur Yaye Rokhaya</title>
+  <meta name="description" content="Estimez la reprise, le rachat ou la rétrogradation de votre iPhone chez Keur Yaye Rokhaya à Dakar, puis envoyez votre demande sur WhatsApp.">
+  <link rel="canonical" href="https://papaahmedsonko5-collab.github.io/keur-yaye-rokhaya/estimation.html">
+  <meta property="og:image" content="https://papaahmedsonko5-collab.github.io/keur-yaye-rokhaya/og-image.jpg">
+  <meta property="og:site_name" content="Keur Yaye Rokhaya">
   <meta name="theme-color" content="#8419CB">
   <link rel="icon" href="favicon.png" type="image/png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -19,7 +23,7 @@
       <a href="index.html#a-propos">À propos</a>
       <a href="index.html#contact">Contact</a>
     </nav>
-    <a class="btn btn-small" href="https://wa.me/221784852982?text=Bonjour%2C%20je%20souhaite%20commander%20un%20produit%20chez%20Keur%20Yaye%20Rokhaya." target="_blank" rel="noopener">Commander</a>
+    <a class="btn btn-small" href="#" data-wa="Bonjour, je souhaite commander un produit chez Keur Yaye Rokhaya.">Commander</a>
   </div>
 </header>
 <main>
@@ -183,15 +187,20 @@
     var pas = G.arrondi || 1000;
     return Math.max(0, Math.round(v / pas) * pas);
   }
+  function aPrixParCapacite(nom) {
+    var p = (window.PRODUCTS || []).filter(function (x) { return x.nom === nom; })[0];
+    return !!p && KYR.aPrixParCapacite(p);
+  }
   function prixCatalogue(nom) {
     var p = (window.PRODUCTS || []).filter(function (x) { return x.nom === nom; })[0];
-    return p && typeof p.prix === "number" ? p.prix : null;
+    return p && typeof p.prix === "number" ? KYR.prixMini(p) : null;
   }
 
   function recap() {
     var ref = reference();
     var est = estimer();
     var neuf = rep.nouveau ? prixCatalogue(rep.nouveau) : null;
+    var nouveauAVariantes = rep.nouveau ? aPrixParCapacite(rep.nouveau) : false;
     var libelle = type === "vendre" ? "Estimation de rachat de votre " + rep.modele
                                      : "Valeur de reprise estimée de votre " + rep.modele;
     var lignes = [T.ouverture, "Réf : " + ref];
@@ -214,7 +223,7 @@
         if (neuf === null) {
           boite.appendChild(el("p", "", "Le prix du " + rep.nouveau + " vous est confirmé sur WhatsApp."));
         } else {
-          boite.appendChild(el("p", "", rep.nouveau + " : " + fcfa(neuf)));
+          boite.appendChild(el("p", "", rep.nouveau + " : " + (nouveauAVariantes ? "à partir de " : "") + fcfa(neuf)));
           var diff = neuf - est;
           var phrase;
           if (type === "echange") {

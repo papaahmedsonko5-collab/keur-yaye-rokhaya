@@ -1,9 +1,28 @@
 /* Éléments communs à toutes les pages : lien WhatsApp, barre d'onglets en pilule, bouton Discuter */
 (function () {
-  var NUMERO = "221784852982";
+  // ---- CONFIGURATION : seul endroit où écrire les numéros (format international, sans +) ----
+  var NUMERO = "221784852982";      // WhatsApp et téléphone principal
+  var NUMERO2 = "221772615354";     // deuxième téléphone
+
+  function affiche(n) {
+    var m = String(n).match(/^(\d{3})(\d{2})(\d{3})(\d{2})(\d{2})$/);
+    return m ? "+" + m[1] + " " + m[2] + " " + m[3] + " " + m[4] + " " + m[5] : "+" + n;
+  }
 
   window.KYR = {
     numero: NUMERO,
+    fcfa: function (n) { return n.toLocaleString("fr-FR") + " FCFA"; },
+    // un produit a-t-il un prix différent selon la capacité ?
+    aPrixParCapacite: function (p) {
+      var st = p && p.options && p.options.stockages;
+      return !!(st && st.some(function (s) { return typeof s === "object" && typeof s.prix === "number"; }));
+    },
+    // prix le plus bas du produit (prix de base ou capacité la moins chère)
+    prixMini: function (p) {
+      var st = p && p.options && p.options.stockages, prix = [];
+      if (st) st.forEach(function (s) { if (typeof s === "object" && typeof s.prix === "number") prix.push(s.prix); });
+      return prix.length ? Math.min.apply(null, prix) : p.prix;
+    },
     lien: function (message) {
       return "https://wa.me/" + NUMERO + "?text=" + encodeURIComponent(message);
     },
@@ -12,6 +31,25 @@
         .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
     }
   };
+
+  // Liens et numéros des pages : data-wa="message", data-tel="1|2", data-num="1|2"
+  function appliquerNumeros() {
+    Array.prototype.forEach.call(document.querySelectorAll("[data-wa]"), function (a) {
+      var msg = a.getAttribute("data-wa") || "Bonjour, je souhaite commander un produit chez Keur Yaye Rokhaya.";
+      a.href = window.KYR.lien(msg);
+      a.target = "_blank";
+      a.rel = "noopener";
+    });
+    Array.prototype.forEach.call(document.querySelectorAll("[data-tel]"), function (a) {
+      var n = a.getAttribute("data-tel") === "2" ? NUMERO2 : NUMERO;
+      a.href = "tel:+" + n;
+      if (!a.textContent.trim()) a.textContent = affiche(n);
+    });
+    Array.prototype.forEach.call(document.querySelectorAll("[data-num]"), function (e) {
+      e.textContent = affiche(e.getAttribute("data-num") === "2" ? NUMERO2 : NUMERO);
+    });
+  }
+  appliquerNumeros();
 
   function icone(chemin) {
     return '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + chemin + "</svg>";

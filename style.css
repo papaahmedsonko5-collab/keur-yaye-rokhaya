@@ -1,11 +1,3 @@
-@font-face {
-  font-family: "Hanken Grotesk";
-  src: url("fonts/hanken-grotesk.woff2") format("woff2");
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
-
 :root {
   --paper: #F8F7FA;
   --ink: #1A1222;
@@ -36,7 +28,7 @@ body {
   margin: 0;
   isolation: isolate;
   color: var(--ink);
-  font-family: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 1.0625rem;
   line-height: 1.6;
   padding-bottom: 5.5rem;
@@ -558,3 +550,18 @@ body { padding-bottom: 8.5rem; }
 .description { margin-top: 2rem; }
 .description h2 { font-size: 1.05rem; margin-bottom: 0.5rem; }
 .description p { color: var(--muted); max-width: 62ch; }
+
+/* En-tête : tient sur les petits écrans (320 à 390 px) */
+.header-grid { grid-template-columns: minmax(0, 1fr) auto; }
+@media (min-width: 820px) { .header-grid { grid-template-columns: auto 1fr auto; } }
+@media (max-width: 400px) {
+  .brand { font-size: 0.92rem; gap: 0.4rem; }
+  .brand img { height: 32px; }
+  .header-grid .btn-small { padding: 0.5rem 0.85rem; font-size: 0.9rem; }
+}
+@media (max-width: 340px) {
+  .brand { font-size: 0.82rem; }
+  .brand img { height: 28px; }
+  .header-grid { padding-left: 0.75rem; }
+  .header-grid .btn-small { padding: 0.45rem 0.7rem; font-size: 0.85rem; }
+}
