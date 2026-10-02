@@ -23,7 +23,7 @@
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="preload" href="hero-bg.jpg" as="image">
   <script type="application/ld+json">
-  {"@context": "https://schema.org", "@graph": [{"@type": "Store", "@id": "https://keuryayerokhaya.com/#boutique", "name": "Keur Yaye Rokhaya", "url": "https://keuryayerokhaya.com/", "image": "https://keuryayerokhaya.com/og-image.jpg", "logo": "https://keuryayerokhaya.com/logo.png", "description": "Boutique de produits Apple et de smartphones à Dakar. Livraison partout au Sénégal.", "telephone": ["+221784852982", "+221772615354"], "email": "contact@keuryayerokhaya.com", "address": {"@type": "PostalAddress", "streetAddress": "Keur Mbaye Fall, en face école Fogny", "addressLocality": "Dakar", "addressCountry": "SN"}}, {"@type": "WebSite", "@id": "https://keuryayerokhaya.com/#site", "name": "Keur Yaye Rokhaya", "url": "https://keuryayerokhaya.com/", "inLanguage": "fr", "publisher": {"@id": "https://keuryayerokhaya.com/#boutique"}}]}
+  {"@context": "https://schema.org", "@graph": [{"@type": "Store", "@id": "https://keuryayerokhaya.com/#boutique", "name": "Keur Yaye Rokhaya", "url": "https://keuryayerokhaya.com/", "image": "https://keuryayerokhaya.com/og-image.jpg", "logo": "https://keuryayerokhaya.com/logo.png", "description": "Boutique de produits Apple et de smartphones à Dakar. Livraison partout au Sénégal.", "telephone": ["+221772615354", "+221784852982"], "email": "contact@keuryayerokhaya.com", "address": {"@type": "PostalAddress", "streetAddress": "Keur Mbaye Fall, en face école Fogny", "addressLocality": "Dakar", "addressCountry": "SN"}}, {"@type": "WebSite", "@id": "https://keuryayerokhaya.com/#site", "name": "Keur Yaye Rokhaya", "url": "https://keuryayerokhaya.com/", "inLanguage": "fr", "publisher": {"@id": "https://keuryayerokhaya.com/#boutique"}}]}
   </script>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -71,9 +71,32 @@
           <h2 id="titre-produits">Boutique</h2>
           <p>Le prix et la disponibilité sont confirmés sur WhatsApp avant toute commande.</p>
         </div>
-        <div class="filters" id="filters" role="group" aria-label="Filtrer par catégorie"></div>
+      </div>
+      <div class="shop-tools">
+        <div class="search-field">
+          <label for="recherche">Rechercher un produit</label>
+          <input id="recherche" type="search" placeholder="Exemple : iPhone 15, 256 Go, Samsung" autocomplete="off" enterkeyhint="search" maxlength="80">
+        </div>
+        <div class="cats" id="cats" role="group" aria-label="Catégories"></div>
+        <details class="filters-panel" id="filtres-panel">
+          <summary>Filtres <span id="filtres-actifs"></span></summary>
+          <div class="filters-grid" id="filtres-champs"></div>
+          <p class="error-msg" id="erreur-prix" role="alert" hidden></p>
+          <button type="button" class="btn btn-outline btn-small" id="reinit">Réinitialiser les filtres</button>
+        </details>
+        <div class="shop-bar">
+          <p id="compteur" role="status" aria-live="polite"></p>
+          <div class="sort-field"><label for="tri">Trier par</label><select id="tri"></select></div>
+        </div>
       </div>
       <div class="grid" id="grid"></div>
+      <div class="empty-state" id="vide" hidden>
+        <p><strong>Aucun produit ne correspond à votre recherche.</strong></p>
+        <p>Essayez un autre mot ou retirez des filtres.</p>
+        <button type="button" class="btn btn-outline" id="reinit2">Réinitialiser les filtres</button>
+      </div>
+      <noscript><p class="note">La boutique a besoin de JavaScript. Écrivez-nous sur WhatsApp pour connaître nos produits.</p></noscript>
+      <p class="shop-help">Vous ne trouvez pas votre produit ? <a href="#" data-wa="Bonjour Keur Yaye Rokhaya, je cherche un produit qui n’est pas dans la boutique.">Demandez-le sur WhatsApp</a>.</p>
     </div>
   </section>
 
@@ -205,103 +228,7 @@
 
 <script src="products.js"></script>
 <script src="site.js"></script>
-<script>
-(function () {
-  var CATEGORIES = ["iPhone", "iPad", "MacBook", "AirPods", "Accessoires"];
-  var produits = Array.isArray(window.PRODUCTS) ? window.PRODUCTS : [];
-  var grid = document.getElementById("grid");
-  var filters = document.getElementById("filters");
-  var actif = "Tous";
-
-  function el(tag, cls, text) {
-    var n = document.createElement(tag);
-    if (cls) n.className = cls;
-    if (text) n.textContent = text;
-    return n;
-  }
-
-  function prixTexte(p) {
-    if (typeof p === "number" && p > 0) return p.toLocaleString("fr-FR") + " FCFA";
-    return "Prix sur WhatsApp";
-  }
-
-  function carteCategorie(cat) {
-    var c = el("article", "card");
-    var media = el("div", "card-media", cat);
-    var body = el("div", "card-body");
-    body.appendChild(el("h3", "", cat));
-    body.appendChild(el("p", "cat", "Demandez les modèles et les prix disponibles."));
-    var a = el("a", "btn btn-outline btn-small", "Demander sur WhatsApp");
-    a.href = KYR.lien("Bonjour, je souhaite connaître les modèles " + cat + " disponibles chez Keur Yaye Rokhaya.");
-    a.target = "_blank";
-    a.rel = "noopener";
-    body.appendChild(a);
-    c.appendChild(media);
-    c.appendChild(body);
-    return c;
-  }
-
-  function carteProduit(p) {
-    var c = el("article", "card");
-    var lien = el("a", "card-link");
-    lien.href = "produit.html?p=" + encodeURIComponent(KYR.slug(p.nom));
-    var media = el("div", p.image ? "card-media has-img" : "card-media");
-    if (p.image) {
-      var img = document.createElement("img");
-      img.src = p.image;
-      img.alt = p.nom;
-      img.loading = "lazy";
-      media.appendChild(img);
-    } else {
-      media.appendChild(document.createTextNode(p.nom));
-    }
-    media.appendChild(el("span", "tag-pill", p.categorie));
-    var body = el("div", "card-body");
-    body.appendChild(el("h3", "", p.nom));
-    body.appendChild(el("p", "price", KYR.aPrixParCapacite(p) ? "À partir de " + KYR.fcfa(KYR.prixMini(p)) : prixTexte(p.prix)));
-    body.appendChild(el("span", "pill-link", "Détails →"));
-    lien.appendChild(media);
-    lien.appendChild(body);
-    c.appendChild(lien);
-    return c;
-  }
-
-  function noms() {
-    var liste = CATEGORIES.slice();
-    produits.forEach(function (p) {
-      if (p.categorie && liste.indexOf(p.categorie) === -1) liste.push(p.categorie);
-    });
-    return liste;
-  }
-
-  function afficher() {
-    grid.innerHTML = "";
-    var visibles = produits.filter(function (p) { return actif === "Tous" || p.categorie === actif; });
-    if (visibles.length === 0) {
-      (actif === "Tous" ? CATEGORIES : [actif]).forEach(function (cat) { grid.appendChild(carteCategorie(cat)); });
-      return;
-    }
-    visibles.forEach(function (p) { grid.appendChild(carteProduit(p)); });
-  }
-
-  function boutonsFiltres() {
-    filters.innerHTML = "";
-    ["Tous"].concat(noms()).forEach(function (nom) {
-      var b = el("button", "", nom);
-      b.type = "button";
-      b.setAttribute("aria-pressed", nom === actif ? "true" : "false");
-      b.addEventListener("click", function () {
-        actif = nom;
-        boutonsFiltres();
-        afficher();
-      });
-      filters.appendChild(b);
-    });
-  }
-
-  boutonsFiltres();
-  afficher();
-})();
-</script>
+<script src="shop.js"></script>
+<script src="boutique.js"></script>
 </body>
 </html>

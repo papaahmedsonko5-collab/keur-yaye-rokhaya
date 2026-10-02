@@ -1,8 +1,8 @@
 /* Éléments communs à toutes les pages : lien WhatsApp, barre d'onglets en pilule, bouton Discuter */
 (function () {
   // ---- CONFIGURATION : seul endroit où écrire les numéros (format international, sans +) ----
-  var NUMERO = "221784852982";      // WhatsApp et téléphone principal
-  var NUMERO2 = "221772615354";     // deuxième numéro (WhatsApp et téléphone)
+  var NUMERO = "221772615354";      // NUMÉRO PRINCIPAL : toutes les commandes WhatsApp (+221 77 261 53 54)
+  var NUMERO2 = "221784852982";     // deuxième contact WhatsApp et téléphone (+221 78 485 29 82)
   var EMAIL = "contact@keuryayerokhaya.com";
 
   function affiche(n) {
@@ -10,7 +10,16 @@
     return m ? "+" + m[1] + " " + m[2] + " " + m[3] + " " + m[4] + " " + m[5] : "+" + n;
   }
 
+  var CLE_PANIER = "kyr_panier_v1";
+  function nbPanier() {
+    var n = 0;
+    try { JSON.parse(localStorage.getItem(CLE_PANIER) || "[]").forEach(function (l) { n += Math.max(0, Math.min(20, parseInt(l && l.q, 10) || 0)); }); } catch (e) { n = 0; }
+    return n;
+  }
+
   window.KYR = {
+    CLE_PANIER: CLE_PANIER,
+    nbPanier: nbPanier,
     numero: NUMERO,
     numero2: NUMERO2,
     email: EMAIL,
@@ -112,6 +121,10 @@
     var nav = grille && grille.querySelector(".nav");
     if (!grille || !nav) return;
     nav.id = nav.id || "menu-principal";
+    var panierLien = document.createElement("a");
+    panierLien.className = "nav-cart"; panierLien.href = "panier.html";
+    panierLien.innerHTML = 'Panier <span class="cart-count" data-cart-count hidden>0</span>';
+    nav.appendChild(panierLien);
     var wa = document.createElement("a");
     wa.className = "nav-extra"; wa.href = "#"; wa.textContent = "Commander sur WhatsApp";
     wa.setAttribute("data-wa", "Bonjour, je souhaite commander un produit chez Keur Yaye Rokhaya.");
@@ -132,7 +145,7 @@
     b.addEventListener("click", function () { etat(!grille.classList.contains("menu-ouvert")); });
     nav.addEventListener("click", function (e) { var t = e.target; while (t && t !== nav) { if (t.tagName === "A") { etat(false); return; } t = t.parentNode; } });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape" && grille.classList.contains("menu-ouvert")) { etat(false); b.focus(); } });
-    var large = window.matchMedia("(min-width: 820px)");
+    var large = window.matchMedia("(min-width: 1080px)");
     function surTaille() { if (large.matches) etat(false); }
     if (large.addEventListener) large.addEventListener("change", surTaille); else if (large.addListener) large.addListener(surTaille);
   })();
@@ -152,6 +165,7 @@
           '<a href="index.html#nos-produits">Tous les produits</a>' +
           '<a href="index.html#services">Services</a>' +
           '<a href="index.html#epargne">Coffre Épargne</a>' +
+          '<a href="panier.html">Panier</a>' +
           '<a href="estimation.html?type=echange">Échange iPhone</a>' +
           '<a href="estimation.html?type=vendre">Vendre mon iPhone</a>' +
           '<a href="estimation.html?type=retrograder">Rétrograder mon iPhone</a>' +
@@ -219,5 +233,24 @@
     chat.innerHTML = icone('<path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.7-1.2A9 9 0 1 0 12 3z"/>') + "Discuter";
     flottants.appendChild(chat);
   }
+  // Panier flottant : n'apparaît que s'il contient des produits (et pas sur la page Panier elle-même)
+  var pagePanier = (location.pathname.split("/").pop() || "") === "panier.html";
+  var flotPanier = document.createElement("a");
+  flotPanier.className = "float-cart"; flotPanier.href = "panier.html"; flotPanier.hidden = true;
+  flotPanier.innerHTML = icone('<path d="M3 4h2l2.4 11h10.2L20 7H6.2"/><circle cx="9" cy="19" r="1.4"/><circle cx="17" cy="19" r="1.4"/>') + '<span>Panier <b data-cart-count>0</b></span>';
+  if (!pagePanier) flottants.insertBefore(flotPanier, flottants.firstChild);
+
+  function majCompteurPanier() {
+    var n = nbPanier();
+    Array.prototype.forEach.call(document.querySelectorAll("[data-cart-count]"), function (e) {
+      e.textContent = n; if (e.tagName === "SPAN" && e.classList.contains("cart-count")) e.hidden = n === 0;
+    });
+    flotPanier.hidden = n === 0;
+    flotPanier.setAttribute("aria-label", "Voir le panier, " + n + " article" + (n > 1 ? "s" : ""));
+  }
+  window.addEventListener("kyr:panier", majCompteurPanier);
+  window.addEventListener("storage", function (e) { if (e.key === CLE_PANIER) majCompteurPanier(); });
+
   document.body.appendChild(flottants);
+  majCompteurPanier();   // après l'ajout au document : met à jour aussi la pastille du panier flottant
 })();

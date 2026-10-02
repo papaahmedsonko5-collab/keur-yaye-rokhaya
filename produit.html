@@ -45,6 +45,7 @@
 </footer>
 <script src="products.js"></script>
 <script src="site.js"></script>
+<script src="shop.js"></script>
 <script>
 (function () {
   var contenu = document.getElementById("contenu");
@@ -59,7 +60,7 @@
     return n;
   }
   function prixTexte(v) {
-    return (typeof v === "number" && v > 0) ? v.toLocaleString("fr-FR") + " FCFA" : "Prix sur WhatsApp";
+    return (typeof v === "number" && v > 0) ? v.toLocaleString("fr-FR") + " FCFA" : "Sur devis";
   }
 
   if (!p) {
@@ -80,7 +81,7 @@
     var produit = { "@type": "Product", "name": p.nom, "category": p.categorie, "url": url };
     if (p.description) produit.description = p.description;
     if (p.image) produit.image = base + p.image;
-    var marque = ({ "iPhone": "Apple", "Apple Watch": "Apple", "Samsung": "Samsung", "Google Pixel": "Google" })[p.categorie];
+    var marque = p.marque || ({ "iPhone": "Apple", "Apple Watch": "Apple", "Samsung": "Samsung", "Google Pixel": "Google" })[p.categorie];
     if (marque) produit.brand = { "@type": "Brand", "name": marque };
     var st = (p.options && p.options.stockages) || [];
     var prix = st.filter(function (x) { return typeof x === "object" && typeof x.prix === "number"; }).map(function (x) { return x.prix; });
@@ -95,7 +96,7 @@
     document.head.appendChild(ld);
   })();
 
-  var marque = ({ "iPhone": "Apple", "Apple Watch": "Apple", "Samsung": "Samsung", "Google Pixel": "Google" })[p.categorie] || "";
+  var marque = p.marque || ({ "iPhone": "Apple", "Apple Watch": "Apple", "Samsung": "Samsung", "Google Pixel": "Google" })[p.categorie] || "";
   var opt = p.options || {};
   function nomStock(s) { return typeof s === "object" ? s.nom : s; }
   function prixStock(s) { return (typeof s === "object" && typeof s.prix === "number") ? s.prix : p.prix; }
@@ -146,20 +147,46 @@
   zoneOptions.style.display = "grid"; zoneOptions.style.gap = "1.25rem";
   info.appendChild(zoneOptions);
 
-  var bouton = el("a", "btn btn-block", "Commander sur WhatsApp");
+  // ---- achat : quantité, panier, WhatsApp (numéro principal des commandes, défini dans site.js) ----
+  var qte = 1;
+  var bouton = el("a", "btn btn-wa btn-block", "Commander sur WhatsApp");
   bouton.target = "_blank"; bouton.rel = "noopener";
+  var ajouterBtn = el("button", "btn btn-block", "Ajouter au panier"); ajouterBtn.type = "button";
+  var totalEl = el("p", "total-line");
+  var statut = el("p", "added"); statut.setAttribute("role", "status"); statut.hidden = true;
 
-  function message() {
-    var parts = [];
-    if (choix.couleur) parts.push("couleur " + choix.couleur);
-    if (choix.stockage) parts.push(choix.stockage);
-    if (choix.etat) parts.push(choix.etat.nom + (choix.etat.detail ? " (" + choix.etat.detail.toLowerCase() + ")" : ""));
-    if (choix.sim) parts.push(choix.sim.nom);
-    var m = "Bonjour, je souhaite commander : " + p.nom + (parts.length ? ", " + parts.join(", ") : "") + ".";
-    if (typeof choix.prix === "number" && choix.prix > 0) m += " Prix affiché : " + prixTexte(choix.prix) + ".";
-    return m;
+  function variante() {
+    return { couleur: choix.couleur || "", stockage: choix.stockage || "", etat: choix.etat ? choix.etat.nom : "", sim: choix.sim ? choix.sim.nom : "" };
   }
-  function majLien() { bouton.href = KYR.lien(message()); }
+  function majLien() {
+    var v = variante(), unitaire = KYR.shop.prixDe(p, v.stockage);
+    choix.prix = unitaire;
+    prixEl.textContent = KYR.shop.prixTexte(unitaire);
+    totalEl.textContent = unitaire === null ? "Produit sur devis : le prix est confirmé sur WhatsApp." : "Total : " + KYR.fcfa(unitaire * qte);
+    bouton.href = KYR.lien(KYR.shop.messageProduit(p, v, qte));
+  }
+
+  var pas = el("div", "qty-row");
+  pas.appendChild(el("span", "qty-label", "Quantité"));
+  var stepper = el("div", "stepper");
+  var moins = el("button", "", "\u2212"); moins.type = "button"; moins.setAttribute("aria-label", "Diminuer la quantité");
+  var sortie = document.createElement("output"); sortie.textContent = "1"; sortie.setAttribute("aria-live", "polite");
+  var plus = el("button", "", "+"); plus.type = "button"; plus.setAttribute("aria-label", "Augmenter la quantité");
+  function majQte(n) { qte = Math.max(1, Math.min(KYR.shop.MAX_QTE, n)); sortie.textContent = qte; moins.disabled = qte <= 1; plus.disabled = qte >= KYR.shop.MAX_QTE; majLien(); }
+  moins.addEventListener("click", function () { majQte(qte - 1); });
+  plus.addEventListener("click", function () { majQte(qte + 1); });
+  stepper.appendChild(moins); stepper.appendChild(sortie); stepper.appendChild(plus); pas.appendChild(stepper);
+
+  ajouterBtn.addEventListener("click", function () {
+    var r = KYR.shop.ajouter(KYR.slug(p.nom), variante(), qte);
+    statut.hidden = false; statut.textContent = "";
+    if (r.ok) {
+      statut.appendChild(document.createTextNode("Ajouté au panier (" + r.nombre + " article" + (r.nombre > 1 ? "s" : "") + " au total). "));
+      var a = el("a", "", "Voir le panier"); a.href = "panier.html"; statut.appendChild(a);
+    } else {
+      statut.textContent = r.raison === "plein" ? "Le panier est plein (20 produits différents au maximum). Passez commande ou retirez un produit." : "Impossible d’ajouter ce produit.";
+    }
+  });
 
   function groupe(titre, construire) {
     var g = el("div", "opt-group");
@@ -214,8 +241,8 @@
 
   if (opt.stockages) info.appendChild(el("p", "note", KYR.aPrixParCapacite(p) ? "Le prix change selon la capacité choisie. Il est confirmé sur WhatsApp avant toute commande." : "Le prix peut varier selon la capacité. Il est confirmé sur WhatsApp avant toute commande."));
   else info.appendChild(el("p", "note", "Le prix et la disponibilité sont confirmés sur WhatsApp avant toute commande."));
-  majLien();
-  info.appendChild(bouton);
+  info.appendChild(pas); info.appendChild(totalEl); info.appendChild(ajouterBtn); info.appendChild(bouton); info.appendChild(statut);
+  majQte(1);
   grille.appendChild(info);
   contenu.appendChild(grille);
 

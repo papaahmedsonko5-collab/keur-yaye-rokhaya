@@ -4,8 +4,8 @@
  "inconnu": "Je n’ai pas encore cette information dans ma base. {Vous pouvez|Tu peux} contacter directement l’équipe de Keur Yaye Rokhaya pour obtenir une réponse précise. 🙏",
  "contact": {
   "adresse": "Keur Mbaye Fall, en face école Fogny, Dakar",
-  "tel1": "+221 78 485 29 82",
-  "tel2": "+221 77 261 53 54",
+  "tel1": "+221 77 261 53 54",
+  "tel2": "+221 78 485 29 82",
   "email": "contact@keuryayerokhaya.com"
  },
  "sujets": [
@@ -241,11 +241,15 @@
     "comment passer commande",
     "reserver"
    ],
-   "reponse": "Pour commander, {ouvrez|ouvre} la fiche du produit puis {envoyez|envoie} la demande sur WhatsApp : l’équipe confirme la disponibilité et le prix, puis {vous convenez|tu conviens} avec elle du paiement et de la livraison. Je ne peux pas prendre de commande moi-même.",
+   "reponse": "Pour commander, {ouvrez|ouvre} la fiche du produit puis {envoyez|envoie} la demande sur WhatsApp. {Vous pouvez|Tu peux} aussi ajouter plusieurs produits au panier et envoyer toute la commande d’un coup. L’équipe confirme la disponibilité et le prix, puis {vous convenez|tu conviens} avec elle du paiement et de la livraison. Je ne peux pas prendre de commande moi-même.",
    "actions": [
     {
      "label": "Voir la boutique",
      "href": "index.html#nos-produits"
+    },
+    {
+     "label": "Voir le panier",
+     "href": "panier.html"
     }
    ]
   },
