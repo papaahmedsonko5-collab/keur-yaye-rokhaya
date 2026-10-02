@@ -1,0 +1,63 @@
+/* Fenêtre de chat de Malick. Chargée au premier clic sur le bouton Malick. */
+.malick {
+  position: fixed; z-index: 90;
+  display: flex; flex-direction: column;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--glass-edge, #fff);
+  box-shadow: 0 24px 60px rgba(42, 12, 66, 0.28);
+  -webkit-backdrop-filter: var(--blur, blur(22px)); backdrop-filter: var(--blur, blur(22px));
+  color: var(--ink, #1a1222);
+  overflow: hidden;
+}
+.malick[hidden] { display: none; }
+
+/* Ordinateur et tablette : fenêtre en bas à droite */
+@media (min-width: 820px) {
+  .malick { right: 1rem; bottom: 1rem; width: 380px; height: min(36rem, calc(100dvh - 2rem)); border-radius: 24px; }
+}
+/* Téléphone : occupe l'écran visible (la hauteur suit le clavier, voir malick.js) */
+@media (max-width: 819px) {
+  .malick { left: 0; right: 0; top: 0; height: 100dvh; border-radius: 0; border: 0; }
+}
+
+.malick-entete { display: flex; align-items: center; gap: 0.7rem; padding: 0.75rem 0.9rem; background: var(--accent, #8419cb); color: #fff; flex: none; }
+.malick-entete .malick-avatar { background: #fff; color: var(--accent, #8419cb); }
+.malick-qui { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; flex: 1; }
+.malick-qui strong { font-size: 1.05rem; }
+.malick-qui span { font-size: 0.82rem; opacity: 0.9; }
+.malick-fermer {
+  width: 44px; height: 44px; flex: none; display: inline-flex; align-items: center; justify-content: center;
+  border: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.18); color: #fff; cursor: pointer;
+}
+.malick-fermer:hover, .malick-fermer:active { background: rgba(255, 255, 255, 0.32); }
+
+.malick-log { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 1rem 0.9rem; display: flex; flex-direction: column; gap: 0.7rem; }
+.malick-msg { display: flex; flex-direction: column; gap: 0.5rem; max-width: 88%; }
+.malick-bot { align-self: flex-start; }
+.malick-user { align-self: flex-end; align-items: flex-end; }
+.malick-bulle { padding: 0.65rem 0.9rem; font-size: 0.97rem; line-height: 1.45; white-space: pre-line; overflow-wrap: anywhere; }
+.malick-bot .malick-bulle { background: #fff; border: 1px solid var(--line, #ddd8e3); border-radius: 18px 18px 18px 6px; }
+.malick-user .malick-bulle { background: var(--accent, #8419cb); color: #fff; border-radius: 18px 18px 6px 18px; }
+.malick-ecrit .malick-bulle { color: var(--muted, #5c5468); font-style: italic; }
+
+.malick-actions, .malick-suggestions { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+.malick-action, .malick-chip {
+  display: inline-flex; align-items: center; min-height: 40px; padding: 0.4rem 0.95rem;
+  border-radius: 999px; font: inherit; font-size: 0.92rem; font-weight: 700; text-decoration: none; cursor: pointer;
+  color: var(--accent-dark, #6a12a8); background: #fff; border: 1px solid rgba(132, 25, 203, 0.35);
+}
+.malick-action:hover, .malick-chip:hover, .malick-action:active, .malick-chip:active { background: var(--accent, #8419cb); color: #fff; }
+
+.malick-form { display: flex; gap: 0.5rem; padding: 0.7rem 0.9rem 0.3rem; border-top: 1px solid var(--line, #ddd8e3); flex: none; background: rgba(255, 255, 255, 0.7); }
+.malick-champ {
+  flex: 1; min-width: 0; min-height: 44px; padding: 0.55rem 1rem;
+  font: inherit; font-size: 16px; /* 16 px : évite le zoom automatique sur iPhone */
+  color: var(--ink, #1a1222); background: #fff; border: 1px solid var(--line, #ddd8e3); border-radius: 999px;
+}
+.malick-envoi { width: 44px; height: 44px; flex: none; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 50%; background: var(--accent, #8419cb); color: #fff; cursor: pointer; }
+.malick-envoi:hover:not(:disabled), .malick-envoi:active:not(:disabled) { background: var(--accent-dark, #6a12a8); }
+.malick-envoi:disabled { opacity: 0.5; cursor: progress; }
+.malick-note { margin: 0; padding: 0.3rem 0.9rem calc(0.6rem + env(safe-area-inset-bottom, 0px)); font-size: 0.78rem; color: var(--muted, #5c5468); text-align: center; flex: none; background: rgba(255, 255, 255, 0.7); }
+
+.malick :focus-visible { outline: 3px solid var(--accent, #8419cb); outline-offset: 2px; }
+.malick-entete :focus-visible { outline-color: #fff; }

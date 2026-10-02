@@ -11,19 +11,19 @@
   <meta property="og:title" content="Keur Yaye Rokhaya | iPhone, MacBook et smartphones à Dakar">
   <meta property="og:description" content="Boutique à Dakar : iPhone, iPad, MacBook, AirPods et smartphones. Commande sur WhatsApp, livraison partout au Sénégal.">
   <meta property="og:locale" content="fr_FR">
-  <meta property="og:url" content="https://papaahmedsonko5-collab.github.io/keur-yaye-rokhaya/">
-  <meta property="og:image" content="https://papaahmedsonko5-collab.github.io/keur-yaye-rokhaya/og-image.jpg">
+  <meta property="og:url" content="https://keuryayerokhaya.com/">
+  <meta property="og:image" content="https://keuryayerokhaya.com/og-image.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Logo Keur Yaye Rokhaya, boutique à Dakar">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="canonical" href="https://papaahmedsonko5-collab.github.io/keur-yaye-rokhaya/">
+  <link rel="canonical" href="https://keuryayerokhaya.com/">
   <meta name="theme-color" content="#8419CB">
   <link rel="icon" href="favicon.png" type="image/png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="preload" href="hero-bg.jpg" as="image">
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"Store","name":"Keur Yaye Rokhaya","telephone":["+221784852982","+221772615354"],"address":{"@type":"PostalAddress","streetAddress":"Keur Mbaye Fall, en face école Fogny","addressLocality":"Dakar","addressCountry":"SN"}}
+  {"@context": "https://schema.org", "@graph": [{"@type": "Store", "@id": "https://keuryayerokhaya.com/#boutique", "name": "Keur Yaye Rokhaya", "url": "https://keuryayerokhaya.com/", "image": "https://keuryayerokhaya.com/og-image.jpg", "logo": "https://keuryayerokhaya.com/logo.png", "description": "Boutique de produits Apple et de smartphones à Dakar. Livraison partout au Sénégal.", "telephone": ["+221784852982", "+221772615354"], "email": "contact@keuryayerokhaya.com", "address": {"@type": "PostalAddress", "streetAddress": "Keur Mbaye Fall, en face école Fogny", "addressLocality": "Dakar", "addressCountry": "SN"}}, {"@type": "WebSite", "@id": "https://keuryayerokhaya.com/#site", "name": "Keur Yaye Rokhaya", "url": "https://keuryayerokhaya.com/", "inLanguage": "fr", "publisher": {"@id": "https://keuryayerokhaya.com/#boutique"}}]}
   </script>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -35,6 +35,7 @@
     <nav class="nav" aria-label="Navigation principale">
       <a href="#nos-produits">Boutique</a>
       <a href="#services">Services</a>
+      <a href="#epargne">Coffre Épargne</a>
       <a href="#a-propos">À propos</a>
       <a href="#contact">Contact</a>
     </nav>
@@ -100,16 +101,33 @@
           <p>Votre téléphone a un problème ? Décrivez la panne sur WhatsApp et nous vous répondons.</p>
           <a class="btn btn-outline btn-small" href="#" data-wa="Bonjour, je souhaite faire réparer mon téléphone.">Demander sur WhatsApp</a>
         </article>
-        <article class="service" id="epargne">
+        <article class="service">
           <h3>Coffre Épargne</h3>
           <p>Payez en plusieurs tranches : épargnez et payez à votre rythme dans votre coffre.</p>
-          <a class="btn btn-outline btn-small" href="#" data-wa="Bonjour, je souhaite ouvrir un Coffre Épargne.">Ouvrir mon coffre</a>
+          <a class="btn btn-outline btn-small" href="#epargne">Voir le principe</a>
         </article>
         <article class="service">
           <h3>Fonds d’écran HD</h3>
           <p>Des fonds d’écran en haute définition pour votre téléphone.</p>
           <a class="btn btn-outline btn-small" href="#" data-wa="Bonjour, je souhaite des fonds d’écran HD.">Demander sur WhatsApp</a>
         </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="epargne" aria-labelledby="titre-epargne">
+    <div class="wrap">
+      <div class="panel coffre">
+        <h2 id="titre-epargne">Coffre Épargne</h2>
+        <p class="coffre-lead">Une épargne flexible, sans intérêts, pour acquérir votre prochain produit Apple.</p>
+        <ol class="coffre-steps">
+          <li><span class="n">1</span><span>Choisissez le produit que vous voulez dans la boutique.</span></li>
+          <li><span class="n">2</span><span>Contactez-nous sur WhatsApp pour ouvrir votre coffre.</span></li>
+          <li><span class="n">3</span><span>Épargnez à votre rythme.</span></li>
+          <li><span class="n">4</span><span>Récupérez votre produit selon les conditions de la boutique.</span></li>
+        </ol>
+        <p class="note">Les conditions, montants et délais sont à confirmer auprès de Keur Yaye Rokhaya.</p>
+        <a class="btn" href="#" data-wa="Bonjour, je souhaite ouvrir un Coffre Épargne.">Ouvrir mon coffre sur WhatsApp</a>
       </div>
     </div>
   </section>
@@ -163,7 +181,11 @@
         <address class="contact-address">Keur Mbaye Fall, en face école Fogny, Dakar<br><a class="map-link" href="https://www.google.com/maps/search/?api=1&amp;query=Keur+Mbaye+Fall+%C3%A9cole+Fogny+Dakar" target="_blank" rel="noopener">Voir sur la carte</a></address>
         <p class="contact-line"><a href="#" data-tel="1"></a></p>
         <p class="contact-line"><a href="#" data-tel="2"></a></p>
-        <a class="btn" href="#" data-wa="Bonjour, j’ai une question sur un produit.">Écrire sur WhatsApp</a>
+        <p class="contact-mail"><a href="#" data-mail></a></p>
+        <div class="contact-actions">
+          <a class="btn" href="#" data-wa="Bonjour, j’ai une question sur un produit." data-wa-num="1">WhatsApp <span data-num="1"></span></a>
+          <a class="btn" href="#" data-wa="Bonjour, j’ai une question sur un produit." data-wa-num="2">WhatsApp <span data-num="2"></span></a>
+        </div>
       </div>
     </div>
   </section>

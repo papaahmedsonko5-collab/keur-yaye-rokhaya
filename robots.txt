@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://papaahmedsonko5-collab.github.io/keur-yaye-rokhaya/sitemap.xml
+Sitemap: https://keuryayerokhaya.com/sitemap.xml

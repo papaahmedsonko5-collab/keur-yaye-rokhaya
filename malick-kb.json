@@ -1,0 +1,396 @@
+{
+ "version": "2026-10-02",
+ "accueil": "Bonjour 👋 Je suis Malick, l’assistant de Keur Yaye Rokhaya. Comment puis-je vous aider ?",
+ "inconnu": "Je n’ai pas encore cette information dans ma base. {Vous pouvez|Tu peux} contacter directement l’équipe de Keur Yaye Rokhaya pour obtenir une réponse précise. 🙏",
+ "contact": {
+  "adresse": "Keur Mbaye Fall, en face école Fogny, Dakar",
+  "tel1": "+221 78 485 29 82",
+  "tel2": "+221 77 261 53 54",
+  "email": "contact@keuryayerokhaya.com"
+ },
+ "sujets": [
+  {
+   "id": "presentation",
+   "mots": [
+    "vous faites quoi",
+    "tu fais quoi",
+    "que faites vous",
+    "que faites tu",
+    "que vendez vous",
+    "que vends tu",
+    "vous proposez",
+    "tu proposes",
+    "que proposez vous",
+    "quels services",
+    "quel service",
+    "services",
+    "presentation",
+    "presenter",
+    "c est quoi keur yaye rokhaya"
+   ],
+   "reponse": "Bienvenue chez Keur Yaye Rokhaya ! 😊 Nous proposons notamment des produits Apple et des smartphones, des services autour des iPhone (échange/reprise, vente, rétrogradation), la réparation et le Coffre Épargne. La boutique est à Keur Mbaye Fall, à Dakar, et nous livrons partout au Sénégal. Si {vous voulez|tu veux}, je peux {vous|t’}expliquer l’un de ces services.",
+   "actions": [
+    {
+     "label": "Voir les services",
+     "href": "index.html#services"
+    }
+   ]
+  },
+  {
+   "id": "identite",
+   "mots": [
+    "qui es tu",
+    "qui etes vous",
+    "tu es qui",
+    "vous etes qui",
+    "robot",
+    "chatbot",
+    "humain",
+    "vraie personne",
+    "une personne",
+    "intelligence artificielle",
+    "tu es une ia",
+    "c est une ia",
+    "es tu reel"
+   ],
+   "reponse": "Je suis Malick, l’assistant virtuel de Keur Yaye Rokhaya. Je ne suis pas une personne : je réponds aux questions sur la boutique et ses services. Pour parler à l’équipe, {utilisez|utilise} WhatsApp. 😊",
+   "actions": [
+    {
+     "contact": true
+    }
+   ]
+  },
+  {
+   "id": "echange",
+   "mots": [
+    "echange*",
+    "echanger",
+    "reprise",
+    "troquer",
+    "changer mon iphone"
+   ],
+   "reponse": "Pour l’échange, {vous décrivez|tu décris} {votre|ton} iPhone actuel et {vous choisissez|tu choisis} le nouveau modèle : le site donne une estimation quand elle est disponible, puis la demande part sur WhatsApp. L’équipe répond et {vous invite|t’invite} à passer à la boutique pour l’estimation finale, après inspection de l’appareil.",
+   "actions": [
+    {
+     "label": "Faire une estimation",
+     "href": "estimation.html?type=echange"
+    },
+    {
+     "label": "Écrire sur WhatsApp",
+     "wa": "Bonjour, je souhaite échanger mon iPhone.",
+     "num": 1
+    }
+   ]
+  },
+  {
+   "id": "vente",
+   "mots": [
+    "vendre mon iphone",
+    "vendre iphone",
+    "vendre mon telephone",
+    "vendre mon",
+    "je veux vendre",
+    "revendre",
+    "rachat",
+    "racheter",
+    "vente de mon"
+   ],
+   "reponse": "{Vous voulez|Tu veux} vendre {votre|ton} iPhone ? {Faites|Fais} l’estimation sur le site : {vous obtenez|tu obtiens} un prix estimé quand il est disponible, sinon l’équipe le confirme sur WhatsApp. Le prix final est déterminé à la boutique après inspection physique de l’appareil, et le paiement se fait par Wave à la remise de l’appareil.",
+   "actions": [
+    {
+     "label": "Faire une estimation",
+     "href": "estimation.html?type=vendre"
+    },
+    {
+     "label": "Écrire sur WhatsApp",
+     "wa": "Bonjour, je souhaite vendre mon iPhone.",
+     "num": 1
+    }
+   ]
+  },
+  {
+   "id": "retrograde",
+   "mots": [
+    "retrograd*",
+    "downgrade",
+    "modele moins cher"
+   ],
+   "reponse": "Rétrograder, c’est passer à un modèle moins cher et recevoir la différence en cash. {Faites|Fais} l’estimation sur le site, puis {envoyez|envoie} la demande sur WhatsApp. L’estimation finale se fait à la boutique, après inspection de l’appareil.",
+   "actions": [
+    {
+     "label": "Faire une estimation",
+     "href": "estimation.html?type=retrograder"
+    }
+   ]
+  },
+  {
+   "id": "estimation",
+   "mots": [
+    "estimation",
+    "estimer",
+    "combien pour mon iphone"
+   ],
+   "reponse": "Pour une estimation, {choisissez|choisis} le service : échange, vente ou rétrogradation. {Vous décrivez|Tu décris} {votre|ton} iPhone (modèle, stockage, état), le site donne une estimation quand elle est disponible, puis la demande part sur WhatsApp. L’estimation finale se fait à la boutique, après inspection.",
+   "actions": [
+    {
+     "label": "Échange",
+     "href": "estimation.html?type=echange"
+    },
+    {
+     "label": "Vente",
+     "href": "estimation.html?type=vendre"
+    },
+    {
+     "label": "Rétrogradation",
+     "href": "estimation.html?type=retrograder"
+    }
+   ]
+  },
+  {
+   "id": "reparation",
+   "mots": [
+    "repar*",
+    "panne",
+    "depann*",
+    "ecran casse",
+    "ecran fissure",
+    "ne s allume plus",
+    "changer la batterie",
+    "remplacement ecran"
+   ],
+   "reponse": "Pour une réparation, {décrivez|décris} la panne de {votre|ton} téléphone sur WhatsApp : l’équipe répond. Je n’ai pas encore les tarifs ni les délais de réparation dans ma base, donc je préfère ne pas {vous|t’}en donner. 🔧",
+   "actions": [
+    {
+     "label": "WhatsApp 1",
+     "wa": "Bonjour, je souhaite faire réparer mon téléphone.",
+     "num": 1
+    },
+    {
+     "label": "WhatsApp 2",
+     "wa": "Bonjour, je souhaite faire réparer mon téléphone.",
+     "num": 2
+    }
+   ]
+  },
+  {
+   "id": "coffre",
+   "mots": [
+    "coffre*",
+    "epargn*",
+    "tranche*",
+    "payer en plusieurs",
+    "paiement echelonne"
+   ],
+   "reponse": "Le Coffre Épargne est une épargne flexible, sans intérêts : {vous épargnez|tu épargnes} à {votre|ton} rythme pour acquérir {votre|ton} prochain produit Apple. Pour ouvrir {votre|ton} coffre, {contactez|contacte} l’équipe sur WhatsApp. 💰\nLes conditions, montants et délais sont à confirmer auprès de Keur Yaye Rokhaya.",
+   "actions": [
+    {
+     "label": "Voir le principe",
+     "href": "index.html#epargne"
+    },
+    {
+     "label": "Ouvrir mon coffre",
+     "wa": "Bonjour, je souhaite ouvrir un Coffre Épargne.",
+     "num": 1
+    }
+   ]
+  },
+  {
+   "id": "garantie",
+   "mots": [
+    "garantie*",
+    "retour",
+    "retourner",
+    "rembours*",
+    "sav",
+    "apres vente"
+   ],
+   "reponse": "Les conditions de garantie, de retour et d’échange qui s’appliquent à un produit {vous|te} sont communiquées avant l’achat, sur WhatsApp. {Demandez-les|Demande-les} par écrit avant de payer."
+  },
+  {
+   "id": "paiement",
+   "mots": [
+    "paiement",
+    "payer",
+    "paye",
+    "wave",
+    "orange money",
+    "moyen de paiement",
+    "moyens de paiement"
+   ],
+   "reponse": "Les moyens de paiement acceptés {vous|te} sont communiqués au moment de la commande, sur WhatsApp. Aucun paiement n’est fait sur le site. Pour la vente d’un iPhone, le paiement se fait par Wave à la remise de l’appareil."
+  },
+  {
+   "id": "livraison",
+   "mots": [
+    "livraison",
+    "livrer",
+    "livrez",
+    "livre",
+    "expedition",
+    "expedier"
+   ],
+   "reponse": "Nous livrons partout au Sénégal. Le délai et le coût de livraison {vous|te} sont donnés avant la confirmation de la commande."
+  },
+  {
+   "id": "commande",
+   "mots": [
+    "comment commander",
+    "passer commande",
+    "passer une commande",
+    "comment acheter",
+    "comment passer commande",
+    "reserver"
+   ],
+   "reponse": "Pour commander, {ouvrez|ouvre} la fiche du produit puis {envoyez|envoie} la demande sur WhatsApp : l’équipe confirme la disponibilité et le prix, puis {vous convenez|tu conviens} avec elle du paiement et de la livraison. Je ne peux pas prendre de commande moi-même.",
+   "actions": [
+    {
+     "label": "Voir la boutique",
+     "href": "index.html#nos-produits"
+    }
+   ]
+  },
+  {
+   "id": "horaires",
+   "mots": [
+    "horaire*",
+    "heures d ouverture",
+    "ouvert",
+    "ferme",
+    "ouverture",
+    "fermeture",
+    "a quelle heure"
+   ],
+   "reponse": "Je n’ai pas encore les horaires d’ouverture dans ma base. {Vous pouvez|Tu peux} les demander directement à l’équipe sur WhatsApp.",
+   "actions": [
+    {
+     "label": "Demander les horaires",
+     "wa": "Bonjour, quels sont vos horaires d’ouverture ?",
+     "num": 1
+    }
+   ]
+  },
+  {
+   "id": "fonds-ecran",
+   "mots": [
+    "fond d ecran",
+    "fonds d ecran",
+    "fond ecran",
+    "wallpaper"
+   ],
+   "reponse": "Nous proposons des fonds d’écran HD pour {votre|ton} téléphone. {Demandez-les|Demande-les} à l’équipe sur WhatsApp.",
+   "actions": [
+    {
+     "label": "Demander sur WhatsApp",
+     "wa": "Bonjour, je souhaite des fonds d’écran HD.",
+     "num": 1
+    }
+   ]
+  },
+  {
+   "id": "ipad-mac",
+   "mots": [
+    "ipad",
+    "macbook",
+    "mac",
+    "airpods",
+    "airpod"
+   ],
+   "reponse": "Pour le moment, je n’ai pas d’iPad, de Mac ni d’AirPods dans les produits affichés sur le site. {Vous pouvez|Tu peux} demander à l’équipe sur WhatsApp s’ils sont disponibles.",
+   "actions": [
+    {
+     "label": "Demander sur WhatsApp",
+     "wa": "Bonjour, avez-vous des iPad, Mac ou AirPods disponibles ?",
+     "num": 1
+    }
+   ]
+  },
+  {
+   "id": "promotion",
+   "mots": [
+    "promo*",
+    "reduction*",
+    "remise*",
+    "solde*",
+    "bon plan"
+   ],
+   "reponse": "Je n’ai pas d’information sur des promotions ou des remises dans ma base. L’équipe peut {vous|te} renseigner sur WhatsApp.",
+   "actions": [
+    {
+     "contact": true
+    }
+   ]
+  },
+  {
+   "id": "adresse",
+   "mots": [
+    "adresse",
+    "ou etes vous",
+    "ou se trouve",
+    "ou vous trouvez",
+    "localisation",
+    "situe",
+    "boutique",
+    "venir",
+    "passer a la boutique",
+    "itineraire",
+    "maps",
+    "fogny",
+    "keur mbaye fall",
+    "vous etes ou",
+    "tu es ou",
+    "ou est votre boutique",
+    "ou est la boutique",
+    "ou se situe",
+    "ou vous situez",
+    "dans quel quartier"
+   ],
+   "reponse": "Notre boutique est à {adresse}. 📍",
+   "actions": [
+    {
+     "label": "Voir sur la carte",
+     "href": "https://www.google.com/maps/search/?api=1&query=Keur+Mbaye+Fall+%C3%A9cole+Fogny+Dakar",
+     "ext": true
+    }
+   ]
+  },
+  {
+   "id": "contact",
+   "mots": [
+    "contact*",
+    "numero*",
+    "telephone",
+    "appeler",
+    "joindre",
+    "email",
+    "e mail",
+    "mail",
+    "whatsapp",
+    "equipe",
+    "parler a"
+   ],
+   "reponse": "{Vous pouvez|Tu peux} nous joindre sur WhatsApp ou par téléphone au {tel1} et au {tel2}, ou par e-mail : {email}.",
+   "actions": [
+    {
+     "contact": true
+    }
+   ]
+  },
+  {
+   "id": "disponibilite",
+   "mots": [
+    "disponible*",
+    "disponibilite",
+    "dispo",
+    "en stock",
+    "stock",
+    "rupture"
+   ],
+   "reponse": "Je n’ai pas accès au stock en temps réel. L’équipe confirme la disponibilité sur WhatsApp avant toute commande.",
+   "actions": [
+    {
+     "contact": true
+    }
+   ]
+  }
+ ]
+}

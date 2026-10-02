@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Produit | Keur Yaye Rokhaya</title>
   <meta name="description" content="Fiche produit Keur Yaye Rokhaya : prix, options et commande sur WhatsApp. Boutique à Dakar, livraison partout au Sénégal.">
-  <link rel="canonical" href="https://papaahmedsonko5-collab.github.io/keur-yaye-rokhaya/produit.html">
-  <meta property="og:image" content="https://papaahmedsonko5-collab.github.io/keur-yaye-rokhaya/og-image.jpg">
+  <link rel="canonical" href="https://keuryayerokhaya.com/produit.html">
+  <meta property="og:image" content="https://keuryayerokhaya.com/og-image.jpg">
   <meta property="og:site_name" content="Keur Yaye Rokhaya">
   <meta name="theme-color" content="#8419CB">
   <link rel="icon" href="favicon.png" type="image/png">
@@ -20,6 +20,7 @@
     <nav class="nav" aria-label="Navigation principale">
       <a href="index.html#nos-produits">Boutique</a>
       <a href="index.html#services">Services</a>
+      <a href="index.html#epargne">Coffre Épargne</a>
       <a href="index.html#a-propos">À propos</a>
       <a href="index.html#contact">Contact</a>
     </nav>
@@ -70,11 +71,28 @@
     return;
   }
   document.title = p.nom + " | Keur Yaye Rokhaya";
-  (function () {
-    var d = document.querySelector('meta[name="description"]');
-    if (d) d.setAttribute("content", p.nom + " chez Keur Yaye Rokhaya à Dakar. " + (p.description || "") + " Commande sur WhatsApp, livraison partout au Sénégal.");
-    var c = document.querySelector('link[rel="canonical"]');
-    if (c) c.setAttribute("href", c.getAttribute("href") + "?p=" + encodeURIComponent(slug));
+  (function donneesPourGoogle() {
+    var base = "https://keuryayerokhaya.com/";
+    var url = base + "produit.html?p=" + KYR.slug(p.nom);
+    var canon = document.querySelector('link[rel="canonical"]'); if (canon) canon.href = url;
+    var md = document.querySelector('meta[name="description"]');
+    if (md) md.content = p.nom + " chez Keur Yaye Rokhaya à Dakar. " + (p.description || "") + " Commande sur WhatsApp, livraison partout au Sénégal.";
+    var produit = { "@type": "Product", "name": p.nom, "category": p.categorie, "url": url };
+    if (p.description) produit.description = p.description;
+    if (p.image) produit.image = base + p.image;
+    var marque = ({ "iPhone": "Apple", "Apple Watch": "Apple", "Samsung": "Samsung", "Google Pixel": "Google" })[p.categorie];
+    if (marque) produit.brand = { "@type": "Brand", "name": marque };
+    var st = (p.options && p.options.stockages) || [];
+    var prix = st.filter(function (x) { return typeof x === "object" && typeof x.prix === "number"; }).map(function (x) { return x.prix; });
+    if (prix.length) produit.offers = { "@type": "AggregateOffer", "priceCurrency": "XOF", "lowPrice": Math.min.apply(null, prix), "highPrice": Math.max.apply(null, prix), "offerCount": prix.length };
+    else if (typeof p.prix === "number" && p.prix > 0) produit.offers = { "@type": "Offer", "priceCurrency": "XOF", "price": p.prix, "url": url };
+    var fil = { "@type": "BreadcrumbList", "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Accueil", "item": base },
+      { "@type": "ListItem", "position": 2, "name": "Boutique", "item": base + "#nos-produits" },
+      { "@type": "ListItem", "position": 3, "name": p.nom, "item": url } ] };
+    var ld = document.createElement("script"); ld.type = "application/ld+json";
+    ld.textContent = JSON.stringify({ "@context": "https://schema.org", "@graph": [produit, fil] });
+    document.head.appendChild(ld);
   })();
 
   var marque = ({ "iPhone": "Apple", "Apple Watch": "Apple", "Samsung": "Samsung", "Google Pixel": "Google" })[p.categorie] || "";
