@@ -140,11 +140,7 @@
     corps.appendChild(el("h3", "", p.nom));
     var st = S.stockages(p);
     if (st.length) corps.appendChild(el("p", "card-meta", st.join(" · ")));
-    var prix = S.prixListe(p), texte;
-    if (!prix.length) texte = "Sur devis";
-    else if (KYR.aPrixParCapacite(p)) texte = "À partir de " + KYR.fcfa(Math.min.apply(null, prix));
-    else texte = KYR.fcfa(prix[0]);
-    corps.appendChild(el("p", "price", texte));
+    corps.appendChild(el("p", "price", S.prixCarte(p)));
     corps.appendChild(el("span", "pill-link", "Détails →"));
     lien.appendChild(media); lien.appendChild(corps); c.appendChild(lien);
     return c;

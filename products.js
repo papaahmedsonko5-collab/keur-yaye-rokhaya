@@ -8,6 +8,8 @@
     description : texte affiché sur la fiche produit.
     options     : (facultatif) choix de la fiche produit : couleurs, stockages, etats, sims.
       - stockages : "128 Go" (même prix) ou { nom: "256 Go", prix: 419000 } (prix propre à la capacité).
+        Dès qu'un produit a au moins un prix par capacité, une capacité écrite sans prix ("512 Go") s'affiche « Sur devis ».
+        Le champ prix du produit sert alors de prix de référence (le plus bas).
       - Les couleurs et capacités viennent des gammes officielles : supprimez celles que la boutique n'a pas.
       - etats : à renseigner produit par produit (par exemple Scellé). Sans "etats", le groupe n'apparaît pas.
       - Une couleur avec image: affiche la pastille de couleur sur la photo.
@@ -19,7 +21,7 @@
 */
 window.PRODUCTS = [
   {
-    nom: "iPhone 18 Pro Max", marque: "Apple", categorie: "iPhone", prix: 1070000, image: "iphone-18-pro-max.webp",
+    nom: "iPhone 18 Pro Max", marque: "Apple", categorie: "iPhone", prix: 1100000, image: "iphone-18-pro-max.webp",
     description: "Le plus grand iPhone Pro de la gamme, avec écran 6,9 pouces et triple caméra.",
     options: {
       couleurs: [
@@ -28,13 +30,13 @@ window.PRODUCTS = [
         { nom: "Bleu", hex: "#2A45A8" },
         { nom: "Blanc", hex: "#F1F1F1" }
       ],
-      stockages: ["256 Go", "512 Go", "1 To", "2 To"],
+      stockages: [{ nom: "256 Go", prix: 1100000 }, { nom: "512 Go", prix: 1150000 }, "1 To", "2 To"],
       etats: [{ nom: "Scellé", detail: "Neuf dans son emballage" }],
       sims: [{ nom: "eSIM", detail: "SIM intégrée" }, { nom: "SIM physique", detail: "Carte SIM" }]
     }
   },
   {
-    nom: "iPhone 18 Pro", marque: "Apple", categorie: "iPhone", prix: 950000, image: "iphone-18-pro.webp",
+    nom: "iPhone 18 Pro", marque: "Apple", categorie: "iPhone", prix: 850000, image: "iphone-18-pro.webp",
     description: "iPhone Pro avec triple caméra, dans un format plus compact que le Pro Max.",
     options: {
       couleurs: [
@@ -43,12 +45,12 @@ window.PRODUCTS = [
         { nom: "Noir", hex: "#1B1B1D" },
         { nom: "Blanc", hex: "#F1F1F1" }
       ],
-      stockages: ["256 Go", "512 Go", "1 To"],
+      stockages: [{ nom: "256 Go", prix: 850000 }, { nom: "512 Go", prix: 900000 }, "1 To"],
       sims: [{ nom: "eSIM", detail: "SIM intégrée" }, { nom: "SIM physique", detail: "Carte SIM" }]
     }
   },
   {
-    nom: "iPhone 17 Pro Max", marque: "Apple", categorie: "iPhone", prix: 690000, image: "iphone-17-pro-max.webp",
+    nom: "iPhone 17 Pro Max", marque: "Apple", categorie: "iPhone", prix: 750000, image: "iphone-17-pro-max.webp",
     description: "Grand iPhone Pro avec écran 6,9 pouces, puce A19 Pro et triple caméra 48 Mpx.",
     options: {
       couleurs: [
@@ -56,12 +58,12 @@ window.PRODUCTS = [
         { nom: "Orange cosmique", hex: "#D9622B" },
         { nom: "Bleu intense", hex: "#1F2A44" }
       ],
-      stockages: ["256 Go", "512 Go", "1 To", "2 To"],
+      stockages: [{ nom: "256 Go", prix: 750000 }, "512 Go", "1 To", "2 To"],
       sims: [{ nom: "eSIM", detail: "SIM intégrée" }, { nom: "SIM physique", detail: "Carte SIM" }]
     }
   },
   {
-    nom: "iPhone 17 Pro", marque: "Apple", categorie: "iPhone", prix: 635000, image: "iphone-17-pro.webp",
+    nom: "iPhone 17 Pro", marque: "Apple", categorie: "iPhone", prix: 650000, image: "iphone-17-pro.webp",
     description: "iPhone Pro avec écran 6,3 pouces, puce A19 Pro et triple caméra 48 Mpx.",
     options: {
       couleurs: [
@@ -69,12 +71,12 @@ window.PRODUCTS = [
         { nom: "Orange cosmique", hex: "#D9622B" },
         { nom: "Bleu intense", hex: "#1F2A44" }
       ],
-      stockages: ["256 Go", "512 Go", "1 To"],
+      stockages: [{ nom: "256 Go", prix: 650000 }, "512 Go", "1 To"],
       sims: [{ nom: "eSIM", detail: "SIM intégrée" }, { nom: "SIM physique", detail: "Carte SIM" }]
     }
   },
   {
-    nom: "iPhone 17 Air", marque: "Apple", categorie: "iPhone", prix: 480000, image: "iphone-17-air.webp",
+    nom: "iPhone 17 Air", marque: "Apple", categorie: "iPhone", prix: 520000, image: "iphone-17-air.webp",
     description: "iPhone ultrafin avec écran 6,5 pouces, puce A19 Pro et caméra 48 Mpx. eSIM uniquement.",
     options: {
       couleurs: [
@@ -83,12 +85,12 @@ window.PRODUCTS = [
         { nom: "Or clair", hex: "#E6D7B8" },
         { nom: "Bleu ciel", hex: "#BFD3E6" }
       ],
-      stockages: ["256 Go", "512 Go", "1 To"],
+      stockages: [{ nom: "256 Go", prix: 520000 }, { nom: "512 Go", prix: 560000 }, "1 To"],
       sims: [{ nom: "eSIM", detail: "SIM intégrée" }]
     }
   },
   {
-    nom: "iPhone 17", marque: "Apple", categorie: "iPhone", prix: 450000, image: "iphone-17.webp",
+    nom: "iPhone 17", marque: "Apple", categorie: "iPhone", prix: 520000, image: "iphone-17.webp",
     description: "iPhone avec écran 6,3 pouces ProMotion, puce A19 et double caméra 48 Mpx.",
     options: {
       couleurs: [
@@ -98,7 +100,7 @@ window.PRODUCTS = [
         { nom: "Bleu brume", hex: "#9DB7D0" },
         { nom: "Lavande", hex: "#C9BFE0" }
       ],
-      stockages: ["256 Go", "512 Go"],
+      stockages: [{ nom: "256 Go", prix: 520000 }, "512 Go"],
       sims: [{ nom: "eSIM", detail: "SIM intégrée" }, { nom: "SIM physique", detail: "Carte SIM" }]
     }
   },
@@ -118,7 +120,7 @@ window.PRODUCTS = [
     }
   },
   {
-    nom: "iPhone 16 Pro Max", marque: "Apple", categorie: "iPhone", prix: 480000, image: "iphone-16-pro-max.webp",
+    nom: "iPhone 16 Pro Max", marque: "Apple", categorie: "iPhone", prix: 490000, image: "iphone-16-pro-max.webp",
     description: "iPhone Pro Max en titane avec écran 6,9 pouces, puce A18 Pro et zoom optique 5x.",
     options: {
       couleurs: [
@@ -127,12 +129,12 @@ window.PRODUCTS = [
         { nom: "Titane blanc", hex: "#ECECEA" },
         { nom: "Titane naturel", hex: "#BDB3A8" }
       ],
-      stockages: ["256 Go", "512 Go", "1 To"],
+      stockages: [{ nom: "256 Go", prix: 490000 }, "512 Go", "1 To"],
       sims: [{ nom: "eSIM", detail: "SIM intégrée" }, { nom: "SIM physique", detail: "Carte SIM" }]
     }
   },
   {
-    nom: "iPhone 16 Pro", marque: "Apple", categorie: "iPhone", prix: 405000, image: "iphone-16-pro.webp",
+    nom: "iPhone 16 Pro", marque: "Apple", categorie: "iPhone", prix: 420000, image: "iphone-16-pro.webp",
     description: "iPhone Pro en titane avec écran 6,3 pouces, puce A18 Pro et zoom optique 5x.",
     options: {
       couleurs: [
@@ -141,7 +143,7 @@ window.PRODUCTS = [
         { nom: "Titane blanc", hex: "#ECECEA" },
         { nom: "Titane naturel", hex: "#BDB3A8" }
       ],
-      stockages: ["128 Go", "256 Go", "512 Go", "1 To"],
+      stockages: ["128 Go", { nom: "256 Go", prix: 420000 }, "512 Go", "1 To"],
       sims: [{ nom: "eSIM", detail: "SIM intégrée" }, { nom: "SIM physique", detail: "Carte SIM" }]
     }
   },
@@ -158,7 +160,7 @@ window.PRODUCTS = [
     }
   },
   {
-    nom: "iPhone 15 Pro Max", marque: "Apple", categorie: "iPhone", prix: 380000, image: "iphone-15-pro-max.webp",
+    nom: "iPhone 15 Pro Max", marque: "Apple", categorie: "iPhone", prix: 390000, image: "iphone-15-pro-max.webp",
     description: "iPhone Pro Max en titane avec zoom optique 5x, puce A17 Pro et écran 6,7 pouces.",
     options: {
       couleurs: [
@@ -167,7 +169,7 @@ window.PRODUCTS = [
         { nom: "Titane blanc", hex: "#ECECEA" },
         { nom: "Titane noir", hex: "#2B2B2D" }
       ],
-      stockages: ["256 Go", "512 Go", "1 To"],
+      stockages: [{ nom: "256 Go", prix: 390000 }, "512 Go", "1 To"],
       sims: [{ nom: "eSIM", detail: "SIM intégrée" }, { nom: "SIM physique", detail: "Carte SIM" }]
     }
   },
@@ -187,7 +189,7 @@ window.PRODUCTS = [
     }
   },
   {
-    nom: "iPhone 14 Pro Max", marque: "Apple", categorie: "iPhone", prix: 295000, image: "iphone-14-pro-max.webp",
+    nom: "iPhone 14 Pro Max", marque: "Apple", categorie: "iPhone", prix: 320000, image: "iphone-14-pro-max.webp",
     description: "Le meilleur iPhone 14 avec écran always-on 6,7 pouces, caméra 48 Mpx et Dynamic Island.",
     options: {
       couleurs: [
@@ -196,12 +198,12 @@ window.PRODUCTS = [
         { nom: "Or", hex: "#E9D5B6" },
         { nom: "Violet intense", hex: "#58476B" }
       ],
-      stockages: ["128 Go", "256 Go", "512 Go", "1 To"],
+      stockages: [{ nom: "128 Go", prix: 320000 }, { nom: "256 Go", prix: 350000 }, "512 Go", "1 To"],
       sims: [{ nom: "eSIM", detail: "SIM intégrée" }, { nom: "SIM physique", detail: "Carte SIM" }]
     }
   },
   {
-    nom: "iPhone 13 Pro Max", marque: "Apple", categorie: "iPhone", prix: 255000, image: "iphone-13-pro-max.webp",
+    nom: "iPhone 13 Pro Max", marque: "Apple", categorie: "iPhone", prix: 250000, image: "iphone-13-pro-max.webp",
     description: "Grand iPhone Pro avec écran ProMotion 6,7 pouces, triple caméra pro et excellente autonomie.",
     options: {
       couleurs: [
@@ -211,12 +213,12 @@ window.PRODUCTS = [
         { nom: "Argent", hex: "#DADCDD" },
         { nom: "Vert alpin", hex: "#586B58" }
       ],
-      stockages: ["128 Go", "256 Go", "512 Go", "1 To"],
+      stockages: [{ nom: "128 Go", prix: 250000 }, { nom: "256 Go", prix: 265000 }, "512 Go", "1 To"],
       sims: [{ nom: "eSIM", detail: "SIM intégrée" }, { nom: "SIM physique", detail: "Carte SIM" }]
     }
   },
   {
-    nom: "iPhone 12 Pro Max", marque: "Apple", categorie: "iPhone", prix: 195000, image: "iphone-12-pro-max.webp",
+    nom: "iPhone 12 Pro Max", marque: "Apple", categorie: "iPhone", prix: 205000, image: "iphone-12-pro-max.webp",
     description: "Le plus grand des iPhone 12, avec caméra 12 Mpx améliorée, écran 6,7 pouces et 5G.",
     options: {
       couleurs: [
@@ -225,12 +227,12 @@ window.PRODUCTS = [
         { nom: "Or", hex: "#E9D5B6" },
         { nom: "Bleu Pacifique", hex: "#2F5672" }
       ],
-      stockages: ["128 Go", "256 Go", "512 Go"],
+      stockages: [{ nom: "128 Go", prix: 205000 }, { nom: "256 Go", prix: 225000 }, "512 Go"],
       sims: [{ nom: "eSIM", detail: "SIM intégrée" }, { nom: "SIM physique", detail: "Carte SIM" }]
     }
   },
   {
-    nom: "iPhone 12", marque: "Apple", categorie: "iPhone", prix: 129000, image: "iphone-12.webp",
+    nom: "iPhone 12", marque: "Apple", categorie: "iPhone", prix: 125000, image: "iphone-12.webp",
     description: "iPhone avec puce A14 Bionic, écran Super Retina XDR 6,1 pouces et compatibilité 5G.",
     options: {
       couleurs: [
@@ -241,7 +243,7 @@ window.PRODUCTS = [
         { nom: "Vert", hex: "#B7D3B0" },
         { nom: "Mauve", hex: "#CDBFDD" }
       ],
-      stockages: ["64 Go", "128 Go", "256 Go"],
+      stockages: [{ nom: "64 Go", prix: 125000 }, "128 Go", "256 Go"],
       sims: [{ nom: "eSIM", detail: "SIM intégrée" }, { nom: "SIM physique", detail: "Carte SIM" }]
     }
   },
@@ -255,12 +257,12 @@ window.PRODUCTS = [
         { nom: "Gris sidéral", hex: "#535150" },
         { nom: "Argent", hex: "#DADCDD" }
       ],
-      stockages: ["64 Go", "256 Go", "512 Go"],
+      stockages: [{ nom: "64 Go", prix: 155000 }, { nom: "256 Go", prix: 175000 }, { nom: "512 Go", prix: 180000 }],
       sims: [{ nom: "eSIM", detail: "SIM intégrée" }, { nom: "SIM physique", detail: "Carte SIM" }]
     }
   },
   {
-    nom: "iPhone 11", marque: "Apple", categorie: "iPhone", prix: 105000, image: "iphone-11.webp",
+    nom: "iPhone 11", marque: "Apple", categorie: "iPhone", prix: 110000, image: "iphone-11.webp",
     description: "iPhone avec double caméra 12 Mpx, puce A13 Bionic et écran Liquid Retina 6,1 pouces.",
     options: {
       couleurs: [
@@ -271,7 +273,7 @@ window.PRODUCTS = [
         { nom: "Jaune", hex: "#F4E27A" },
         { nom: "Mauve", hex: "#CDBFDD" }
       ],
-      stockages: ["64 Go", "128 Go", "256 Go"],
+      stockages: [{ nom: "64 Go", prix: 110000 }, { nom: "128 Go", prix: 125000 }, "256 Go"],
       sims: [{ nom: "eSIM", detail: "SIM intégrée" }, { nom: "SIM physique", detail: "Carte SIM" }]
     }
   },
@@ -301,7 +303,7 @@ window.PRODUCTS = [
     }
   },
   {
-    nom: "Google Pixel 8", marque: "Google", categorie: "Google Pixel", prix: 190000, image: "google-pixel-8.webp",
+    nom: "Google Pixel 8", marque: "Google", categorie: "Google Pixel", prix: 250000, image: "google-pixel-8.webp",
     description: "Google Pixel avec écran 6,2 pouces 120 Hz, puce Tensor G3 et caméra principale 50 Mpx.",
     options: {
       couleurs: [
@@ -309,7 +311,7 @@ window.PRODUCTS = [
         { nom: "Obsidian", hex: "#1F1F22" },
         { nom: "Rose", hex: "#F2C6D0" }
       ],
-      stockages: ["128 Go", "256 Go"]
+      stockages: [{ nom: "128 Go", prix: 250000 }, "256 Go"]
     }
   },
   {

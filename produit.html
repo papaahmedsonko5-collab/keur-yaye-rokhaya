@@ -100,10 +100,15 @@
   var opt = p.options || {};
   function nomStock(s) { return typeof s === "object" ? s.nom : s; }
   function prixStock(s) { return (typeof s === "object" && typeof s.prix === "number") ? s.prix : p.prix; }
+  // capacité présélectionnée : la première qui a un prix (sinon la première de la liste)
+  var iniStock = 0;
+  if (opt.stockages) for (var is = 0; is < opt.stockages.length; is++) {
+    if (typeof opt.stockages[is] === "object" && typeof opt.stockages[is].prix === "number") { iniStock = is; break; }
+  }
   var choix = {
     couleur: opt.couleurs ? opt.couleurs[0].nom : "",
-    stockage: opt.stockages ? nomStock(opt.stockages[0]) : "",
-    prix: opt.stockages ? prixStock(opt.stockages[0]) : p.prix,
+    stockage: opt.stockages ? nomStock(opt.stockages[iniStock]) : "",
+    prix: p.prix,
     etat: opt.etats ? opt.etats[0] : null,
     sim: opt.sims ? opt.sims[0] : null
   };
@@ -213,8 +218,8 @@
   if (opt.stockages) groupe("Capacité de stockage", function (rang) {
     opt.stockages.forEach(function (s, i) {
       var b = el("button", "pill-btn", nomStock(s)); b.type = "button";
-      b.setAttribute("aria-pressed", i === 0 ? "true" : "false");
-      b.addEventListener("click", function () { choix.stockage = nomStock(s); choix.prix = prixStock(s); prixEl.textContent = prixTexte(choix.prix); activer(rang, b); majLien(); });
+      b.setAttribute("aria-pressed", i === iniStock ? "true" : "false");
+      b.addEventListener("click", function () { choix.stockage = nomStock(s); activer(rang, b); majLien(); });
       rang.appendChild(b);
     });
   });

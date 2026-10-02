@@ -118,10 +118,13 @@
   function reponseProduit(p, nq) {
     var st = p.options && p.options.stockages, cap = capaciteDemandee(nq), t;
     if (KYR.aPrixParCapacite(p)) {
-      var choisi = cap ? st.filter(function (s) { return s.nom === cap; })[0] : null;
-      if (choisi) t = p.nom + " " + cap + " : " + KYR.fcfa(choisi.prix) + " (prix affiché sur le site).";
-      else t = p.nom + " : à partir de " + KYR.fcfa(KYR.prixMini(p)) + " (prix affiché sur le site), selon la capacité :\n" +
-        st.map(function (s) { return "• " + s.nom + " : " + KYR.fcfa(s.prix); }).join("\n");
+      var nomS = function (s) { return typeof s === "object" ? s.nom : s; };
+      var prixS = function (s) { return typeof s === "object" && typeof s.prix === "number" ? s.prix : null; };
+      var choisi = cap ? st.filter(function (s) { return nomS(s) === cap; })[0] : null;
+      if (choisi && prixS(choisi) !== null) t = p.nom + " " + cap + " : " + KYR.fcfa(prixS(choisi)) + " (prix affiché sur le site).";
+      else if (choisi) t = p.nom + " " + cap + " : le prix de cette capacité n’est pas encore affiché sur le site. L’équipe " + (registre === "tu" ? "te" : "vous") + " le confirmera sur WhatsApp.";
+      else t = p.nom + " : prix affichés sur le site, selon la capacité :\n" +
+        st.map(function (s) { return "• " + nomS(s) + " : " + (prixS(s) !== null ? KYR.fcfa(prixS(s)) : "prix à confirmer"); }).join("\n");
     } else if (typeof p.prix === "number" && p.prix > 0) {
       t = p.nom + " : " + KYR.fcfa(p.prix) + " (prix affiché sur le site).";
     } else {

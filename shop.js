@@ -22,11 +22,32 @@
   function prixValide(n) { return typeof n === "number" && isFinite(n) && n > 0 ? n : null; }
   // Prix d'un produit pour une capacité donnée. null = pas de prix exploitable (affiché « Sur devis »).
   function prixDe(p, stockage) {
-    var st = (p.options && p.options.stockages) || [];
-    if (stockage) for (var i = 0; i < st.length; i++) {
-      if (typeof st[i] === "object" && st[i].nom === stockage && prixValide(st[i].prix) !== null) return st[i].prix;
+    var st = (p.options && p.options.stockages) || [], parCapacite = false, i;
+    for (i = 0; i < st.length; i++) if (typeof st[i] === "object" && prixValide(st[i].prix) !== null) parCapacite = true;
+    if (parCapacite) {
+      // Produit avec des prix par capacité : seule la capacité choisie compte. Sans prix propre, c'est « Sur devis ».
+      for (i = 0; i < st.length; i++) {
+        if (typeof st[i] === "object" && st[i].nom === stockage && prixValide(st[i].prix) !== null) return st[i].prix;
+      }
+      return null;
     }
     return prixValide(p.prix);
+  }
+  // Capacité la moins chère dont le prix est connu (null si le produit n'a pas de prix par capacité).
+  function capaciteMini(p) {
+    var st = (p.options && p.options.stockages) || [], meilleur = null;
+    st.forEach(function (s) { if (typeof s === "object" && prixValide(s.prix) !== null && (!meilleur || s.prix < meilleur.prix)) meilleur = s; });
+    return meilleur;
+  }
+  // Texte de prix d'une carte : « À partir de » seulement si la plus petite capacité a un prix.
+  function prixCarte(p) {
+    var l = prixListe(p);
+    if (!l.length) return "Sur devis";
+    var st = (p.options && p.options.stockages) || [], mini = capaciteMini(p);
+    if (!mini) return KYR.fcfa(l[0]);
+    var premiere = st[0];
+    var premierePrixee = typeof premiere === "object" && prixValide(premiere.prix) !== null;
+    return premierePrixee ? "À partir de " + KYR.fcfa(mini.prix) : KYR.fcfa(mini.prix) + " (" + mini.nom + ")";
   }
   // Tous les prix connus d'un produit (prix de base ou prix par capacité).
   function prixListe(p) {
@@ -193,7 +214,7 @@
 
   window.KYR.shop = {
     MAX_QTE: MAX_QTE, produits: produits, trouver: trouver, stockages: stockages, couleurs: couleurs,
-    prixDe: prixDe, prixListe: prixListe, aPrix: aPrix, prixMini: prixMini, prixTexte: prixTexte,
+    prixDe: prixDe, prixCarte: prixCarte, capaciteMini: capaciteMini, prixListe: prixListe, aPrix: aPrix, prixMini: prixMini, prixTexte: prixTexte,
     varianteValide: varianteValide, lignesVariante: lignesVariante,
     ajouter: ajouter, changerQte: changerQte, supprimer: supprimer, vider: vider, lignes: lignes, totaux: totaux,
     messageProduit: messageProduit, messageCommande: messageCommande,
