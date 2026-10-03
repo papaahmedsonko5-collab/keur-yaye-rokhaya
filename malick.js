@@ -47,12 +47,14 @@
     var c = (kb && kb.contact) || {};
     if (cle === "tel1") return KYR.affiche(KYR.numero);
     if (cle === "tel2") return KYR.affiche(KYR.numero2);
+    if (cle === "telcom") return KYR.affiche(KYR.telCommercial);
+    if (cle === "tiktok") return KYR.tiktokNom;
     if (cle === "email") return KYR.email;
     return c[cle] || "";
   }
   /* {vous|tu} : choisit selon le registre ; {tel1}, {email}, {adresse} : coordonnées */
   function formater(t) {
-    t = t.replace(/\{(tel1|tel2|email|adresse)\}/g, function (_, k) { return valeurContact(k); });
+    t = t.replace(/\{(tel1|tel2|telcom|tiktok|email|adresse)\}/g, function (_, k) { return valeurContact(k); });
     return t.replace(/\{([^{}|]+)\|([^{}]+)\}/g, function (_, a, b) { return registre === "tu" ? b : a; });
   }
   var RE_TU = /(^| )(tu|toi|ton|ta|tes|salut|slt|wesh|stp|t as|t es|dis moi|j veux|tas)( |$)/;
@@ -62,7 +64,9 @@
   function actionsContact() {
     return [
       { label: "WhatsApp " + court(KYR.numero), href: KYR.lien("Bonjour Keur Yaye Rokhaya, j’ai une question.", 1), ext: true },
+      { label: "Appeler " + court(KYR.telCommercial), href: "tel:+" + KYR.telCommercial },
       { label: "WhatsApp " + court(KYR.numero2), href: KYR.lien("Bonjour Keur Yaye Rokhaya, j’ai une question.", 2), ext: true },
+      { label: "TikTok", href: KYR.tiktok, ext: true },
       { label: "E-mail", href: "mailto:" + KYR.email }
     ];
   }
@@ -115,16 +119,24 @@
   function messageProduit(p) {
     return "Bonjour Keur Yaye Rokhaya, je suis intéressé(e) par : " + p.nom + ". Pouvez-vous me confirmer la disponibilité et le prix ?";
   }
+  // V2 : demande de prix pour une capacité sans prix affiché (« Sur devis »)
+  function messageDevis(p, cap) {
+    return "Bonjour Keur Yaye Rokhaya, je souhaite connaître le prix du " + p.nom + (cap ? " en " + cap : "") + ".";
+  }
   function reponseProduit(p, nq) {
-    var st = p.options && p.options.stockages, cap = capaciteDemandee(nq), t;
+    var st = p.options && p.options.stockages, cap = capaciteDemandee(nq), t, devisCap = "", aDevis = false;
     if (KYR.aPrixParCapacite(p)) {
       var nomS = function (s) { return typeof s === "object" ? s.nom : s; };
       var prixS = function (s) { return typeof s === "object" && typeof s.prix === "number" ? s.prix : null; };
       var choisi = cap ? st.filter(function (s) { return nomS(s) === cap; })[0] : null;
       if (choisi && prixS(choisi) !== null) t = p.nom + " " + cap + " : " + KYR.fcfa(prixS(choisi)) + " (prix affiché sur le site).";
-      else if (choisi) t = p.nom + " " + cap + " : le prix de cette capacité n’est pas encore affiché sur le site. L’équipe " + (registre === "tu" ? "te" : "vous") + " le confirmera sur WhatsApp.";
-      else t = p.nom + " : prix affichés sur le site, selon la capacité :\n" +
-        st.map(function (s) { return "• " + nomS(s) + " : " + (prixS(s) !== null ? KYR.fcfa(prixS(s)) : "prix à confirmer"); }).join("\n");
+      else if (choisi) { aDevis = true; devisCap = cap; t = p.nom + " " + cap + " : Sur devis. Le prix de cette capacité n’est pas affiché sur le site : " + (registre === "tu" ? "demande-le" : "demandez-le") + " sur WhatsApp, l’équipe " + (registre === "tu" ? "te" : "vous") + " le donne."; }
+      else {
+        aDevis = st.some(function (s) { return prixS(s) === null; });
+        t = p.nom + " : le prix change selon la capacité. Prix affichés sur le site :\n" +
+          st.map(function (s) { return "• " + nomS(s) + " : " + (prixS(s) !== null ? KYR.fcfa(prixS(s)) : "Sur devis"); }).join("\n") +
+          (aDevis ? "\n\nPour une capacité « Sur devis », " + (registre === "tu" ? "demande" : "demandez") + " le prix sur WhatsApp." : "");
+      }
     } else if (typeof p.prix === "number" && p.prix > 0) {
       t = p.nom + " : " + KYR.fcfa(p.prix) + " (prix affiché sur le site).";
     } else {
@@ -134,7 +146,7 @@
     t += "\n\nCe prix est indicatif. Je n’ai pas accès au stock en temps réel : l’équipe confirme la disponibilité et le prix à jour sur WhatsApp.";
     return { texte: t, actions: [
       { label: "Voir la fiche", href: "produit.html?p=" + KYR.slug(p.nom) },
-      { label: "Demander sur WhatsApp", href: KYR.lien(messageProduit(p), 1), ext: true }
+      { label: aDevis ? "Demander le prix sur WhatsApp" : "Demander sur WhatsApp", href: KYR.lien(aDevis ? messageDevis(p, devisCap) : messageProduit(p), 1), ext: true }
     ] };
   }
   function reponseCategorie(cat, nq) {

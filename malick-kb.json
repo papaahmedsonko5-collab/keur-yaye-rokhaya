@@ -6,7 +6,9 @@
   "adresse": "Keur Mbaye Fall, en face école Fogny, Dakar",
   "tel1": "+221 77 261 53 54",
   "tel2": "+221 78 485 29 82",
-  "email": "contact@keuryayerokhaya.com"
+  "email": "contact@keuryayerokhaya.com",
+  "telcom": "+221 77 579 79 48",
+  "tiktok": "@keur_yaye_rokhaya_apple"
  },
  "sujets": [
   {
@@ -241,7 +243,7 @@
     "comment passer commande",
     "reserver"
    ],
-   "reponse": "Pour commander, {ouvrez|ouvre} la fiche du produit puis {envoyez|envoie} la demande sur WhatsApp. {Vous pouvez|Tu peux} aussi ajouter plusieurs produits au panier et envoyer toute la commande d’un coup. L’équipe confirme la disponibilité et le prix, puis {vous convenez|tu conviens} avec elle du paiement et de la livraison. Je ne peux pas prendre de commande moi-même.",
+   "reponse": "Pour commander, {ouvrez|ouvre} la fiche du produit puis {envoyez|envoie} la demande sur WhatsApp. {Vous pouvez|Tu peux} aussi ajouter plusieurs produits au panier et envoyer toute la commande d’un coup. L’équipe confirme la disponibilité et le prix, puis {vous convenez|tu conviens} avec elle du paiement et de la livraison. Je ne peux pas prendre de commande moi-même. Si le prix d’une variante est « Sur devis », {demandez|demande} le prix sur WhatsApp.",
    "actions": [
     {
      "label": "Voir la boutique",
@@ -250,6 +252,33 @@
     {
      "label": "Voir le panier",
      "href": "panier.html"
+    }
+   ]
+  },
+  {
+   "id": "variantes",
+   "mots": [
+    "variante*",
+    "capacite*",
+    "couleur*",
+    "stockage",
+    "sur devis",
+    "devis",
+    "prix selon la capacite",
+    "le prix change",
+    "choisir la capacite",
+    "choisir une couleur"
+   ],
+   "reponse": "Sur le site, un produit peut avoir plusieurs variantes : {choisissez|choisis} la capacité et la couleur sur la fiche du produit. Le prix change selon la capacité choisie. Quand une capacité n’a pas de prix affiché, elle est « Sur devis » : {vous pouvez|tu peux} alors demander le prix sur WhatsApp avec un message déjà rempli. Je ne peux pas {vous|te} donner un prix qui n’est pas affiché sur le site.",
+   "actions": [
+    {
+     "label": "Voir la boutique",
+     "href": "index.html#nos-produits"
+    },
+    {
+     "label": "Demander un prix sur WhatsApp",
+     "wa": "Bonjour Keur Yaye Rokhaya, je souhaite connaître le prix d’un produit.",
+     "num": 1
     }
    ]
   },
@@ -370,9 +399,12 @@
     "mail",
     "whatsapp",
     "equipe",
-    "parler a"
+    "parler a",
+    "tiktok",
+    "reseaux",
+    "reseau social"
    ],
-   "reponse": "{Vous pouvez|Tu peux} nous joindre sur WhatsApp ou par téléphone au {tel1} et au {tel2}, ou par e-mail : {email}.",
+   "reponse": "{Vous pouvez|Tu peux} nous joindre sur WhatsApp au {tel1} (commandes, prix et devis), par téléphone au {telcom} (numéro commercial), ou au {tel2} (contact secondaire). Nous sommes aussi sur TikTok : {tiktok}. E-mail : {email}.",
    "actions": [
     {
      "contact": true
