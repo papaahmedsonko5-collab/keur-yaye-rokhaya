@@ -23,7 +23,7 @@
       var nom = el("a", "cart-name", l.produit.nom); nom.href = "produit.html?p=" + encodeURIComponent(l.id);
       corps.appendChild(nom);
       S.lignesVariante(l.v).forEach(function (t) { corps.appendChild(el("p", "cart-var", t)); });
-      corps.appendChild(el("p", "cart-unit", "Prix unitaire : " + S.prixTexte(l.unitaire)));
+      corps.appendChild(el("p", "cart-unit" + (l.unitaire === null ? " is-quote" : ""), l.unitaire === null ? "Prix à confirmer (Sur devis)" : "Prix unitaire : " + KYR.fcfa(l.unitaire)));
     }
     var bas = el("div", "cart-actions");
     if (l.produit) {
@@ -35,7 +35,7 @@
       plus.addEventListener("click", function () { S.changerQte(l.cle, l.q + 1); });
       pas.appendChild(moins); pas.appendChild(sortie); pas.appendChild(plus);
       bas.appendChild(pas);
-      bas.appendChild(el("p", "cart-total", l.sousTotal === null ? "Sur devis" : KYR.fcfa(l.sousTotal)));
+      bas.appendChild(el("p", "cart-total", l.sousTotal === null ? "Prix à confirmer" : KYR.fcfa(l.sousTotal)));
     }
     var sup = el("button", "link-btn", "Supprimer"); sup.type = "button";
     sup.setAttribute("aria-label", "Supprimer " + (l.produit ? l.produit.nom : "ce produit") + " du panier");
@@ -67,8 +67,8 @@
     var r1 = el("p", "sum-row"); r1.appendChild(el("span", "", "Articles")); r1.appendChild(el("b", "", String(t.quantite))); res.appendChild(r1);
     var r2 = el("p", "sum-row"); r2.appendChild(el("span", "", t.nbSurDevis ? "Sous-total des produits avec prix" : "Sous-total")); r2.appendChild(el("b", "", KYR.fcfa(t.sousTotal))); res.appendChild(r2);
     res.appendChild(el("p", "note", "Livraison : le coût et le délai vous sont donnés avant la confirmation de la commande."));
-    var r3 = el("p", "sum-row sum-total"); r3.appendChild(el("span", "", "Total")); r3.appendChild(el("b", "", t.complet ? KYR.fcfa(t.sousTotal) : "À confirmer")); res.appendChild(r3);
-    if (t.nbSurDevis) res.appendChild(el("p", "note warn", t.nbSurDevis + " produit" + (t.nbSurDevis > 1 ? "s sont" : " est") + " sur devis : le total ne peut pas être calculé. L’équipe confirme le prix sur WhatsApp."));
+    var r3 = el("p", "sum-row sum-total"); r3.appendChild(el("span", "", "Total")); r3.appendChild(el("b", "", t.complet ? KYR.fcfa(t.sousTotal) : "Prix à confirmer")); res.appendChild(r3);
+    if (t.nbSurDevis) res.appendChild(el("p", "note warn", t.nbSurDevis + " produit" + (t.nbSurDevis > 1 ? "s sont" : " est") + " sur devis : le total n’est pas calculé, car il serait faux. L’équipe vous confirme le prix sur WhatsApp."));
     if (t.indisponibles) res.appendChild(el("p", "note warn", t.indisponibles + " produit" + (t.indisponibles > 1 ? "s ne sont" : " n’est") + " plus dans la boutique et ne sera pas commandé."));
 
     var cmd = el("a", "btn btn-wa btn-block", "Commander via WhatsApp"); cmd.target = "_blank"; cmd.rel = "noopener";

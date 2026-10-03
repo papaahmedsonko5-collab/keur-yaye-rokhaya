@@ -82,7 +82,8 @@
   }
   function lignesVariante(v) {
     var l = [];
-    CHAMPS.forEach(function (c) { if (v && v[c]) l.push(ETIQUETTES[c] + " : " + v[c]); });
+    // V2 : ordre d'affichage Produit > Capacité > Couleur (puis état et SIM)
+    ["stockage", "couleur", "etat", "sim"].forEach(function (c) { if (v && v[c]) l.push(ETIQUETTES[c] + " : " + v[c]); });
     return l;
   }
   // Libellés lisibles d'une variante, sans étiquette : capacité, couleur, état, SIM (V2)

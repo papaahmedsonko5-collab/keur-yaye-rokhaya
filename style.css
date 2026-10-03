@@ -766,3 +766,7 @@ a.cart-name:hover { text-decoration: underline; text-underline-offset: 4px; }
 .quote-note[hidden] { display: none; }
 .cap-btn { min-width: 6.5rem; }
 .cap-btn small { margin-top: 0.1rem; font-size: 0.8rem; }
+
+/* ===== V2 : panier avec variantes ===== */
+.cart-unit.is-quote { color: #7a4a00; font-weight: 700; }
+.cart-total { text-align: right; }
