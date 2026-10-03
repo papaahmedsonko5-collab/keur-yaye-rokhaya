@@ -85,6 +85,16 @@
     CHAMPS.forEach(function (c) { if (v && v[c]) l.push(ETIQUETTES[c] + " : " + v[c]); });
     return l;
   }
+  // Libellés lisibles d'une variante, sans étiquette : capacité, couleur, état, SIM (V2)
+  function partsVariante(v) {
+    var l = [];
+    if (v && v.stockage) l.push(v.stockage);
+    if (v && v.couleur) l.push(v.couleur);
+    if (v && v.etat) l.push(v.etat);
+    if (v && v.sim) l.push(v.sim);
+    return l;
+  }
+  function resumeVariante(v) { return partsVariante(v).join(" · "); }
   function cleLigne(id, v) { return [id, v.couleur, v.stockage, v.etat, v.sim].join("|"); }
 
   /* ---------- panier (localStorage) ---------- */
@@ -215,7 +225,7 @@
   window.KYR.shop = {
     MAX_QTE: MAX_QTE, produits: produits, trouver: trouver, stockages: stockages, couleurs: couleurs,
     prixDe: prixDe, prixCarte: prixCarte, capaciteMini: capaciteMini, prixListe: prixListe, aPrix: aPrix, prixMini: prixMini, prixTexte: prixTexte,
-    varianteValide: varianteValide, lignesVariante: lignesVariante,
+    varianteValide: varianteValide, lignesVariante: lignesVariante, partsVariante: partsVariante, resumeVariante: resumeVariante,
     ajouter: ajouter, changerQte: changerQte, supprimer: supprimer, vider: vider, lignes: lignes, totaux: totaux,
     messageProduit: messageProduit, messageCommande: messageCommande,
     normaliser: normaliser, texteRecherche: texteRecherche, score: score

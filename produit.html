@@ -147,6 +147,9 @@
   info.appendChild(el("h1", "", p.nom));
   var prixEl = el("p", "product-price", prixTexte(choix.prix));
   info.appendChild(prixEl);
+  // V2 : rappel clair de la variante choisie (capacité, couleur, SIM, état)
+  var resumeEl = el("p", "variant-summary"); resumeEl.setAttribute("aria-live", "polite");
+  info.appendChild(resumeEl);
 
   var zoneOptions = el("div", "");
   zoneOptions.style.display = "grid"; zoneOptions.style.gap = "1.25rem";
@@ -167,6 +170,8 @@
     var v = variante(), unitaire = KYR.shop.prixDe(p, v.stockage);
     choix.prix = unitaire;
     prixEl.textContent = KYR.shop.prixTexte(unitaire);
+    var resume = KYR.shop.resumeVariante(v);
+    resumeEl.textContent = resume ? "Variante sélectionnée : " + resume : "";
     totalEl.textContent = unitaire === null ? "Produit sur devis : le prix est confirmé sur WhatsApp." : "Total : " + KYR.fcfa(unitaire * qte);
     bouton.href = KYR.lien(KYR.shop.messageProduit(p, v, qte));
   }

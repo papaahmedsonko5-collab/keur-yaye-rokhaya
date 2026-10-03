@@ -751,3 +751,10 @@ a.cart-name:hover { text-decoration: underline; text-underline-offset: 4px; }
   .header-grid { column-gap: 1.25rem; }
   .nav { display: flex; gap: 1.1rem; }
 }
+
+/* ===== V2 : variantes (résumé de la sélection, pastilles de couleur sur les cartes) ===== */
+.variant-summary { margin: 0.1rem 0 0; font-weight: 700; color: var(--ink); overflow-wrap: anywhere; }
+.variant-summary:empty { display: none; }
+.card-swatches { display: flex; align-items: center; flex-wrap: wrap; gap: 0.3rem; margin: 0.05rem 0 0.15rem; }
+.card-swatches i { display: block; width: 14px; height: 14px; border-radius: 50%; background: var(--c, #ccc); border: 1px solid rgba(26, 18, 34, 0.28); }
+.card-swatches b { font-size: 0.78rem; color: var(--muted); font-weight: 700; margin-left: 0.15rem; }

@@ -140,6 +140,13 @@
     corps.appendChild(el("h3", "", p.nom));
     var st = S.stockages(p);
     if (st.length) corps.appendChild(el("p", "card-meta", st.join(" · ")));
+    var cl = (p.options && p.options.couleurs) || [];
+    if (cl.length) {   // V2 : aperçu des couleurs (purement visuel)
+      var sw = el("span", "card-swatches"); sw.setAttribute("role", "img"); sw.setAttribute("aria-label", cl.length + " couleur" + (cl.length > 1 ? "s" : ""));
+      cl.slice(0, 6).forEach(function (c) { var d = document.createElement("i"); if (/^#[0-9A-Fa-f]{6}$/.test(c.hex || "")) d.style.setProperty("--c", c.hex); sw.appendChild(d); });
+      if (cl.length > 6) sw.appendChild(el("b", "", "+" + (cl.length - 6)));
+      corps.appendChild(sw);
+    }
     corps.appendChild(el("p", "price", S.prixCarte(p)));
     corps.appendChild(el("span", "pill-link", "Détails →"));
     lien.appendChild(media); lien.appendChild(corps); c.appendChild(lien);
