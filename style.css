@@ -790,3 +790,9 @@ a.cart-name:hover { text-decoration: underline; text-underline-offset: 4px; }
 /* ===== V2 : finitions ===== */
 .nowrap { white-space: nowrap; }
 .total-line[hidden] { display: none; }
+
+/* ===== Malick : message si l'assistant ne peut pas se charger (aucune ouverture automatique de WhatsApp) ===== */
+.malick-avis { position: fixed; left: 1rem; right: 1rem; bottom: calc(14.5rem + env(safe-area-inset-bottom, 0px)); z-index: 60; display: flex; align-items: center; flex-wrap: wrap; gap: 0.4rem 0.8rem; max-width: 26rem; margin-left: auto; padding: 0.7rem 0.6rem 0.7rem 1rem; border-radius: 18px; background: #fff; border: 1px solid var(--glass-edge); box-shadow: var(--glass-shadow); font-weight: 600; }
+.malick-avis a { display: inline-flex; align-items: center; min-height: 44px; color: var(--accent-dark); font-weight: 800; text-underline-offset: 4px; }
+.malick-avis button { margin-left: auto; width: 44px; height: 44px; border-radius: 50%; border: 0; background: transparent; font-size: 1.4rem; cursor: pointer; color: var(--muted); }
+@media (min-width: 820px) { .malick-avis { bottom: 11rem; } }

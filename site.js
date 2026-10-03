@@ -226,6 +226,17 @@
       document.head.appendChild(n);
     });
   }
+  // Si les fichiers de Malick ne se chargent pas (hors connexion...), on l'indique ; WhatsApp reste un lien que le visiteur choisit de toucher.
+  function avisMalickIndisponible() {
+    var ancien = document.querySelector(".malick-avis"); if (ancien) ancien.parentNode.removeChild(ancien);
+    var a = document.createElement("div"); a.className = "malick-avis"; a.setAttribute("role", "alert");
+    a.appendChild(document.createTextNode("Malick n’est pas disponible pour le moment. "));
+    var l = document.createElement("a"); l.href = window.KYR.lien("Bonjour Keur Yaye Rokhaya, j’ai une question."); l.target = "_blank"; l.rel = "noopener"; l.textContent = "Écrire à l’équipe sur WhatsApp";
+    var x = document.createElement("button"); x.type = "button"; x.setAttribute("aria-label", "Fermer ce message"); x.textContent = "×";
+    x.addEventListener("click", function () { if (a.parentNode) a.parentNode.removeChild(a); });
+    a.appendChild(l); a.appendChild(x); document.body.appendChild(a);
+    setTimeout(function () { if (a.parentNode) a.parentNode.removeChild(a); }, 15000);
+  }
   malick.addEventListener("click", function () {
     if (window.Malick) { window.Malick.ouvrir(malick); return; }
     if (malickEnCours) return;
@@ -236,7 +247,7 @@
       .then(function () { malick.classList.remove("charge"); malickEnCours = false; window.Malick.ouvrir(malick); })
       .catch(function () {
         malick.classList.remove("charge"); malickEnCours = false;
-        window.open(window.KYR.lien("Bonjour, j’ai une question."), "_blank", "noopener");
+        avisMalickIndisponible();
       });
   });
 

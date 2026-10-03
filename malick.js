@@ -19,6 +19,16 @@
   var PRIORITAIRES = ["identite", "echange", "vente", "retrograde", "estimation", "reparation", "coffre", "garantie", "paiement", "livraison", "commande", "horaires", "fonds-ecran", "ipad-mac", "promotion"];
 
   var kb = null, ui = null, historique = [], registre = "vous", ouvert = false, occupe = false, declencheur = null, apiEnPanne = false;
+  // Base de secours : utilisée SEULEMENT si malick-kb.json ne peut pas être lu (site ouvert depuis le disque en file://,
+  // hors connexion...). Malick ouvre alors sa conversation quand même ; il ne renvoie jamais vers WhatsApp tout seul.
+  var KB_SECOURS = {
+    version: 0,
+    accueil: "Bonjour 👋 Je suis Malick, l’assistant de Keur Yaye Rokhaya. Comment puis-je vous aider ?",
+    inconnu: "Je n’ai pas cette information pour le moment. {Vous pouvez|Tu peux} contacter directement l’équipe de Keur Yaye Rokhaya pour obtenir une réponse précise. 🙏",
+    contact: {},
+    sujets: []
+  };
+  var modeSecours = false;
 
   /* ---------- outils ---------- */
   function el(tag, cls, texte) {
@@ -398,7 +408,10 @@
     if (historique.length) {
       historique.forEach(function (m) { ajouterMessage(m.r, m.t, m.a); });
     } else {
-      ajouterMessage("b", formater(kb.accueil), [], true);
+      ajouterMessage("b", formater(kb.accueil), [], !modeSecours);   // en mode de secours : pas de suggestions qui mèneraient à une réponse vide
+      if (modeSecours) {
+        ajouterMessage("b", "Mes réponses détaillées ne sont pas chargées pour le moment (le site est peut-être ouvert hors connexion ou depuis un fichier). Je peux encore vous donner les prix du catalogue. Pour le reste, vous pouvez contacter l’équipe avec les boutons ci-dessous.", actionsContact(), false);
+      }
     }
   }
 
@@ -441,8 +454,8 @@
   window.Malick = {
     ouvrir: function (source) {
       if (kb) return ouvrir(source);
-      chargerDonnees(function (ok) {
-        if (!ok) { if (source) window.open(KYR.lien("Bonjour Keur Yaye Rokhaya, j’ai une question."), "_blank", "noopener"); return; }
+      chargerDonnees(function () {
+        if (!kb) { kb = KB_SECOURS; modeSecours = true; }   // la conversation s'ouvre toujours
         ouvrir(source);
       });
     },
