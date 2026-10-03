@@ -20,6 +20,18 @@
     return n;
   }
 
+  // Répare un nom dont les accents ont été lus avec un mauvais encodage (UTF-8 lu comme Latin-1) : le slug d'un produit
+  // (adresse de sa fiche) doit être identique sur la boutique, la fiche, le panier et Malick, quel que soit l'encodage de la page.
+  function reparerEncodage(s) {
+    s = String(s);
+    if (!/[\u00C2-\u00F4]/.test(s) || /[^\u0000-\u00FF]/.test(s) || typeof TextDecoder === "undefined") return s;
+    try {
+      var octets = new Uint8Array(s.length);
+      for (var i = 0; i < s.length; i++) octets[i] = s.charCodeAt(i);
+      return new TextDecoder("utf-8", { fatal: true }).decode(octets);
+    } catch (e) { return s; }                          // texte déjà correct : inchangé
+  }
+
   window.KYR = {
     CLE_PANIER: CLE_PANIER,
     nbPanier: nbPanier,
@@ -47,7 +59,7 @@
       return "https://wa.me/" + (n === 2 ? NUMERO2 : NUMERO) + "?text=" + encodeURIComponent(message);
     },
     slug: function (nom) {
-      return String(nom).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      return reparerEncodage(nom).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
         .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
     }
   };
