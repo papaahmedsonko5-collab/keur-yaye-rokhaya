@@ -24,6 +24,10 @@
       corps.appendChild(nom);
       S.lignesVariante(l.v).forEach(function (t) { corps.appendChild(el("p", "cart-var", t)); });
       corps.appendChild(el("p", "cart-unit" + (l.unitaire === null ? " is-quote" : ""), l.unitaire === null ? "Prix à confirmer (Sur devis)" : "Prix unitaire : " + KYR.fcfa(l.unitaire)));
+      if (l.unitaire === null) {   // V2 : demander le prix de cette variante précise
+        var dq = el("a", "cart-quote-link", "Demander le prix sur WhatsApp"); dq.href = KYR.lien(S.messageDevis(l.produit, l.v)); dq.target = "_blank"; dq.rel = "noopener";
+        corps.appendChild(dq);
+      }
     }
     var bas = el("div", "cart-actions");
     if (l.produit) {
@@ -71,7 +75,7 @@
     if (t.nbSurDevis) res.appendChild(el("p", "note warn", t.nbSurDevis + " produit" + (t.nbSurDevis > 1 ? "s sont" : " est") + " sur devis : le total n’est pas calculé, car il serait faux. L’équipe vous confirme le prix sur WhatsApp."));
     if (t.indisponibles) res.appendChild(el("p", "note warn", t.indisponibles + " produit" + (t.indisponibles > 1 ? "s ne sont" : " n’est") + " plus dans la boutique et ne sera pas commandé."));
 
-    var cmd = el("a", "btn btn-wa btn-block", "Commander via WhatsApp"); cmd.target = "_blank"; cmd.rel = "noopener";
+    var cmd = el("a", "btn btn-wa btn-block", t.nb > 0 && t.nbSurDevis === t.nb ? "Demander le prix sur WhatsApp" : "Commander via WhatsApp"); cmd.target = "_blank"; cmd.rel = "noopener";
     if (t.nb > 0) cmd.href = KYR.lien(S.messageCommande(liste));
     else { cmd.href = "#"; cmd.setAttribute("aria-disabled", "true"); cmd.addEventListener("click", function (e) { e.preventDefault(); }); }
     res.appendChild(cmd);

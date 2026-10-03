@@ -770,3 +770,7 @@ a.cart-name:hover { text-decoration: underline; text-underline-offset: 4px; }
 /* ===== V2 : panier avec variantes ===== */
 .cart-unit.is-quote { color: #7a4a00; font-weight: 700; }
 .cart-total { text-align: right; }
+
+/* ===== V2 : WhatsApp variantes et Sur devis ===== */
+.btn[hidden] { display: none; }
+.cart-quote-link { display: inline-flex; align-items: center; min-height: 44px; font-weight: 700; color: var(--accent-dark); text-underline-offset: 4px; }

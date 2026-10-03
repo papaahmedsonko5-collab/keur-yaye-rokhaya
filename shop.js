@@ -155,32 +155,36 @@
     return { nb: dispo.length, quantite: dispo.reduce(function (n, l) { return n + l.q; }, 0), sousTotal: somme, nbSurDevis: devis, complet: dispo.length > 0 && devis === 0, indisponibles: liste.length - dispo.length };
   }
 
-  /* ---------- messages WhatsApp (jamais d'IMEI, jamais de donnée interne) ---------- */
-  var ENTETE = "Bonjour Keur Yaye Rokhaya 👋\n\nJe souhaite commander :\n";
-  var PIED = "\nMerci de me confirmer la disponibilité et les modalités de commande.";
-  function lignesMessage(p, v, q, unitaire, prefixe) {
-    var l = [prefixe + "Produit : " + p.nom];
-    if (v.stockage) l.push("• Capacité : " + v.stockage);
-    if (v.couleur) l.push("• Couleur : " + v.couleur);
-    if (v.etat) l.push("• État : " + v.etat);
-    if (v.sim) l.push("• SIM : " + v.sim);
-    l.push("• Quantité : " + q);
-    l.push("• Prix unitaire : " + prixTexte(unitaire));
-    if (unitaire !== null) l.push("• Total : " + KYR.fcfa(unitaire * q));
+  /* ---------- messages WhatsApp (V2 : variantes et « Sur devis » ; jamais d'IMEI ni de donnée interne) ---------- */
+  var ENTETE = "Bonjour Keur Yaye Rokhaya,\n\nJe souhaite commander :\n\n";
+  // Une ligne de commande : rang, produit, capacité, couleur, (état, SIM), quantité, prix
+  function lignesMessage(p, v, q, unitaire, rang) {
+    var l = [rang + ". " + p.nom];
+    if (v.stockage) l.push("   - " + v.stockage);
+    if (v.couleur) l.push("   - " + v.couleur);
+    if (v.etat) l.push("   - État : " + v.etat);
+    if (v.sim) l.push("   - SIM : " + v.sim);
+    l.push("   - Quantité : " + q);
+    l.push("   - Prix : " + prixTexte(unitaire));
+    if (unitaire !== null && q > 1) l.push("   - Total : " + KYR.fcfa(unitaire * q));
     return l;
   }
   function messageProduit(p, variante, qte) {
-    var v = varianteValide(p, variante), q = Math.max(1, Math.min(MAX_QTE, parseInt(qte, 10) || 1));
-    return ENTETE + "\n" + lignesMessage(p, v, q, prixDe(p, v.stockage), "• ").join("\n") + "\n" + PIED;
+    var v = varianteValide(p, variante), q = Math.max(1, Math.min(MAX_QTE, parseInt(qte, 10) || 1)), u = prixDe(p, v.stockage);
+    return ENTETE + lignesMessage(p, v, q, u, 1).join("\n") + "\n\n" + (u === null ? "Merci de me confirmer le prix." : "Merci.");
   }
   function messageCommande(liste) {
-    var dispo = liste.filter(function (l) { return l.produit; }), t = totaux(liste), corps = [];
-    dispo.forEach(function (l, i) {
-      var lg = lignesMessage(l.produit, l.v, l.q, l.unitaire, (i + 1) + ") ");
-      corps.push(lg.join("\n   ").replace(/\n {3}• Total :/, "\n   • Sous-total :"));
-    });
-    var total = t.complet ? "Total : " + KYR.fcfa(t.sousTotal) : "Total : à confirmer (" + t.nbSurDevis + " produit" + (t.nbSurDevis > 1 ? "s" : "") + " sur devis)";
-    return ENTETE + "\n" + corps.join("\n\n") + "\n\n" + total + "\n" + PIED;
+    var dispo = liste.filter(function (l) { return l.produit; }), t = totaux(liste), fin = [];
+    var corps = dispo.map(function (l, i) { return lignesMessage(l.produit, l.v, l.q, l.unitaire, i + 1).join("\n"); });
+    if (dispo.length > 1 || dispo.some(function (l) { return l.q > 1; })) fin.push(t.complet ? "Total : " + KYR.fcfa(t.sousTotal) : "Total : prix à confirmer");
+    return ENTETE + corps.join("\n\n") + "\n\n" + (fin.length ? fin.join("\n") + "\n\n" : "") + (t.nbSurDevis ? "Merci de me confirmer le prix." : "Merci.");
+  }
+  // Demande de prix pour une variante « Sur devis » (nom, capacité, couleur)
+  function messageDevis(p, variante) {
+    var v = varianteValide(p, variante), s = "Bonjour Keur Yaye Rokhaya, je souhaite connaître le prix du " + p.nom;
+    if (v.stockage) s += " en " + v.stockage;
+    if (v.couleur) s += ", couleur " + v.couleur;
+    return s + ".";
   }
 
   /* ---------- recherche ---------- */
@@ -228,7 +232,7 @@
     prixDe: prixDe, prixCarte: prixCarte, capaciteMini: capaciteMini, prixListe: prixListe, aPrix: aPrix, prixMini: prixMini, prixTexte: prixTexte,
     varianteValide: varianteValide, lignesVariante: lignesVariante, partsVariante: partsVariante, resumeVariante: resumeVariante,
     ajouter: ajouter, changerQte: changerQte, supprimer: supprimer, vider: vider, lignes: lignes, totaux: totaux,
-    messageProduit: messageProduit, messageCommande: messageCommande,
+    messageProduit: messageProduit, messageCommande: messageCommande, messageDevis: messageDevis,
     normaliser: normaliser, texteRecherche: texteRecherche, score: score
   };
 })();

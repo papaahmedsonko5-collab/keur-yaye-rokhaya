@@ -164,6 +164,9 @@
   var qte = 1;
   var bouton = el("a", "btn btn-wa btn-block", "Commander sur WhatsApp");
   bouton.target = "_blank"; bouton.rel = "noopener";
+  // V2 : si la variante est « Sur devis », le bouton devient « Demander le prix sur WhatsApp »
+  var devisBtn = el("a", "btn btn-wa btn-block", "Demander le prix sur WhatsApp");
+  devisBtn.target = "_blank"; devisBtn.rel = "noopener"; devisBtn.hidden = true;
   var ajouterBtn = el("button", "btn btn-block", "Ajouter au panier"); ajouterBtn.type = "button";
   var totalEl = el("p", "total-line");
   var statut = el("p", "added"); statut.setAttribute("role", "status"); statut.hidden = true;
@@ -181,6 +184,8 @@
     resumeEl.textContent = resume ? "Variante sélectionnée : " + resume : "";
     totalEl.textContent = unitaire === null ? "Produit sur devis : le prix est confirmé sur WhatsApp." : "Total : " + KYR.fcfa(unitaire * qte);
     bouton.href = KYR.lien(KYR.shop.messageProduit(p, v, qte));
+    devisBtn.href = KYR.lien(KYR.shop.messageDevis(p, v));
+    bouton.hidden = unitaire === null; devisBtn.hidden = unitaire !== null;
   }
 
   var pas = el("div", "qty-row");
@@ -260,7 +265,7 @@
 
   if (opt.stockages) info.appendChild(el("p", "note", KYR.aPrixParCapacite(p) ? "Le prix change selon la capacité choisie. Il est confirmé sur WhatsApp avant toute commande." : "Le prix peut varier selon la capacité. Il est confirmé sur WhatsApp avant toute commande."));
   else info.appendChild(el("p", "note", "Le prix et la disponibilité sont confirmés sur WhatsApp avant toute commande."));
-  info.appendChild(pas); info.appendChild(totalEl); info.appendChild(ajouterBtn); info.appendChild(bouton); info.appendChild(statut);
+  info.appendChild(pas); info.appendChild(totalEl); info.appendChild(ajouterBtn); info.appendChild(bouton); info.appendChild(devisBtn); info.appendChild(statut);
   majQte(1);
   grille.appendChild(info);
   contenu.appendChild(grille);
