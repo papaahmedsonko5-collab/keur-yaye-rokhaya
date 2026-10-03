@@ -145,8 +145,13 @@
   if (marque) { var li2 = el("li", "pill pill-accent", marque); pills.appendChild(li2); }
   info.appendChild(pills);
   info.appendChild(el("h1", "", p.nom));
-  var prixEl = el("p", "product-price", prixTexte(choix.prix));
+  // V2 : « Prix : » + valeur dynamique (prix de la capacité choisie, ou « Sur devis »)
+  var prixEl = el("p", "product-price"); prixEl.setAttribute("aria-live", "polite");
+  var prixV = el("span", "price-v", prixTexte(choix.prix));
+  prixEl.appendChild(el("span", "price-k", "Prix :")); prixEl.appendChild(document.createTextNode(" ")); prixEl.appendChild(prixV);
   info.appendChild(prixEl);
+  var devisNote = el("p", "quote-note", "Le prix de cette variante n’est pas affiché : il vous est donné sur demande, par WhatsApp."); devisNote.hidden = true;
+  info.appendChild(devisNote);
   // V2 : rappel clair de la variante choisie (capacité, couleur, SIM, état)
   var resumeEl = el("p", "variant-summary"); resumeEl.setAttribute("aria-live", "polite");
   info.appendChild(resumeEl);
@@ -169,7 +174,9 @@
   function majLien() {
     var v = variante(), unitaire = KYR.shop.prixDe(p, v.stockage);
     choix.prix = unitaire;
-    prixEl.textContent = KYR.shop.prixTexte(unitaire);
+    prixV.textContent = KYR.shop.prixTexte(unitaire);
+    prixEl.classList.toggle("is-quote", unitaire === null);
+    devisNote.hidden = unitaire !== null;
     var resume = KYR.shop.resumeVariante(v);
     resumeEl.textContent = resume ? "Variante sélectionnée : " + resume : "";
     totalEl.textContent = unitaire === null ? "Produit sur devis : le prix est confirmé sur WhatsApp." : "Total : " + KYR.fcfa(unitaire * qte);
@@ -222,7 +229,9 @@
   });
   if (opt.stockages) groupe("Capacité de stockage", function (rang) {
     opt.stockages.forEach(function (s, i) {
-      var b = el("button", "pill-btn", nomStock(s)); b.type = "button";
+      var b = el("button", "pill-btn cap-btn"); b.type = "button";
+      b.appendChild(document.createTextNode(nomStock(s)));
+      if (KYR.aPrixParCapacite(p)) { var prc = KYR.shop.prixDe(p, nomStock(s)); b.appendChild(el("small", "", prc === null ? "Sur devis" : KYR.fcfa(prc))); }
       b.setAttribute("aria-pressed", i === iniStock ? "true" : "false");
       b.addEventListener("click", function () { choix.stockage = nomStock(s); activer(rang, b); majLien(); });
       rang.appendChild(b);

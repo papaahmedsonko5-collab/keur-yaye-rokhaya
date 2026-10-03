@@ -758,3 +758,11 @@ a.cart-name:hover { text-decoration: underline; text-underline-offset: 4px; }
 .card-swatches { display: flex; align-items: center; flex-wrap: wrap; gap: 0.3rem; margin: 0.05rem 0 0.15rem; }
 .card-swatches i { display: block; width: 14px; height: 14px; border-radius: 50%; background: var(--c, #ccc); border: 1px solid rgba(26, 18, 34, 0.28); }
 .card-swatches b { font-size: 0.78rem; color: var(--muted); font-weight: 700; margin-left: 0.15rem; }
+
+/* ===== V2 : prix dynamique par capacité ===== */
+.product-price .price-k { font-size: 0.55em; font-weight: 700; letter-spacing: 0; color: var(--muted); }
+.product-price.is-quote .price-v { color: #7a4a00; }
+.quote-note { margin: 0; padding: 0.6rem 0.9rem; border-radius: 14px; background: #fff4df; color: #6b4300; font-weight: 600; }
+.quote-note[hidden] { display: none; }
+.cap-btn { min-width: 6.5rem; }
+.cap-btn small { margin-top: 0.1rem; font-size: 0.8rem; }
