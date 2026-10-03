@@ -80,6 +80,9 @@
     else { cmd.href = "#"; cmd.setAttribute("aria-disabled", "true"); cmd.addEventListener("click", function (e) { e.preventDefault(); }); }
     res.appendChild(cmd);
     res.appendChild(el("p", "note", "Aucun paiement n’est fait sur le site : la commande se confirme sur WhatsApp."));
+    var appelP = el("p", "call-line"); appelP.appendChild(document.createTextNode("Besoin d’aide ? "));
+    var appelA = el("a", "", "Appeler le magasin " + KYR.affiche(KYR.telCommercial)); appelA.href = "tel:+" + KYR.telCommercial; appelP.appendChild(appelA);
+    res.appendChild(appelP);
 
     var vider = el("button", "btn btn-outline btn-block", armeVider ? "Confirmer : vider le panier" : "Vider le panier"); vider.type = "button";
     vider.addEventListener("click", function () {

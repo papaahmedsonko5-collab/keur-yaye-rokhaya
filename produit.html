@@ -265,7 +265,9 @@
 
   if (opt.stockages) info.appendChild(el("p", "note", KYR.aPrixParCapacite(p) ? "Le prix change selon la capacité choisie. Il est confirmé sur WhatsApp avant toute commande." : "Le prix peut varier selon la capacité. Il est confirmé sur WhatsApp avant toute commande."));
   else info.appendChild(el("p", "note", "Le prix et la disponibilité sont confirmés sur WhatsApp avant toute commande."));
-  info.appendChild(pas); info.appendChild(totalEl); info.appendChild(ajouterBtn); info.appendChild(bouton); info.appendChild(devisBtn); info.appendChild(statut);
+  var appelP = el("p", "call-line"); appelP.appendChild(document.createTextNode("Une question ? "));
+  var appelA = el("a", "", "Appeler le magasin " + KYR.affiche(KYR.telCommercial)); appelA.href = "tel:+" + KYR.telCommercial; appelP.appendChild(appelA);
+  info.appendChild(pas); info.appendChild(totalEl); info.appendChild(ajouterBtn); info.appendChild(bouton); info.appendChild(devisBtn); info.appendChild(statut); info.appendChild(appelP);
   majQte(1);
   grille.appendChild(info);
   contenu.appendChild(grille);

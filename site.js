@@ -2,7 +2,10 @@
 (function () {
   // ---- CONFIGURATION : seul endroit où écrire les numéros (format international, sans +) ----
   var NUMERO = "221772615354";      // NUMÉRO PRINCIPAL : toutes les commandes WhatsApp (+221 77 261 53 54)
-  var NUMERO2 = "221784852982";     // deuxième contact WhatsApp et téléphone (+221 78 485 29 82)
+  var TEL_COMMERCIAL = "221775797948"; // TÉLÉPHONE COMMERCIAL : appels uniquement, jamais WhatsApp (+221 77 579 79 48)
+  var NUMERO2 = "221784852982";     // contact secondaire (+221 78 485 29 82)
+  var TIKTOK_URL = "https://www.tiktok.com/@keur_yaye_rokhaya_apple";
+  var TIKTOK_NOM = "@keur_yaye_rokhaya_apple";
   var EMAIL = "contact@keuryayerokhaya.com";
 
   function affiche(n) {
@@ -22,6 +25,9 @@
     nbPanier: nbPanier,
     numero: NUMERO,
     numero2: NUMERO2,
+    telCommercial: TEL_COMMERCIAL,
+    tiktok: TIKTOK_URL,
+    tiktokNom: TIKTOK_NOM,
     email: EMAIL,
     affiche: affiche,
     fcfa: function (n) { return n.toLocaleString("fr-FR") + " FCFA"; },
@@ -46,7 +52,7 @@
     }
   };
 
-  // Liens et numéros des pages : data-wa="message" (+ data-wa-num="2"), data-tel="1|2", data-num="1|2", data-mail
+  // Liens et numéros des pages : data-wa="message" (+ data-wa-num="2"), data-tel="1|2|c" (c = téléphone commercial), data-num="1|2|c", data-mail, data-tiktok
   function appliquerNumeros() {
     Array.prototype.forEach.call(document.querySelectorAll("[data-wa]"), function (a) {
       var msg = a.getAttribute("data-wa") || "Bonjour, je souhaite commander un produit chez Keur Yaye Rokhaya.";
@@ -59,12 +65,17 @@
       if (!a.textContent.trim()) a.textContent = EMAIL;
     });
     Array.prototype.forEach.call(document.querySelectorAll("[data-tel]"), function (a) {
-      var n = a.getAttribute("data-tel") === "2" ? NUMERO2 : NUMERO;
+      var c = a.getAttribute("data-tel"), n = c === "c" ? TEL_COMMERCIAL : (c === "2" ? NUMERO2 : NUMERO);
       a.href = "tel:+" + n;
       if (!a.textContent.trim()) a.textContent = affiche(n);
     });
     Array.prototype.forEach.call(document.querySelectorAll("[data-num]"), function (e) {
-      e.textContent = affiche(e.getAttribute("data-num") === "2" ? NUMERO2 : NUMERO);
+      var c = e.getAttribute("data-num");
+      e.textContent = affiche(c === "c" ? TEL_COMMERCIAL : (c === "2" ? NUMERO2 : NUMERO));
+    });
+    Array.prototype.forEach.call(document.querySelectorAll("[data-tiktok]"), function (a) {
+      a.href = TIKTOK_URL; a.target = "_blank"; a.rel = "noopener noreferrer";
+      if (!a.textContent.trim()) a.textContent = "TikTok " + TIKTOK_NOM;
     });
   }
   appliquerNumeros();
@@ -129,6 +140,9 @@
     wa.className = "nav-extra"; wa.href = "#"; wa.textContent = "Commander sur WhatsApp";
     wa.setAttribute("data-wa", "Bonjour, je souhaite commander un produit chez Keur Yaye Rokhaya.");
     nav.appendChild(wa);
+    var appel = document.createElement("a");
+    appel.className = "nav-extra"; appel.href = "#"; appel.setAttribute("data-tel", "c"); appel.textContent = "Appeler le magasin";
+    nav.appendChild(appel);
     appliquerNumeros();
     var b = document.createElement("button");
     b.type = "button"; b.className = "menu-btn";
@@ -173,9 +187,12 @@
         '<div class="fcol">' +
           '<p class="ftitre">Contact</p>' +
           '<address>Keur Mbaye Fall, en face école Fogny, Dakar</address>' +
-          '<a href="#" data-wa="Bonjour, j’ai une question." data-wa-num="1">WhatsApp <span data-num="1"></span></a>' +
-          '<a href="#" data-wa="Bonjour, j’ai une question." data-wa-num="2">WhatsApp <span data-num="2"></span></a>' +
+          '<a href="#" data-wa="Bonjour, j’ai une question." data-wa-num="1">WhatsApp commandes <span data-num="1"></span></a>' +
+          '<a href="#" data-tel="c">Téléphone commercial <span data-num="c"></span></a>' +
+          '<a href="#" data-wa="Bonjour, j’ai une question." data-wa-num="2">Contact secondaire <span data-num="2"></span></a>' +
           '<a href="#" data-mail></a>' +
+          '<p class="ftitre">Suivez-nous</p>' +
+          '<a class="f-social" href="#" data-tiktok>' + icone('<path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5"/><path d="M14 3c.4 2.4 2 4 4.5 4.2"/>') + '<span>TikTok ' + TIKTOK_NOM + '</span></a>' +
         '</div>' +
         '<nav class="fcol" aria-label="Informations légales">' +
           '<p class="ftitre">Informations</p>' +
