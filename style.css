@@ -786,3 +786,7 @@ a.cart-name:hover { text-decoration: underline; text-underline-offset: 4px; }
 .contact-actions .btn { min-width: 0; max-width: 100%; white-space: normal; text-align: center; overflow-wrap: anywhere; line-height: 1.25; padding-top: 0.55rem; padding-bottom: 0.55rem; }
 .contact-actions .btn { text-wrap: balance; }
 .fcol a:not(.brand) { gap: 0.4rem; flex-wrap: wrap; }
+
+/* ===== V2 : finitions ===== */
+.nowrap { white-space: nowrap; }
+.total-line[hidden] { display: none; }

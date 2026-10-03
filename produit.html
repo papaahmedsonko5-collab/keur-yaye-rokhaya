@@ -182,7 +182,8 @@
     devisNote.hidden = unitaire !== null;
     var resume = KYR.shop.resumeVariante(v);
     resumeEl.textContent = resume ? "Variante sélectionnée : " + resume : "";
-    totalEl.textContent = unitaire === null ? "Produit sur devis : le prix est confirmé sur WhatsApp." : "Total : " + KYR.fcfa(unitaire * qte);
+    totalEl.textContent = unitaire === null ? "" : "Total : " + KYR.fcfa(unitaire * qte);
+    totalEl.hidden = unitaire === null;
     bouton.href = KYR.lien(KYR.shop.messageProduit(p, v, qte));
     devisBtn.href = KYR.lien(KYR.shop.messageDevis(p, v));
     bouton.hidden = unitaire === null; devisBtn.hidden = unitaire !== null;
@@ -266,7 +267,7 @@
   if (opt.stockages) info.appendChild(el("p", "note", KYR.aPrixParCapacite(p) ? "Le prix change selon la capacité choisie. Il est confirmé sur WhatsApp avant toute commande." : "Le prix peut varier selon la capacité. Il est confirmé sur WhatsApp avant toute commande."));
   else info.appendChild(el("p", "note", "Le prix et la disponibilité sont confirmés sur WhatsApp avant toute commande."));
   var appelP = el("p", "call-line"); appelP.appendChild(document.createTextNode("Une question ? "));
-  var appelA = el("a", "", "Appeler le magasin " + KYR.affiche(KYR.telCommercial)); appelA.href = "tel:+" + KYR.telCommercial; appelP.appendChild(appelA);
+  var appelA = el("a", "", "Appeler le magasin "); appelA.href = "tel:+" + KYR.telCommercial; appelA.appendChild(el("span", "nowrap", KYR.affiche(KYR.telCommercial))); appelP.appendChild(appelA);
   info.appendChild(pas); info.appendChild(totalEl); info.appendChild(ajouterBtn); info.appendChild(bouton); info.appendChild(devisBtn); info.appendChild(statut); info.appendChild(appelP);
   majQte(1);
   grille.appendChild(info);

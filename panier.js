@@ -81,7 +81,7 @@
     res.appendChild(cmd);
     res.appendChild(el("p", "note", "Aucun paiement n’est fait sur le site : la commande se confirme sur WhatsApp."));
     var appelP = el("p", "call-line"); appelP.appendChild(document.createTextNode("Besoin d’aide ? "));
-    var appelA = el("a", "", "Appeler le magasin " + KYR.affiche(KYR.telCommercial)); appelA.href = "tel:+" + KYR.telCommercial; appelP.appendChild(appelA);
+    var appelA = el("a", "", "Appeler le magasin "); appelA.href = "tel:+" + KYR.telCommercial; appelA.appendChild(el("span", "nowrap", KYR.affiche(KYR.telCommercial))); appelP.appendChild(appelA);
     res.appendChild(appelP);
 
     var vider = el("button", "btn btn-outline btn-block", armeVider ? "Confirmer : vider le panier" : "Vider le panier"); vider.type = "button";
