@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Mon espace client — Keur Yaye Rokhaya</title>
+  <meta name="description" content="Votre espace client Keur Yaye Rokhaya.">
+  <meta name="robots" content="noindex">
+
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="auth.css">
+</head>
+
+<body>
+
+  <main class="auth-page">
+    <section class="auth-card auth-large">
+
+      <a href="index.html" class="auth-logo">
+        Keur Yaye Rokhaya
+      </a>
+
+      <h1>Mon espace client</h1>
+
+      <p id="espace-chargement" class="auth-subtitle" role="status">
+        Chargement de votre espace...
+      </p>
+
+      <p id="espace-erreur" class="auth-message" role="alert" hidden></p>
+
+      <div id="espace-contenu" hidden>
+
+        <div class="account-block">
+          <h2>Mon compte</h2>
+          <dl class="account-list">
+            <div>
+              <dt>Adresse e-mail</dt>
+              <dd id="compte-email"></dd>
+            </div>
+            <div>
+              <dt>Statut du compte</dt>
+              <dd id="compte-statut"></dd>
+            </div>
+            <div>
+              <dt>Adresse e-mail confirmée</dt>
+              <dd id="compte-confirme"></dd>
+            </div>
+          </dl>
+        </div>
+
+        <div class="account-block">
+          <h2>Mes commandes</h2>
+          <p id="commandes-etat" class="auth-subtitle" role="status">Chargement des commandes...</p>
+          <ul id="commandes-liste" class="order-list" hidden></ul>
+        </div>
+
+        <div class="account-actions">
+          <a href="index.html" class="auth-secondary">← Retour à la boutique</a>
+          <button type="button" id="deconnexion" class="auth-submit">Se déconnecter</button>
+        </div>
+
+      </div>
+
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="supabase-client.js"></script>
+  <script src="espace-client.js"></script>
+
+</body>
+</html>

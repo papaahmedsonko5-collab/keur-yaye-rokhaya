@@ -43,13 +43,23 @@
     button.textContent = "Création du compte...";
 
     try {
-      const { data, error } = await window.KYR_SUPABASE.auth.signUp({
+      // L'adresse de retour du lien de confirmation est celle du site servi (production, GitHub Pages...) : jamais écrite en dur.
+      const retour = (window.location.protocol === "http:" || window.location.protocol === "https:")
+        ? new URL("connexion.html", window.location.href).href
+        : "https://keuryayerokhaya.com/connexion.html";
+
+      const { error } = await window.KYR_SUPABASE.auth.signUp({
         email: email,
-        password: password
+        password: password,
+        options: {
+          emailRedirectTo: retour,
+          // Preuve du consentement : la version des documents est fixée par le serveur, pas par le navigateur.
+          data: { accept_terms: "true", accept_privacy: "true" }
+        }
       });
 
       if (error) {
-        console.error("Erreur inscription Supabase :", error);
+        console.error("Erreur inscription Supabase :", error.code || error.message);
 
         if (error.message.toLowerCase().includes("already registered")) {
           message.textContent = "Cette adresse e-mail possède déjà un compte.";
@@ -59,8 +69,6 @@
 
         return;
       }
-
-      console.log("Compte créé :", data);
 
       message.className = "auth-message success";
       message.textContent =

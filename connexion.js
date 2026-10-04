@@ -6,6 +6,23 @@
 
   if (!form || !message) return;
 
+  // Redirection après connexion : LISTE BLANCHE de pages internes (comparaison exacte).
+  // Toute autre valeur (adresse externe, //domaine, javascript:, chemin...) est ignorée : jamais de redirection ouverte.
+  const DESTINATIONS_AUTORISEES = ["espace-client.html", "index.html"];
+  const DESTINATION_PAR_DEFAUT = "espace-client.html";
+
+  function destination() {
+    const demande = new URLSearchParams(window.location.search).get("redirect");
+    return DESTINATIONS_AUTORISEES.indexOf(demande) !== -1 ? demande : DESTINATION_PAR_DEFAUT;
+  }
+
+  // Déjà connecté : inutile de ressaisir le mot de passe
+  if (window.KYR_SUPABASE) {
+    window.KYR_SUPABASE.auth.getSession().then(function (res) {
+      if (res && res.data && res.data.session) window.location.replace(destination());
+    }).catch(function () { /* on reste sur le formulaire */ });
+  }
+
   form.addEventListener("submit", async function (event) {
     event.preventDefault();
 
@@ -26,17 +43,18 @@
     button.textContent = "Connexion...";
 
     try {
-      const { data, error } =
+      const { error } =
         await window.KYR_SUPABASE.auth.signInWithPassword({
           email: email,
           password: password
         });
 
       if (error) {
-        console.error("Erreur connexion Supabase :", error);
+        console.error("Erreur connexion Supabase :", error.code || error.message);
 
         if (
-          error.message.toLowerCase().includes("email not confirmed")
+          error.code === "email_not_confirmed" ||
+          (error.message || "").toLowerCase().includes("email not confirmed")
         ) {
           message.textContent =
             "Votre adresse e-mail n'est pas encore confirmée. Consultez votre boîte mail.";
@@ -48,13 +66,11 @@
         return;
       }
 
-      console.log("Connexion réussie :", data.user?.id);
-
       message.className = "auth-message success";
       message.textContent = "Connexion réussie. Redirection...";
 
       setTimeout(function () {
-        window.location.href = "index.html";
+        window.location.href = destination();
       }, 800);
 
     } catch (error) {

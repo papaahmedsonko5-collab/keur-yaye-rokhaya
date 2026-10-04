@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Nouveau mot de passe — Keur Yaye Rokhaya</title>
+  <meta name="description" content="Choisissez un nouveau mot de passe pour votre compte.">
+  <meta name="robots" content="noindex">
+
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="auth.css">
+</head>
+
+<body>
+
+  <main class="auth-page">
+    <section class="auth-card">
+
+      <a href="index.html" class="auth-logo">
+        Keur Yaye Rokhaya
+      </a>
+
+      <h1>Nouveau mot de passe</h1>
+
+      <p id="mdp-verification" class="auth-subtitle" data-etat="verification" role="status">
+        Vérification du lien...
+      </p>
+
+      <form id="mdp-form" data-etat="formulaire" hidden>
+
+        <p class="auth-subtitle">
+          Choisissez un nouveau mot de passe d'au moins 8 caractères.
+        </p>
+
+        <div class="form-group">
+          <label for="password">Nouveau mot de passe</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            autocomplete="new-password"
+            minlength="8"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="password-confirm">Confirmer le mot de passe</label>
+          <input
+            type="password"
+            id="password-confirm"
+            name="password-confirm"
+            autocomplete="new-password"
+            minlength="8"
+            required
+          >
+        </div>
+
+        <button type="submit" class="auth-submit">
+          Enregistrer le mot de passe
+        </button>
+
+      </form>
+
+      <div id="mdp-invalide" data-etat="invalide" hidden>
+        <p class="auth-message" role="alert">
+          Ce lien n'est plus valide ou a expiré. Demandez un nouveau lien.
+        </p>
+        <div class="account-actions">
+          <a href="mot-de-passe-oublie.html" class="auth-submit">Demander un nouveau lien</a>
+        </div>
+      </div>
+
+      <p id="mdp-message" class="auth-message" aria-live="polite"></p>
+
+      <div class="auth-links">
+        <a href="connexion.html">Retour à la connexion</a>
+      </div>
+
+      <a href="index.html" class="auth-back">
+        ← Retour à la boutique
+      </a>
+
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="supabase-client.js"></script>
+  <script src="nouveau-mot-de-passe.js"></script>
+
+</body>
+</html>
