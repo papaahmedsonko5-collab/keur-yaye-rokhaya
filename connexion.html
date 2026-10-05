@@ -5,9 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Connexion — Keur Yaye Rokhaya</title>
-  <meta name="description" content="Connectez-vous à votre espace client Keur Yaye Rokhaya.">
+  <meta
+    name="description"
+    content="Connectez-vous à votre espace client Keur Yaye Rokhaya."
+  >
 
   <meta name="robots" content="noindex">
+
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="auth.css">
 </head>
@@ -55,12 +59,20 @@
           Se connecter
         </button>
 
-        <p id="connexion-message" class="auth-message" aria-live="polite"></p>
+        <p
+          id="connexion-message"
+          class="auth-message"
+          aria-live="polite"
+        ></p>
 
       </form>
 
       <div class="auth-links">
-        <a href="mot-de-passe-oublie.html" id="mot-de-passe-oublie">
+
+        <a
+          href="mot-de-passe-oublie.html"
+          id="mot-de-passe-oublie"
+        >
           Mot de passe oublié ?
         </a>
 
@@ -69,6 +81,7 @@
         <a href="inscription.html">
           Créer un compte
         </a>
+
       </div>
 
       <a href="index.html" class="auth-back">
@@ -78,9 +91,12 @@
     </section>
   </main>
 
+  <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
   <script src="supabase-client.js"></script>
+
+  <!-- Authentification -->
   <script src="connexion.js"></script>
 
 </body>
