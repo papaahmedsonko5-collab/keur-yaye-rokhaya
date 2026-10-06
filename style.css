@@ -606,6 +606,7 @@ html.malick-ouvert { overflow: hidden; }
 .menu-btn { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--glass-edge); background: var(--glass-strong); color: var(--ink); cursor: pointer; }
 .menu-btn:hover, .menu-btn:active { background: #fff; }
 .nav-extra { display: none; }
+.nav .nav-account { color: var(--accent-dark); font-weight: 700; }
 @media (max-width: 819px) {
   .header-grid { grid-template-columns: 1fr auto auto; grid-template-areas: "brand cta menu"; column-gap: 0.5rem; }
   .menu-btn { grid-area: menu; }
@@ -735,7 +736,7 @@ a.cart-name:hover { text-decoration: underline; text-underline-offset: 4px; }
 
 /* ===== En-tête : menu en liste (hamburger) jusqu'à 1079 px, menu en ligne au-delà =====
    Entre 820 et 1079 px, le menu en ligne ne tenait pas : il est donc replié comme sur téléphone. */
-@media (max-width: 1079px) {
+@media (max-width: 1239px) {
   .nav { display: none; }
   .menu-btn { display: inline-flex; grid-area: menu; }
   .header-grid { grid-template-columns: 1fr auto auto; grid-template-areas: "brand cta menu"; column-gap: 0.5rem; padding: 0.5rem 0.6rem 0.5rem 1rem; border-radius: 999px; }
@@ -746,10 +747,10 @@ a.cart-name:hover { text-decoration: underline; text-underline-offset: 4px; }
   .menu-ouvert .nav .nav-cart { display: flex; align-items: center; }
 }
 @media (max-width: 400px) { .header-grid > .btn { display: none; } .header-grid { grid-template-columns: 1fr auto; grid-template-areas: "brand menu"; } .header-grid.menu-ouvert { grid-template-areas: "brand menu" "nav nav"; } }
-@media (min-width: 1080px) {
+@media (min-width: 1240px) {
   .menu-btn { display: none; }
-  .header-grid { column-gap: 1.25rem; }
-  .nav { display: flex; gap: 1.1rem; }
+  .header-grid { column-gap: 1.25rem; max-width: 1240px; }
+  .nav { display: flex; gap: 0.7rem; }
 }
 
 /* ===== V2 : variantes (résumé de la sélection, pastilles de couleur sur les cartes) ===== */

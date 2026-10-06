@@ -145,7 +145,7 @@
     if (!grille || !nav) return;
     nav.id = nav.id || "menu-principal";
     var compteLien = document.createElement("a");
-    compteLien.className = "nav-extra";
+    compteLien.className = "nav-account";
     compteLien.href = "connexion.html";
     compteLien.textContent = "Connexion / Espace Client";
     nav.appendChild(compteLien);
@@ -176,7 +176,7 @@
     b.addEventListener("click", function () { etat(!grille.classList.contains("menu-ouvert")); });
     nav.addEventListener("click", function (e) { var t = e.target; while (t && t !== nav) { if (t.tagName === "A") { etat(false); return; } t = t.parentNode; } });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape" && grille.classList.contains("menu-ouvert")) { etat(false); b.focus(); } });
-    var large = window.matchMedia("(min-width: 1080px)");
+    var large = window.matchMedia("(min-width: 1240px)");
     function surTaille() { if (large.matches) etat(false); }
     if (large.addEventListener) large.addEventListener("change", surTaille); else if (large.addListener) large.addListener(surTaille);
   })();
