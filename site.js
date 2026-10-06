@@ -144,6 +144,11 @@
     var nav = grille && grille.querySelector(".nav");
     if (!grille || !nav) return;
     nav.id = nav.id || "menu-principal";
+    var compteLien = document.createElement("a");
+    compteLien.className = "nav-extra";
+    compteLien.href = "connexion.html";
+    compteLien.textContent = "Connexion / Espace Client";
+    nav.appendChild(compteLien);
     var panierLien = document.createElement("a");
     panierLien.className = "nav-cart"; panierLien.href = "panier.html";
     panierLien.innerHTML = 'Panier <span class="cart-count" data-cart-count hidden>0</span>';
