@@ -8,7 +8,7 @@
 
   // Redirection après connexion : LISTE BLANCHE de pages internes (comparaison exacte).
   // Toute autre valeur (adresse externe, //domaine, javascript:, chemin...) est ignorée : jamais de redirection ouverte.
-  const DESTINATIONS_AUTORISEES = ["espace-client.html", "index.html"];
+  const DESTINATIONS_AUTORISEES = ["espace-client.html", "index.html", "admin.html"];
   const DESTINATION_PAR_DEFAUT = "espace-client.html";
 
   function destination() {

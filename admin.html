@@ -1,0 +1,476 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Administration â€” Keur Yaye Rokhaya</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+
+  <meta
+    http-equiv="Content-Security-Policy"
+    content="default-src 'none'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self'; img-src 'self' data:; connect-src https://*.supabase.co; base-uri 'none'; form-action 'none'"
+  >
+
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+
+<body class="adm">
+
+  <a class="adm-skip" href="#adm-contenu">Aller au contenu</a>
+
+  <noscript>
+    <p class="adm-noscript">
+      JavaScript est nÃ©cessaire pour utiliser l'administration.
+    </p>
+  </noscript>
+
+  <!-- =========================================================
+       Ã‰CRANS AVANT ACCÃˆS
+       ========================================================= -->
+
+  <div id="adm-ecran" class="adm-centre">
+    <div class="adm-pile">
+
+      <p class="adm-marque-simple">
+        <img src="logo.png" alt="" width="30" height="36">
+        <span>
+          Keur Yaye Rokhaya
+          <small>Administration</small>
+        </span>
+      </p>
+
+      <!-- Chargement -->
+      <section
+        id="adm-v-chargement"
+        class="adm-carte"
+        aria-labelledby="adm-t-chargement"
+      >
+        <h1 id="adm-t-chargement" tabindex="-1">
+          Administration
+        </h1>
+
+        <p id="adm-chargement-texte" role="status">
+          VÃ©rification de votre sessionâ€¦
+        </p>
+      </section>
+
+      <!-- Erreur -->
+      <section
+        id="adm-v-erreur"
+        class="adm-carte"
+        aria-labelledby="adm-t-erreur"
+        hidden
+      >
+        <h1 id="adm-t-erreur" tabindex="-1">
+          Service indisponible
+        </h1>
+
+        <p
+          id="adm-erreur-texte"
+          class="adm-message adm-message-erreur"
+          role="alert"
+        ></p>
+
+        <div class="adm-actions">
+          <button
+            type="button"
+            id="adm-reessayer"
+            class="adm-btn adm-btn-primaire"
+          >
+            RÃ©essayer
+          </button>
+
+          <a
+            class="adm-btn adm-btn-secondaire"
+            href="index.html"
+          >
+            Retour Ã  la boutique
+          </a>
+        </div>
+      </section>
+
+      <!-- AccÃ¨s refusÃ© -->
+      <section
+        id="adm-v-refus"
+        class="adm-carte"
+        aria-labelledby="adm-t-refus"
+        hidden
+      >
+        <h1 id="adm-t-refus" tabindex="-1">
+          AccÃ¨s refusÃ©
+        </h1>
+
+        <p>
+          Ce compte n'a pas accÃ¨s Ã  l'administration.
+        </p>
+
+        <p class="adm-aide">
+          Si vous pensez qu'il s'agit d'une erreur,
+          contactez le propriÃ©taire de la boutique.
+        </p>
+
+        <div class="adm-actions">
+          <a
+            class="adm-btn adm-btn-primaire"
+            href="index.html"
+          >
+            Retour Ã  la boutique
+          </a>
+
+          <button
+            type="button"
+            class="adm-btn adm-btn-secondaire"
+            data-action="deconnexion"
+          >
+            Se dÃ©connecter
+          </button>
+        </div>
+      </section>
+
+      <!-- MFA -->
+      <section
+        id="adm-v-mfa"
+        class="adm-carte"
+        aria-labelledby="adm-t-mfa"
+        hidden
+      >
+        <h1 id="adm-t-mfa" tabindex="-1">
+          Authentification renforcÃ©e requise
+        </h1>
+
+        <p>
+          Pour accÃ©der Ã  l'administration, vous devez activer
+          et valider l'authentification Ã  deux facteurs (TOTP).
+        </p>
+
+        <p class="adm-compte">
+          ConnectÃ© :
+          <strong id="adm-mfa-email"></strong>
+          <span id="adm-mfa-role" class="adm-badge"></span>
+        </p>
+
+        <!-- Configuration MFA -->
+        <div id="adm-mfa-config" hidden>
+          <p class="adm-aide">
+            Vous aurez besoin d'une application
+            d'authentification
+            (Google Authenticator, Microsoft Authenticator,
+            Authyâ€¦).
+          </p>
+
+          <button
+            type="button"
+            id="adm-mfa-demarrer"
+            class="adm-btn adm-btn-primaire"
+          >
+            Configurer la sÃ©curitÃ©
+          </button>
+        </div>
+
+        <!-- EnrÃ´lement MFA -->
+        <div id="adm-mfa-enrol" hidden>
+
+          <ol class="adm-etapes">
+            <li>
+              Ouvrez votre application d'authentification.
+            </li>
+
+            <li>
+              Scannez ce QR code, ou saisissez la clÃ© ci-dessous.
+            </li>
+
+            <li>
+              Saisissez le code Ã  6 chiffres qu'elle affiche.
+            </li>
+          </ol>
+
+          <img
+            id="adm-mfa-qr"
+            class="adm-qr"
+            alt="QR code Ã  scanner avec votre application d'authentification"
+            width="200"
+            height="200"
+            hidden
+          >
+
+          <p class="adm-aide">
+            ClÃ© de configuration manuelle :
+            <code
+              id="adm-mfa-secret"
+              class="adm-code"
+            ></code>
+          </p>
+        </div>
+
+        <!-- Validation MFA -->
+        <form
+          id="adm-mfa-form"
+          novalidate
+          hidden
+        >
+          <label for="adm-mfa-code">
+            Code Ã  6 chiffres
+          </label>
+
+          <input
+            id="adm-mfa-code"
+            name="code"
+            class="adm-champ-code"
+            type="text"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            pattern="[0-9]{6}"
+            maxlength="6"
+            required
+          >
+
+          <div class="adm-actions">
+            <button
+              type="submit"
+              id="adm-mfa-valider"
+              class="adm-btn adm-btn-primaire"
+            >
+              Valider
+            </button>
+
+            <button
+              type="button"
+              id="adm-mfa-annuler"
+              class="adm-btn adm-btn-secondaire"
+              hidden
+            >
+              Annuler la configuration
+            </button>
+          </div>
+        </form>
+
+        <p
+          id="adm-mfa-message"
+          class="adm-message"
+          aria-live="polite"
+        ></p>
+
+        <p class="adm-bas">
+          <button
+            type="button"
+            class="adm-lien"
+            data-action="deconnexion"
+          >
+            Se dÃ©connecter
+          </button>
+        </p>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- =========================================================
+       APPLICATION ADMINISTRATION
+       ========================================================= -->
+
+  <div id="adm-app" class="adm-shell" hidden>
+
+    <!-- VOILE MOBILE -->
+    <div
+      id="adm-voile"
+      class="adm-voile"
+      hidden
+      aria-hidden="true"
+    ></div>
+
+    <!-- SIDEBAR -->
+    <aside
+      id="adm-side"
+      class="adm-side"
+      aria-label="Navigation de l'administration"
+    >
+
+      <p class="adm-marque">
+        <img
+          src="logo.png"
+          alt=""
+          width="30"
+          height="36"
+        >
+
+        <span>
+          <strong>Keur Yaye Rokhaya</strong>
+          <small>Administration</small>
+        </span>
+      </p>
+
+      <!-- Navigation gÃ©nÃ©rÃ©e par admin-ui.js -->
+      <nav
+        id="adm-nav"
+        aria-label="Modules"
+      ></nav>
+
+      <div class="adm-user">
+
+        <p
+          class="adm-user-email"
+          id="adm-user-email"
+        ></p>
+
+        <p>
+          <span
+            id="adm-user-role"
+            class="adm-badge"
+          ></span>
+        </p>
+
+        <button
+          type="button"
+          class="adm-btn adm-btn-secondaire"
+          data-action="deconnexion"
+        >
+          Se dÃ©connecter
+        </button>
+
+        <a
+          class="adm-lien adm-lien-bloc"
+          href="index.html"
+        >
+          â† Retour Ã  la boutique
+        </a>
+
+      </div>
+
+    </aside>
+
+    <!-- CONTENU -->
+    <div class="adm-corps">
+
+      <!-- BARRE MOBILE -->
+      <header class="adm-barre">
+
+        <button
+          type="button"
+          id="adm-menu-btn"
+          class="adm-btn adm-btn-secondaire adm-btn-petit"
+          aria-label="Ouvrir le menu"
+          aria-controls="adm-side"
+          aria-expanded="false"
+        >
+          â˜°
+        </button>
+
+        <span>
+          Administration
+        </span>
+
+      </header>
+
+      <main
+        id="adm-contenu"
+        class="adm-main"
+      >
+
+        <header class="adm-entete">
+
+          <p class="adm-sur-titre">
+            Administration
+          </p>
+
+          <h1
+            id="adm-titre-app"
+            tabindex="-1"
+          >
+            Bienvenue,
+            <span id="adm-email"></span>
+          </h1>
+
+          <dl class="adm-infos">
+
+            <div>
+              <dt>RÃ´le</dt>
+              <dd>
+                <span
+                  id="adm-role"
+                  class="adm-badge"
+                ></span>
+              </dd>
+            </div>
+
+            <div>
+              <dt>SÃ©curitÃ©</dt>
+              <dd>
+                <span
+                  id="adm-securite"
+                  class="adm-badge"
+                ></span>
+              </dd>
+            </div>
+
+          </dl>
+
+        </header>
+
+        <!-- =====================================================
+             VUE DYNAMIQUE PILOTÃ‰E PAR admin-ui.js
+             ===================================================== -->
+
+        <section
+          id="adm-vue"
+          aria-live="polite"
+          aria-busy="false"
+        ></section>
+
+      </main>
+
+    </div>
+
+  </div>
+
+  <!-- =========================================================
+       NOTIFICATIONS
+       ========================================================= -->
+
+  <div
+    id="adm-toasts"
+    class="adm-toasts"
+    aria-live="polite"
+    aria-atomic="true"
+  ></div>
+
+  <!-- =========================================================
+       DIALOGUE
+       ========================================================= -->
+
+  <dialog
+    id="adm-dialog"
+    class="adm-dialog"
+    aria-labelledby="adm-dialog-titre"
+  >
+
+    <div class="adm-dialog-contenu">
+
+      <h2 id="adm-dialog-titre" tabindex="-1">
+        Confirmation
+      </h2>
+
+      <div id="adm-dialog-corps"></div>
+
+      <div
+        id="adm-dialog-actions"
+        class="adm-actions"
+      ></div>
+
+    </div>
+
+  </dialog>
+  <!-- =========================================================
+       SCRIPTS
+       ========================================================= -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="supabase-client.js"></script>
+  <script src="admin-ui.js"></script>
+  <script src="admin.js"></script>
+
+</body>
+</html>
