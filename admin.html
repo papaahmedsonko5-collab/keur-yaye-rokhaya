@@ -1,10 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Administration â€” Keur Yaye Rokhaya</title>
+  <title>Administration — Keur Yaye Rokhaya</title>
   <meta name="robots" content="noindex, nofollow">
   <meta name="referrer" content="no-referrer">
 
@@ -23,12 +23,12 @@
 
   <noscript>
     <p class="adm-noscript">
-      JavaScript est nÃ©cessaire pour utiliser l'administration.
+      JavaScript est nécessaire pour utiliser l'administration.
     </p>
   </noscript>
 
   <!-- =========================================================
-       Ã‰CRANS AVANT ACCÃˆS
+       ÉCRANS AVANT ACCÈS
        ========================================================= -->
 
   <div id="adm-ecran" class="adm-centre">
@@ -53,7 +53,7 @@
         </h1>
 
         <p id="adm-chargement-texte" role="status">
-          VÃ©rification de votre sessionâ€¦
+          Vérification de votre session…
         </p>
       </section>
 
@@ -80,19 +80,19 @@
             id="adm-reessayer"
             class="adm-btn adm-btn-primaire"
           >
-            RÃ©essayer
+            Réessayer
           </button>
 
           <a
             class="adm-btn adm-btn-secondaire"
             href="index.html"
           >
-            Retour Ã  la boutique
+            Retour à la boutique
           </a>
         </div>
       </section>
 
-      <!-- AccÃ¨s refusÃ© -->
+      <!-- Accès refusé -->
       <section
         id="adm-v-refus"
         class="adm-carte"
@@ -100,16 +100,16 @@
         hidden
       >
         <h1 id="adm-t-refus" tabindex="-1">
-          AccÃ¨s refusÃ©
+          Accès refusé
         </h1>
 
         <p>
-          Ce compte n'a pas accÃ¨s Ã  l'administration.
+          Ce compte n'a pas accès à l'administration.
         </p>
 
         <p class="adm-aide">
           Si vous pensez qu'il s'agit d'une erreur,
-          contactez le propriÃ©taire de la boutique.
+          contactez le propriétaire de la boutique.
         </p>
 
         <div class="adm-actions">
@@ -117,7 +117,7 @@
             class="adm-btn adm-btn-primaire"
             href="index.html"
           >
-            Retour Ã  la boutique
+            Retour à la boutique
           </a>
 
           <button
@@ -125,7 +125,7 @@
             class="adm-btn adm-btn-secondaire"
             data-action="deconnexion"
           >
-            Se dÃ©connecter
+            Se déconnecter
           </button>
         </div>
       </section>
@@ -138,16 +138,16 @@
         hidden
       >
         <h1 id="adm-t-mfa" tabindex="-1">
-          Authentification renforcÃ©e requise
+          Authentification renforcée requise
         </h1>
 
         <p>
-          Pour accÃ©der Ã  l'administration, vous devez activer
-          et valider l'authentification Ã  deux facteurs (TOTP).
+          Pour accéder à l'administration, vous devez activer
+          et valider l'authentification à deux facteurs (TOTP).
         </p>
 
         <p class="adm-compte">
-          ConnectÃ© :
+          Connecté :
           <strong id="adm-mfa-email"></strong>
           <span id="adm-mfa-role" class="adm-badge"></span>
         </p>
@@ -158,7 +158,7 @@
             Vous aurez besoin d'une application
             d'authentification
             (Google Authenticator, Microsoft Authenticator,
-            Authyâ€¦).
+            Authy…).
           </p>
 
           <button
@@ -166,11 +166,11 @@
             id="adm-mfa-demarrer"
             class="adm-btn adm-btn-primaire"
           >
-            Configurer la sÃ©curitÃ©
+            Configurer la sécurité
           </button>
         </div>
 
-        <!-- EnrÃ´lement MFA -->
+        <!-- Enrôlement MFA -->
         <div id="adm-mfa-enrol" hidden>
 
           <ol class="adm-etapes">
@@ -179,25 +179,25 @@
             </li>
 
             <li>
-              Scannez ce QR code, ou saisissez la clÃ© ci-dessous.
+              Scannez ce QR code, ou saisissez la clé ci-dessous.
             </li>
 
             <li>
-              Saisissez le code Ã  6 chiffres qu'elle affiche.
+              Saisissez le code à 6 chiffres qu'elle affiche.
             </li>
           </ol>
 
           <img
             id="adm-mfa-qr"
             class="adm-qr"
-            alt="QR code Ã  scanner avec votre application d'authentification"
+            alt="QR code à scanner avec votre application d'authentification"
             width="200"
             height="200"
             hidden
           >
 
           <p class="adm-aide">
-            ClÃ© de configuration manuelle :
+            Clé de configuration manuelle :
             <code
               id="adm-mfa-secret"
               class="adm-code"
@@ -212,7 +212,7 @@
           hidden
         >
           <label for="adm-mfa-code">
-            Code Ã  6 chiffres
+            Code à 6 chiffres
           </label>
 
           <input
@@ -259,7 +259,7 @@
             class="adm-lien"
             data-action="deconnexion"
           >
-            Se dÃ©connecter
+            Se déconnecter
           </button>
         </p>
       </section>
@@ -302,7 +302,7 @@
         </span>
       </p>
 
-      <!-- Navigation gÃ©nÃ©rÃ©e par admin-ui.js -->
+      <!-- Navigation générée par admin-ui.js -->
       <nav
         id="adm-nav"
         aria-label="Modules"
@@ -327,14 +327,14 @@
           class="adm-btn adm-btn-secondaire"
           data-action="deconnexion"
         >
-          Se dÃ©connecter
+          Se déconnecter
         </button>
 
         <a
           class="adm-lien adm-lien-bloc"
           href="index.html"
         >
-          â† Retour Ã  la boutique
+          ← Retour à la boutique
         </a>
 
       </div>
@@ -355,7 +355,7 @@
           aria-controls="adm-side"
           aria-expanded="false"
         >
-          â˜°
+          ☰
         </button>
 
         <span>
@@ -386,7 +386,7 @@
           <dl class="adm-infos">
 
             <div>
-              <dt>RÃ´le</dt>
+              <dt>Rôle</dt>
               <dd>
                 <span
                   id="adm-role"
@@ -396,7 +396,7 @@
             </div>
 
             <div>
-              <dt>SÃ©curitÃ©</dt>
+              <dt>Sécurité</dt>
               <dd>
                 <span
                   id="adm-securite"
@@ -410,7 +410,7 @@
         </header>
 
         <!-- =====================================================
-             VUE DYNAMIQUE PILOTÃ‰E PAR admin-ui.js
+             VUE DYNAMIQUE PILOTÉE PAR admin-ui.js
              ===================================================== -->
 
         <section
