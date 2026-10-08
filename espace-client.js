@@ -134,15 +134,29 @@
     }
 
     let utilisateur = null;
+    let reseauCoupe = false;
+    let sessionRefusee = false;
     try {
       // getUser() fait vérifier la session par le serveur Supabase (et non seulement par le navigateur).
       const r = await client.auth.getUser();
       utilisateur = r && r.data ? r.data.user : null;
+      if (!utilisateur && r && r.error) {
+        reseauCoupe = r.error.name === "AuthRetryableFetchError";
+        sessionRefusee = !reseauCoupe;
+      }
     } catch (e) {
       console.error("Erreur session :", e);
     }
 
-    if (!utilisateur) { versConnexion(); return; }
+    if (!utilisateur) {
+      // Réseau coupé : on le dit, sans renvoyer vers la connexion (sinon boucle de redirections tant que le réseau est coupé).
+      if (reseauCoupe) { montrerErreur("Connexion impossible pour le moment. Vérifiez votre réseau puis réessayez."); return; }
+      // Session refusée par le serveur mais encore présente dans le navigateur : on la retire (cet appareil seulement),
+      // sinon connexion.html, qui croit la session locale, renverrait ici en boucle.
+      if (sessionRefusee) { try { await client.auth.signOut({ scope: "local" }); } catch (e) { console.error("Erreur nettoyage session :", e); } }
+      versConnexion();
+      return;
+    }
 
     champEmail.textContent = utilisateur.email || "";
     chargement.hidden = true;
