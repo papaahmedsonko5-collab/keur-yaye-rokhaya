@@ -48,11 +48,17 @@
     <p class="credit">Site conçu par Sultan Agency</p>
   </div>
 </footer>
-<script src="products.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="supabase-client.js"></script>
+<script src="products.js" charset="utf-8"></script>
 <script src="tarifs.js"></script>
 <script src="site.js"></script>
 <script>
 (function () {
+  var cataloguePret = window.KYR_PRODUCTS_READY && typeof window.KYR_PRODUCTS_READY.then === "function"
+    ? window.KYR_PRODUCTS_READY : Promise.reject(new Error("Chargement du catalogue manquant"));
+  cataloguePret.then(function () {
   var params = new URLSearchParams(location.search);
   var type = params.get("type");
   var TYPES = {
@@ -263,6 +269,10 @@
   }
 
   question();
+  }).catch(function () {
+    var quiz = document.getElementById("quiz");
+    if (quiz) quiz.textContent = "Le catalogue est momentanément indisponible. Réessayez plus tard ou contactez-nous sur WhatsApp.";
+  });
 })();
 </script>
 </body>

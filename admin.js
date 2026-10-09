@@ -32,8 +32,7 @@
     admin: "Administrateur technique",
   };
 
-  const PAGE_CONNEXION =
-    "/connexion?redirect=" + encodeURIComponent("admin.html");
+  const PAGE_CONNEXION = "connexion.html?redirect=" + encodeURIComponent("admin.html");
 
   const NOM_FACTEUR = "Keur Yaye Rokhaya Admin";
 
@@ -476,7 +475,9 @@
 
     etat.etaitAAL2 = false;
 
-    await preparerMfa();
+    if (!(await preparerMfa())) {
+      return;
+    }
 
     if (etaitAAL2) {
       ecrire(
@@ -493,7 +494,9 @@
     viderApp();
     etat.etaitAAL2 = false;
 
-    await preparerMfa();
+    if (!(await preparerMfa())) {
+      return;
+    }
     montrer("mfa");
   }
 
@@ -561,7 +564,7 @@
   async function preparerMfa() {
     if (etat.facteurEnrolement) {
       afficherModeMfa("enrolement");
-      return;
+      return true;
     }
 
     try {
@@ -577,6 +580,7 @@
 
         afficherModeMfa("configurer");
       }
+      return true;
     } catch (e) {
       console.error(
         "Administration — liste des facteurs :",
@@ -584,7 +588,8 @@
       );
 
       etat.facteurVerifie = null;
-      afficherModeMfa("configurer");
+      montrerErreur(MSG.indisponible);
+      return false;
     }
   }
 

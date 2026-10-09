@@ -51,7 +51,14 @@
     var attente = 2, ok = true;
     function un(reussi) { if (!reussi) ok = false; if (--attente === 0) fini(ok); }
     fetch("malick-kb.json").then(function (r) { return r.json(); }).then(function (j) { kb = j; un(true); }).catch(function () { un(false); });
-    if (Array.isArray(window.PRODUCTS)) un(true); else chargerScript("products.js", un);
+    if (window.KYR_PRODUCTS_READY && typeof window.KYR_PRODUCTS_READY.then === "function") {
+      window.KYR_PRODUCTS_READY.then(function () { un(true); }).catch(function () { un(false); });
+    } else if (Array.isArray(window.PRODUCTS) && window.PRODUCTS.length) un(true);
+    else chargerScript("products.js", function (charge) {
+      if (charge && window.KYR_PRODUCTS_READY && typeof window.KYR_PRODUCTS_READY.then === "function") {
+        window.KYR_PRODUCTS_READY.then(function () { un(true); }).catch(function () { un(false); });
+      } else un(false);
+    });
   }
   function valeurContact(cle) {
     var c = (kb && kb.contact) || {};

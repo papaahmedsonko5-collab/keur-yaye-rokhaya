@@ -5,6 +5,9 @@
 */
 (function () {
   "use strict";
+  var cataloguePret = window.KYR_PRODUCTS_READY && typeof window.KYR_PRODUCTS_READY.then === "function"
+    ? window.KYR_PRODUCTS_READY : Promise.reject(new Error("Chargement du catalogue manquant"));
+  cataloguePret.then(function () {
   var S = KYR.shop, tous = S.produits();
   var grille = document.getElementById("grid");
   if (!grille) return;
@@ -131,7 +134,7 @@
   /* ---------- cartes ---------- */
   function carte(p) {
     var c = el("article", "card"), lien = el("a", "card-link");
-    lien.href = "produit.html?p=" + encodeURIComponent(KYR.slug(p.nom));
+    lien.href = "produit.html?p=" + encodeURIComponent(p.slug || KYR.slug(p.nom));
     var media = el("div", p.image ? "card-media has-img" : "card-media");
     if (p.image) { var img = document.createElement("img"); img.src = p.image; img.alt = p.nom; img.loading = "lazy"; media.appendChild(img); }
     else media.appendChild(document.createTextNode(p.nom));
@@ -212,4 +215,8 @@
   lireAdresse();
   if (nbFiltres()) panneau.setAttribute("open", "");
   maj();
+  }).catch(function () {
+    var grille = document.getElementById("grid");
+    if (grille) grille.textContent = "Le catalogue est momentanément indisponible. Réessayez plus tard ou contactez-nous sur WhatsApp.";
+  });
 })();

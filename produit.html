@@ -43,15 +43,21 @@
     <p class="credit">Site conçu par Sultan Agency</p>
   </div>
 </footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="supabase-client.js"></script>
 <script src="products.js" charset="utf-8"></script>
 <script src="site.js"></script>
 <script src="shop.js"></script>
 <script>
 (function () {
+  var cataloguePret = window.KYR_PRODUCTS_READY && typeof window.KYR_PRODUCTS_READY.then === "function"
+    ? window.KYR_PRODUCTS_READY : Promise.reject(new Error("Chargement du catalogue manquant"));
+  cataloguePret.then(function () {
   var contenu = document.getElementById("contenu");
   var slug = new URLSearchParams(location.search).get("p");
   var produits = Array.isArray(window.PRODUCTS) ? window.PRODUCTS : [];
-  var p = produits.filter(function (x) { return KYR.slug(x.nom) === slug; })[0];
+  var p = produits.filter(function (x) { return x.slug === slug || KYR.slug(x.nom) === slug; })[0];
 
   function el(tag, cls, text) {
     var n = document.createElement(tag);
@@ -74,13 +80,13 @@
   document.title = p.nom + " | Keur Yaye Rokhaya";
   (function donneesPourGoogle() {
     var base = "https://keuryayerokhaya.com/";
-    var url = base + "produit.html?p=" + KYR.slug(p.nom);
+    var url = base + "produit.html?p=" + encodeURIComponent(p.slug || KYR.slug(p.nom));
     var canon = document.querySelector('link[rel="canonical"]'); if (canon) canon.href = url;
     var md = document.querySelector('meta[name="description"]');
     if (md) md.content = p.nom + " chez Keur Yaye Rokhaya à Dakar. " + (p.description || "") + " Commande sur WhatsApp, livraison partout au Sénégal.";
     var produit = { "@type": "Product", "name": p.nom, "category": p.categorie, "url": url };
     if (p.description) produit.description = p.description;
-    if (p.image) produit.image = base + p.image;
+    if (p.image) produit.image = new URL(p.image, base).href;
     var marque = p.marque || ({ "iPhone": "Apple", "Apple Watch": "Apple", "Samsung": "Samsung", "Google Pixel": "Google" })[p.categorie];
     if (marque) produit.brand = { "@type": "Brand", "name": marque };
     var st = (p.options && p.options.stockages) || [];
@@ -112,6 +118,13 @@
     etat: opt.etats ? opt.etats[0] : null,
     sim: opt.sims ? opt.sims[0] : null
   };
+  if (Array.isArray(p.variants) && p.variants.length) {
+    var premiere = p.variants[0];
+    choix.couleur = premiere.color || "";
+    choix.stockage = premiere.capacity || "";
+    choix.etat = premiere.condition ? { nom: premiere.condition } : null;
+    choix.sim = premiere.sim ? { nom: premiere.sim } : null;
+  }
 
   var grille = el("div", "product-grid");
   var media = el("div", "product-media");
@@ -152,6 +165,8 @@
   info.appendChild(prixEl);
   var devisNote = el("p", "quote-note", "Le prix de cette variante n’est pas affiché : il vous est donné sur demande, par WhatsApp."); devisNote.hidden = true;
   info.appendChild(devisNote);
+  var varianteIndisponible = el("p", "note warn", "Cette combinaison n’existe pas dans le catalogue. Choisissez une variante enregistrée."); varianteIndisponible.hidden = true;
+  info.appendChild(varianteIndisponible);
   // V2 : rappel clair de la variante choisie (capacité, couleur, SIM, état)
   var resumeEl = el("p", "variant-summary"); resumeEl.setAttribute("aria-live", "polite");
   info.appendChild(resumeEl);
@@ -175,7 +190,10 @@
     return { couleur: choix.couleur || "", stockage: choix.stockage || "", etat: choix.etat ? choix.etat.nom : "", sim: choix.sim ? choix.sim.nom : "" };
   }
   function majLien() {
-    var v = variante(), unitaire = KYR.shop.prixDe(p, v.stockage);
+    var v = variante(), varianteConnue = KYR.shop.varianteValide(p, v);
+    var unitaire = varianteConnue ? KYR.shop.prixDe(p, v.stockage, varianteConnue) : null;
+    varianteIndisponible.hidden = !!varianteConnue;
+    ajouterBtn.disabled = !varianteConnue;
     choix.prix = unitaire;
     prixV.textContent = KYR.shop.prixTexte(unitaire);
     prixEl.classList.toggle("is-quote", unitaire === null);
@@ -184,9 +202,9 @@
     resumeEl.textContent = resume ? "Variante sélectionnée : " + resume : "";
     totalEl.textContent = unitaire === null ? "" : "Total : " + KYR.fcfa(unitaire * qte);
     totalEl.hidden = unitaire === null;
-    bouton.href = KYR.lien(KYR.shop.messageProduit(p, v, qte));
-    devisBtn.href = KYR.lien(KYR.shop.messageDevis(p, v));
-    bouton.hidden = unitaire === null; devisBtn.hidden = unitaire !== null;
+    bouton.href = varianteConnue ? KYR.lien(KYR.shop.messageProduit(p, v, qte)) : "#";
+    devisBtn.href = varianteConnue ? KYR.lien(KYR.shop.messageDevis(p, v)) : "#";
+    bouton.hidden = !varianteConnue || unitaire === null; devisBtn.hidden = !varianteConnue || unitaire !== null;
   }
 
   var pas = el("div", "qty-row");
@@ -201,13 +219,13 @@
   stepper.appendChild(moins); stepper.appendChild(sortie); stepper.appendChild(plus); pas.appendChild(stepper);
 
   ajouterBtn.addEventListener("click", function () {
-    var r = KYR.shop.ajouter(KYR.slug(p.nom), variante(), qte);
+    var r = KYR.shop.ajouter(p.slug || KYR.slug(p.nom), variante(), qte);
     statut.hidden = false; statut.textContent = "";
     if (r.ok) {
       statut.appendChild(document.createTextNode("Ajouté au panier (" + r.nombre + " article" + (r.nombre > 1 ? "s" : "") + " au total). "));
       var a = el("a", "", "Voir le panier"); a.href = "panier.html"; statut.appendChild(a);
     } else {
-      statut.textContent = r.raison === "plein" ? "Le panier est plein (20 produits différents au maximum). Passez commande ou retirez un produit." : "Impossible d’ajouter ce produit.";
+      statut.textContent = r.raison === "plein" ? "Le panier est plein (20 produits différents au maximum). Passez commande ou retirez un produit." : r.raison === "variante" ? "Cette combinaison n’existe pas dans le catalogue." : "Impossible d’ajouter ce produit.";
     }
   });
 
@@ -237,7 +255,7 @@
     opt.stockages.forEach(function (s, i) {
       var b = el("button", "pill-btn cap-btn"); b.type = "button";
       b.appendChild(document.createTextNode(nomStock(s)));
-      if (KYR.aPrixParCapacite(p)) { var prc = KYR.shop.prixDe(p, nomStock(s)); b.appendChild(el("small", "", prc === null ? "Sur devis" : KYR.fcfa(prc))); }
+      if (KYR.aPrixParCapacite(p)) { var varianteCapacite = variante(); varianteCapacite.stockage = nomStock(s); var prc = KYR.shop.prixDe(p, nomStock(s), varianteCapacite); b.appendChild(el("small", "", prc === null ? "Sur devis" : KYR.fcfa(prc))); }
       b.setAttribute("aria-pressed", i === iniStock ? "true" : "false");
       b.addEventListener("click", function () { choix.stockage = nomStock(s); activer(rang, b); majLien(); });
       rang.appendChild(b);
@@ -295,6 +313,10 @@
     desc.appendChild(el("p", "", p.description));
     contenu.appendChild(desc);
   }
+  }).catch(function () {
+    var contenu = document.getElementById("contenu");
+    if (contenu) contenu.textContent = "Le catalogue est momentanément indisponible. Réessayez plus tard ou contactez-nous sur WhatsApp.";
+  });
 })();
 </script>
 </body>
