@@ -45,6 +45,7 @@
   const STATUTS = {
     requested: "Demande reçue", confirmed: "Confirmée", preparing: "En préparation", ready: "Prête", delivered: "Livrée", cancelled: "Annulée",
     draft: "Brouillon", issued: "Émise", partially_paid: "Partiellement payée", paid: "Payée", pending: "À venir", overdue: "En retard",
+    failed: "Échoué", refunded: "Remboursé",
   };
   const STATUTS_COMMANDE = ["requested", "confirmed", "preparing", "ready", "delivered", "cancelled"];
   const RE_DATE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/;
@@ -53,7 +54,7 @@
   function libelleColonne(c) { return LIBELLES[c] || (c.charAt(0).toUpperCase() + c.slice(1).replace(/_/g, " ")); }
 
   // Tons des badges de statut (vert = succès, ambre = attention, rouge = problème, violet = émis, neutre = autre ou inconnu).
-  const TONS_STATUT = { requested: "ambre", confirmed: "vert", preparing: "ambre", ready: "vert", delivered: "vert", cancelled: "rouge", draft: "neutre", issued: "violet", partially_paid: "ambre", paid: "vert", pending: "ambre", overdue: "rouge" };
+  const TONS_STATUT = { requested: "ambre", confirmed: "vert", preparing: "ambre", ready: "vert", delivered: "vert", cancelled: "rouge", draft: "neutre", issued: "violet", partially_paid: "ambre", paid: "vert", pending: "ambre", overdue: "rouge", failed: "rouge", refunded: "neutre" };
   const RE_JOUR = /^\d{4}-\d{2}-\d{2}$/;
 
   function valeurAffichee(col, v, opts) {
@@ -376,9 +377,9 @@
   // Le CA et les paiements sont deux chiffres distincts : l'un n'est jamais présenté comme l'autre.
   // Ce qui ne peut pas être calculé de façon fiable s'affiche « Données indisponibles » : aucune valeur n'est inventée.
   const STATUT_COMMANDE_ANNULEE = "cancelled";
-  // Valeurs de payments.status à compter comme « encaissé ». VOLONTAIREMENT VIDE : les valeurs réellement présentes en base n'ont pas encore été confirmées
-  // et ne sont pas devinées. Tant que cette liste est vide, le détail par statut est affiché tel quel et le total encaissé reste « Données indisponibles ».
-  const STATUTS_PAIEMENT_ENCAISSE = [];
+  // Valeurs de payments.status à compter comme « encaissé ». Valeurs autorisées par la contrainte CHECK de la base (vérifiées sur le schéma réel) :
+  // pending, confirmed, failed, cancelled, refunded. Seul « confirmed » est un paiement encaissé ; les remboursés, échoués, annulés et en attente sont exclus.
+  const STATUTS_PAIEMENT_ENCAISSE = ["confirmed"];
   const STATUTS_ECHEANCE = ["pending", "overdue", "paid", "cancelled"], STATUTS_ECHEANCE_A_REGLER = ["pending", "overdue"];
   const STATUTS_FACTURE = ["draft", "issued", "partially_paid", "paid", "cancelled"], STATUTS_FACTURE_FACTUREE = ["issued", "partially_paid", "paid"], STATUTS_FACTURE_NON_SOLDEE = ["issued", "partially_paid"];
   const JOURS_ECHEANCE_PROCHE = 7, COMMANDES_PAR_PAGE = 100, COMMANDES_PAGES_MAX = 5;

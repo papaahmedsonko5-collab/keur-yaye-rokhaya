@@ -293,3 +293,15 @@ body.adm { padding-bottom: 0; }   /* style.css réserve de la place pour la barr
 /* ----- Préférences d'accessibilité ----- */
 @media (prefers-reduced-motion: reduce) { .adm-btn, .adm-nav-lien, .adm-actions-rapides a { transition: none; } .adm-squelette { animation: none; } .adm-side { transition: none; } .adm-btn:active:not(:disabled), .adm-btn-primaire:hover:not(:disabled) { transform: none; } }
 @media (prefers-reduced-transparency: reduce) { .adm-carte { background: #fff; -webkit-backdrop-filter: none; backdrop-filter: none; } }
+
+/* Formulaire de l'éditeur catalogue (fenêtre) : un champ par ligne */
+.adm-dialog form { display: grid; gap: 0.35rem; }
+.adm-dialog form > label:not(.adm-etiquette), .adm-dialog fieldset label:not(.adm-etiquette) { font-size: 0.85rem; font-weight: 700; color: var(--muted); margin-top: 0.6rem; }
+.adm-dialog form .adm-champ { width: 100%; min-width: 0; box-sizing: border-box; }
+.adm-dialog textarea.adm-champ { min-height: 6rem; resize: vertical; }
+.adm-dialog .adm-etiquette { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.6rem; }
+.adm-dialog fieldset.adm-bloc { margin: 0.6rem 0; padding: 0.8rem; border: 1px solid var(--line); border-radius: 12px; display: grid; gap: 0.35rem; min-width: 0; }
+.adm-dialog fieldset.adm-bloc legend { padding: 0 0.4rem; font-weight: 700; }
+.adm-televersement { display: grid; gap: 0.35rem; margin-top: 0.6rem; padding: 0.8rem; border: 1px dashed var(--line); border-radius: 12px; }
+.adm-televersement label { margin-top: 0; }
+.adm-apercu-image { max-width: 12rem; max-height: 12rem; object-fit: contain; border: 1px solid var(--line); border-radius: 10px; background: #fff; }

@@ -63,6 +63,53 @@
     return s;
   }
 
+  var BUCKET_IMAGES = "product-images";
+  var TAILLE_MAX_IMAGE = 2 * 1024 * 1024;
+  var TYPES_IMAGE = { "image/webp": "webp", "image/jpeg": "jpg", "image/png": "png" };
+
+  function zoneImage(form, champImage, slug) {
+    var id = "adm-cat-fichier-" + Math.random().toString(36).slice(2, 8);
+    var bloc = ui.el("div", { class: "adm-televersement" });
+    var l = ui.el("label", { for: id, text: "Envoyer une photo (WebP, JPG ou PNG, 2 Mo maximum)" });
+    var f = document.createElement("input");
+    f.type = "file"; f.id = id; f.accept = "image/webp,image/jpeg,image/png"; f.className = "adm-champ";
+    var etat = ui.el("div", { class: "adm-note", "aria-live": "polite" });
+    var apercu = document.createElement("img");
+    apercu.className = "adm-apercu-image"; apercu.alt = "Aperçu de la photo du produit"; apercu.hidden = true;
+    function montrer(src) { if (src) { apercu.src = src; apercu.hidden = false; } else { apercu.hidden = true; } }
+    if (champImage.value && !/^(javascript|data):/i.test(champImage.value)) montrer(champImage.value);
+    champImage.addEventListener("change", function () {
+      var v = champImage.value.trim();
+      montrer(v && !/^(javascript|data):/i.test(v) ? v : "");
+    });
+    f.addEventListener("change", async function () {
+      var fichier = f.files && f.files[0];
+      if (!fichier) return;
+      var ext = TYPES_IMAGE[fichier.type];
+      if (!ext) { etat.textContent = "Format refusé. Utilisez WebP, JPG ou PNG."; f.value = ""; return; }
+      if (fichier.size > TAILLE_MAX_IMAGE) { etat.textContent = "Photo trop lourde (" + (fichier.size / 1048576).toFixed(1) + " Mo). Maximum : 2 Mo."; f.value = ""; return; }
+      var base = String(slug.value || "produit").toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60) || "produit";
+      var chemin = "produits/" + base + "-" + Date.now() + "." + ext;
+      f.disabled = true; etat.textContent = "Envoi en cours…";
+      try {
+        var r = await window.KYR_SUPABASE.storage.from(BUCKET_IMAGES).upload(chemin, fichier, { contentType: fichier.type, upsert: false, cacheControl: "31536000" });
+        if (r.error) throw r.error;
+        var pub = window.KYR_SUPABASE.storage.from(BUCKET_IMAGES).getPublicUrl(chemin);
+        var url = pub && pub.data && pub.data.publicUrl;
+        if (!url || !/^https:\/\//.test(url)) throw new Error("Adresse publique introuvable après l’envoi.");
+        champImage.value = url; montrer(url);
+        etat.textContent = "Photo envoyée. Cliquez sur « Enregistrer » pour l’associer au produit.";
+      } catch (e) {
+        var msg = String((e && e.message) || "");
+        if (/bucket not found|not found/i.test(msg) || (e && Number(e.statusCode) === 404)) etat.textContent = "Stockage des images non disponible : le dossier « " + BUCKET_IMAGES + " » n’existe pas encore côté Supabase.";
+        else if (/row-level security|violates|unauthorized|not allowed|403|401/i.test(msg) || (e && (Number(e.statusCode) === 403 || Number(e.statusCode) === 401))) etat.textContent = "Envoi refusé : votre compte n’a pas le droit d’ajouter des images.";
+        else etat.textContent = "Envoi impossible. Vérifiez la connexion et réessayez.";
+      } finally { f.disabled = false; f.value = ""; }
+    });
+    bloc.appendChild(l); bloc.appendChild(f); bloc.appendChild(etat); bloc.appendChild(apercu);
+    form.appendChild(bloc);
+  }
+
   function caseACocher(form, cle, libelle, checked) {
     var ligne = ui.el("label", { class: "adm-etiquette" });
     var input = document.createElement("input"); input.type = "checkbox"; input.name = cle; input.checked = checked === true;
@@ -139,7 +186,8 @@
       selecteur(form, "brand_id", "Marque", refs[0].data || [], product && product.brand_id);
       selecteur(form, "category_id", "Catégorie", refs[1].data || [], product && product.category_id);
       champ(form, "description", "Description", product && product.description, "textarea");
-      champ(form, "image_url", "Image (chemin ou URL existante ; aucun téléversement configuré)", product && product.image_url, "text");
+      var champImage = champ(form, "image_url", "Image du produit (rempli automatiquement après l’envoi, ou collez un chemin / une URL)", product && product.image_url, "text");
+      zoneImage(form, champImage, slug);
       caseACocher(form, "is_active", "Produit actif", !product || product.is_active === true);
       caseACocher(form, "is_featured", "Produit mis en avant", product && product.is_featured === true);
       var zoneVariants = ui.el("div", { class: "adm-pile" });

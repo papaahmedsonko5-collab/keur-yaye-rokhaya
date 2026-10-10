@@ -1,0 +1,42 @@
+/* Page de connexion : carte « verre » violette, champs à étiquette avec icône, œil du mot de passe, bouton dégradé.
+   Chargé UNIQUEMENT par connexion.html (après style.css et auth.css) : aucune autre page n'est affectée.
+   Palette officielle KYR uniquement (violet, encre, tuile, trait) ; aucune couleur de marque ajoutée. */
+/* Le site pose sa photo d'enseigne floutée en fond fixe (body::before) sous un voile blanc (body::after) : on garde la photo et on teinte seulement le voile de violet sur cette page. */
+.page-connexion { padding-bottom: 0; }
+.page-connexion::after { background: radial-gradient(58rem 40rem at 10% -10%, rgba(132, 25, 203, 0.24), transparent 62%), radial-gradient(50rem 38rem at 108% 106%, rgba(106, 18, 168, 0.2), transparent 60%), rgba(248, 247, 250, 0.84); }
+.page-connexion .auth-card { max-width: 28rem; padding: 1.6rem 1.25rem 1.2rem; border-radius: 28px; box-shadow: var(--glass-shadow), 0 26px 60px rgba(106, 18, 168, 0.15); }
+@media (min-width: 560px) { .page-connexion .auth-card { padding: 2.2rem 2rem 1.4rem; } }
+.page-connexion .auth-logo { display: flex; flex-direction: column; align-items: center; justify-content: center; width: fit-content; margin: 0 auto; gap: 0.35rem; font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; }
+.page-connexion .auth-logo img { display: block; width: auto; height: 3.4rem; }
+.page-connexion h1 { margin: 0.9rem 0 0.4rem; text-align: center; font-size: clamp(1.55rem, 6vw, 1.9rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; text-wrap: balance; }
+.connexion-accent { color: var(--accent); }
+.page-connexion .auth-subtitle { margin: 0 0 1.4rem; text-align: center; font-size: 1rem; text-wrap: balance; }
+
+/* Champ : icône à gauche, étiquette au-dessus de la saisie, œil à droite */
+.page-connexion .champ { position: relative; display: grid; grid-template-columns: 3.1rem minmax(0, 1fr); grid-template-rows: auto auto; align-items: center; gap: 0; margin-bottom: 0.85rem; padding: 0.55rem 0.9rem 0.55rem 0; min-height: 4.3rem; border: 1px solid var(--line); border-radius: 18px; background: rgba(255, 255, 255, 0.9); transition: border-color 0.15s, box-shadow 0.15s; }
+.page-connexion .champ--mdp { grid-template-columns: 3.1rem minmax(0, 1fr) 2.75rem; padding-right: 0.35rem; }
+.page-connexion .champ:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(132, 25, 203, 0.28); }
+.champ-icone { grid-column: 1; grid-row: 1 / span 2; display: grid; place-items: center; color: var(--muted); }
+.champ-icone svg, .champ-oeil svg { width: 1.35rem; height: 1.35rem; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.page-connexion .champ label { grid-column: 2; grid-row: 1; font-size: 0.82rem; font-weight: 700; color: var(--ink); }
+.page-connexion .champ input { grid-column: 2; grid-row: 2; width: 100%; min-width: 0; min-height: 1.9rem; padding: 0; border: 0; border-radius: 0; background: transparent; color: var(--ink); font: inherit; font-size: 1rem; }
+.page-connexion .champ input::placeholder { color: var(--muted); opacity: 1; }
+.page-connexion .champ input:focus, .page-connexion .champ input:focus-visible { outline: none; }
+.page-connexion .champ input:-webkit-autofill { -webkit-text-fill-color: var(--ink); box-shadow: 0 0 0 40rem #fff inset; transition: background-color 9999s; }
+.champ-oeil { grid-column: 3; grid-row: 1 / span 2; display: grid; place-items: center; width: 2.75rem; height: 2.75rem; padding: 0; border: 0; border-radius: 12px; background: transparent; color: var(--muted); cursor: pointer; }
+.champ-oeil:hover { background: var(--tile); color: var(--accent-dark); }
+.champ-oeil:focus-visible { outline: 3px solid var(--accent); outline-offset: 1px; }
+.champ-oeil[data-etat="masque"] .oeil-barre, .champ-oeil[data-etat="visible"] .oeil-ouvert { display: none; }
+
+.connexion-oublie { display: flex; align-items: center; justify-content: flex-end; min-height: 44px; margin: -0.2rem 0 0.35rem; color: var(--accent-dark); font-size: 0.95rem; font-weight: 700; text-underline-offset: 4px; }
+
+/* Bouton : dégradé violet, flèche dessinée en CSS (le texte change pendant l'envoi sans effacer la flèche) */
+.page-connexion .connexion-valider { position: relative; min-height: 54px; padding: 0.5rem 3.2rem; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%); color: #fff; font-size: 1.05rem; box-shadow: 0 10px 22px rgba(106, 18, 168, 0.28); transition: box-shadow 0.15s, filter 0.15s; }
+.connexion-valider::after { content: ""; position: absolute; right: 1.3rem; top: 50%; width: 1.35rem; height: 1.35rem; margin-top: -0.675rem; background: currentColor; -webkit-mask: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E") center / contain no-repeat; }
+.connexion-valider:hover:not(:disabled) { filter: brightness(1.06); box-shadow: 0 12px 26px rgba(106, 18, 168, 0.34); }
+.page-connexion .auth-message { text-align: center; }
+
+.connexion-pied { margin: 1.1rem 0 0; padding-top: 1rem; border-top: 1px solid var(--line); text-align: center; color: var(--muted); }
+.connexion-pied a { margin-left: 0.2rem; color: var(--accent-dark); font-weight: 800; text-underline-offset: 4px; }
+.page-connexion .auth-back { display: flex; justify-content: center; margin-top: 0.2rem; }
+@media (prefers-reduced-motion: reduce) { .page-connexion .champ, .page-connexion .connexion-valider { transition: none; } }

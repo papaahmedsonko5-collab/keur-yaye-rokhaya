@@ -17,9 +17,9 @@
 
   // ---------- Gestion des rôles ----------
   const ROLES = [["owner", "owner (propriétaire)"], ["admin", "admin (administrateur)"], ["manager", "manager (gestionnaire)"], ["support", "support (support)"]];
-  const RE_ROLE = /^[a-z_]{1,30}$/;
   const MESSAGE_GENERIQUE = ui.messageErreur({});
 
+  function roleReconnu(r) { return ROLES.some(function (x) { return x[0] === r; }); }
   function libelleRole(r) { for (let i = 0; i < ROLES.length; i++) if (ROLES[i][0] === r) return ROLES[i][1]; return String(r); }
   function mail(l) { return l && l.email ? String(l.email) : "(adresse non renvoyée)"; }
 
@@ -81,8 +81,8 @@
     let lignes = [];
     const zoneStatut = el("p", { class: "adm-message succes", role: "status", tabindex: "-1", hidden: true });
     const zoneAlerte = el("div", { class: "adm-message adm-message-erreur", role: "alert", tabindex: "-1", hidden: true });
-    const zoneTable = el("div");
-    const form = el("form", { novalidate: true, "aria-labelledby": "adm-roles-form-titre" });
+    const zoneTable = el("div", { class: "adm-equipe" });
+    const form = el("form", { class: "adm-form-roles", novalidate: true, "aria-labelledby": "adm-roles-form-titre" });
     let champId, selRole, erreurId, erreurRole;
 
     function afficher(zone, texte) { zone.textContent = texte || ""; zone.hidden = !texte; }
@@ -196,7 +196,7 @@
         const rechargee = await rechargerEquipe();
         if (!ctx.actif()) return;
         if (!rechargee) retourEtatInconnu("Attribution non vérifiable : le serveur a accepté la demande, mais la relecture a échoué. Le résultat reste inconnu.");
-        else if (!membre(id).some(function (l) { return l.role === role && l.active === true; })) retourNonConfirme("Attribution non confirmée : la liste ne montre pas ce rôle actif. Actualisez la page avant de recommencer.");
+        else if (!(function (c) { return c.length >= 1 && c.every(function (l) { return l.active === true; }); })(membre(id).filter(function (l) { return l.role === role; }))) retourNonConfirme("Attribution non confirmée : la liste ne montre pas ce rôle actif. Actualisez la page avant de recommencer.");
         else retourSucces("Rôle « " + role + " » attribué.");
       } catch (e) { await surEchec(e); }
       finally { occupe = false; if (ctx.actif()) basculerOccupe(false); }
@@ -207,8 +207,13 @@
       if (occupe) return;
       effacerMessages();
       const id = String(ligne.user_id).toLowerCase(), role = String(ligne.role);
-      if (!ui.RE_UUID.test(id) || !RE_ROLE.test(role)) { retourErreur("Cette ligne ne contient pas d'identifiant ou de rôle exploitable : désactivation impossible."); return; }
+      if (!ui.RE_UUID.test(id) || !roleReconnu(role)) { retourErreur("Cette ligne ne contient pas d'identifiant ou de rôle reconnu (owner, admin, manager, support) : désactivation impossible."); return; }
       if (id === moi) { retourErreur("Vous ne pouvez pas modifier votre propre rôle depuis cette interface (le serveur applique aussi cette règle)."); return; }
+      // Précaution d'interface (ne remplace PAS la protection du serveur) : on ne propose pas de retirer le dernier propriétaire actif de la liste.
+      if (role === "owner" && !lignes.some(function (l) { return l.role === "owner" && l.active === true && String(l.user_id).toLowerCase() !== id; })) {
+        retourErreur("Désactivation refusée par précaution : ce serait le dernier propriétaire actif de la liste. Au moins un propriétaire doit rester actif.");
+        return;
+      }
       occupe = true;                    // voir attribuer() : champs désactivés seulement après la confirmation
       try {
         const notes = ["Le rôle sera désactivé : l'utilisateur perd les droits liés à ce rôle. La ligne n'est pas supprimée."];
@@ -245,6 +250,7 @@
         const actif = l.active === true;
         const actions = el("td", { class: "adm-td-actions", "data-libelle": "Actions" });
         if (id === moi) actions.appendChild(el("span", { class: "adm-note", text: "Votre compte : non modifiable ici" }));
+        else if (actif && identifiantsOk && moi && !roleReconnu(l.role)) actions.appendChild(el("span", { class: "adm-note", text: "Rôle non reconnu : non modifiable ici" }));
         else if (actif && identifiantsOk && moi) actions.appendChild(el("button", { type: "button", class: "adm-btn adm-btn-secondaire adm-btn-petit", text: "Désactiver ce rôle", "aria-label": "Désactiver le rôle " + l.role + " de " + mail(l), clic: function () { desactiver(l); } }));
         tbody.appendChild(el("tr", null, [
           el("td", { text: mail(l), "data-libelle": "Utilisateur" }),
@@ -275,14 +281,16 @@
         [
           el("h3", { id: "adm-roles-form-titre", text: "Attribuer un rôle" }),
           el("p", { class: "adm-note", text: "Saisissez l'identifiant (UUID) du compte, visible dans Supabase, section Authentication > Users. Une confirmation vous sera demandée avant toute modification." }),
-          el("div", null, [el("label", { for: "adm-role-uuid", text: "Identifiant de l'utilisateur (UUID)" }), champId, el("p", { id: "adm-role-uuid-aide", class: "adm-note", text: "Format : 8-4-4-4-12 caractères, par exemple 00000000-0000-0000-0000-000000000000." }), erreurId]),
-          el("div", null, [el("label", { for: "adm-role-choix", text: "Rôle à attribuer" }), selRole, erreurRole]),
+          el("div", { class: "adm-form-champs" }, [
+          el("div", { class: "adm-groupe" }, [el("label", { for: "adm-role-uuid", text: "Identifiant de l'utilisateur (UUID)" }), champId, el("p", { id: "adm-role-uuid-aide", class: "adm-note", text: "Format : 8-4-4-4-12 caractères, par exemple 00000000-0000-0000-0000-000000000000." }), erreurId]),
+          el("div", { class: "adm-groupe" }, [el("label", { for: "adm-role-choix", text: "Rôle à attribuer" }), selRole, erreurRole]),
           el("div", { class: "adm-actions" }, [el("button", { type: "submit", class: "adm-btn adm-btn-primaire", text: "Attribuer le rôle" })]),
+          ]),
         ].forEach(function (n) { form.appendChild(n); });
         form.addEventListener("submit", function (ev) { ev.preventDefault(); attribuer(); });
         corps.appendChild(form);
       }
-      corps.appendChild(el("h3", { text: "Équipe actuelle" }));
+      corps.appendChild(el("h3", { class: "adm-equipe-titre", text: "Équipe actuelle" }));
       corps.appendChild(zoneTable);
       rendreTable();
     }
