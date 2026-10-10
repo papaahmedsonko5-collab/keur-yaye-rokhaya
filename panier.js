@@ -4,13 +4,16 @@
 */
 (function () {
   "use strict";
+  var cataloguePret = window.KYR_PRODUCTS_READY && typeof window.KYR_PRODUCTS_READY.then === "function"
+    ? window.KYR_PRODUCTS_READY : Promise.reject(new Error("Chargement du catalogue manquant"));
+  cataloguePret.then(function () {
   var S = KYR.shop, racine = document.getElementById("panier");
   var armeVider = null;
 
   function el(tag, cls, texte) { var n = document.createElement(tag); if (cls) n.className = cls; if (texte) n.textContent = texte; return n; }
 
   function ligne(l) {
-    var li = el("li", "cart-line" + (l.produit ? "" : " cart-line-off"));
+    var li = el("li", "cart-line" + (l.produit && !l.varianteIndisponible ? "" : " cart-line-off"));
     var media = el("div", "cart-img");
     if (l.produit && l.produit.image) { var img = document.createElement("img"); img.src = l.produit.image; img.alt = l.produit.nom; img.loading = "lazy"; media.appendChild(img); }
     li.appendChild(media);
@@ -19,6 +22,10 @@
     if (!l.produit) {
       corps.appendChild(el("p", "cart-name", "Ce produit n’est plus dans la boutique"));
       corps.appendChild(el("p", "note", "Il est ignoré dans le total et dans la commande. Vous pouvez le retirer."));
+    } else if (l.varianteIndisponible) {
+      corps.appendChild(el("p", "cart-name", l.produit.nom));
+      S.lignesVariante(l.v).forEach(function (t) { corps.appendChild(el("p", "cart-var", t)); });
+      corps.appendChild(el("p", "note warn", "Cette variante n’est plus disponible. Elle est ignorée dans le total et la commande ; retirez-la du panier."));
     } else {
       var nom = el("a", "cart-name", l.produit.nom); nom.href = "produit.html?p=" + encodeURIComponent(l.id);
       corps.appendChild(nom);
@@ -30,7 +37,7 @@
       }
     }
     var bas = el("div", "cart-actions");
-    if (l.produit) {
+    if (l.produit && !l.varianteIndisponible) {
       var pas = el("div", "stepper");
       var moins = el("button", "", "\u2212"); moins.type = "button"; moins.setAttribute("aria-label", "Diminuer la quantité de " + l.produit.nom); moins.disabled = l.q <= 1;
       var sortie = document.createElement("output"); sortie.textContent = l.q;
@@ -73,7 +80,8 @@
     res.appendChild(el("p", "note", "Livraison : le coût et le délai vous sont donnés avant la confirmation de la commande."));
     var r3 = el("p", "sum-row sum-total"); r3.appendChild(el("span", "", "Total")); r3.appendChild(el("b", "", t.complet ? KYR.fcfa(t.sousTotal) : "Prix à confirmer")); res.appendChild(r3);
     if (t.nbSurDevis) res.appendChild(el("p", "note warn", t.nbSurDevis + " produit" + (t.nbSurDevis > 1 ? "s sont" : " est") + " sur devis : le total n’est pas calculé, car il serait faux. L’équipe vous confirme le prix sur WhatsApp."));
-    if (t.indisponibles) res.appendChild(el("p", "note warn", t.indisponibles + " produit" + (t.indisponibles > 1 ? "s ne sont" : " n’est") + " plus dans la boutique et ne sera pas commandé."));
+    if (t.produitsAbsents) res.appendChild(el("p", "note warn", t.produitsAbsents + " produit" + (t.produitsAbsents > 1 ? "s ne sont" : " n’est") + " plus dans la boutique et ne sera pas commandé."));
+    if (t.variantesIndisponibles) res.appendChild(el("p", "note warn", t.variantesIndisponibles + " variante" + (t.variantesIndisponibles > 1 ? "s ne sont" : " n’est") + " plus disponible et ne sera pas commandée."));
 
     var cmd = el("a", "btn btn-wa btn-block", t.nb > 0 && t.nbSurDevis === t.nb ? "Demander le prix sur WhatsApp" : "Commander via WhatsApp"); cmd.target = "_blank"; cmd.rel = "noopener";
     if (t.nb > 0) cmd.href = KYR.lien(S.messageCommande(liste));
@@ -97,4 +105,7 @@
   window.addEventListener("kyr:panier", function () { if (armeVider) { clearTimeout(armeVider); armeVider = null; } rendre(); });
   window.addEventListener("storage", function (e) { if (e.key === KYR.CLE_PANIER) rendre(); });
   rendre();
+  }).catch(function () {
+    if (racine) racine.textContent = "Le catalogue n’a pas pu être chargé. Votre panier est conservé sur cet appareil ; réessayez plus tard.";
+  });
 })();

@@ -31,7 +31,7 @@
   <div class="wrap wrap-large">
     <a class="back" href="index.html#nos-produits">Continuer mes achats</a>
     <h1>Panier</h1>
-    <div id="panier" aria-live="polite"></div>
+    <div id="panier" aria-live="polite">Chargement du catalogue…</div>
   </div>
 </main>
 <footer class="site-footer">
@@ -44,7 +44,10 @@
     <p class="credit">Site conçu par Sultan Agency</p>
   </div>
 </footer>
-<script src="products.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="supabase-client.js"></script>
+<script src="products.js" charset="utf-8"></script>
 <script src="site.js"></script>
 <script src="shop.js"></script>
 <script src="panier.js"></script>

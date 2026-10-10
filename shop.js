@@ -11,7 +11,7 @@
   function produits() { return Array.isArray(window.PRODUCTS) ? window.PRODUCTS : []; }
   function trouver(slug) {
     var liste = produits();
-    for (var i = 0; i < liste.length; i++) if (KYR.slug(liste[i].nom) === slug) return liste[i];
+    for (var i = 0; i < liste.length; i++) if (liste[i].slug === slug || KYR.slug(liste[i].nom) === slug) return liste[i];
     return null;
   }
 
@@ -20,15 +20,16 @@
   function stockages(p) { return ((p.options && p.options.stockages) || []).map(nomStock); }
   function couleurs(p) { return ((p.options && p.options.couleurs) || []).map(function (c) { return c.nom; }); }
   function prixValide(n) { return typeof n === "number" && isFinite(n) && n > 0 ? n : null; }
-  // Prix d'un produit pour une capacité donnée. null = pas de prix exploitable (affiché « Sur devis »).
-  function prixDe(p, stockage) {
+  // Le prix est résolu sur la variante exacte quand les lignes Supabase sont disponibles.
+  function prixDe(p, stockage, variante) {
+    if (Array.isArray(p.variants)) {
+      var exacte = trouverVariante(p, variante || { stockage: stockage });
+      return exacte ? prixValide(exacte.price) : null;
+    }
     var st = (p.options && p.options.stockages) || [], parCapacite = false, i;
     for (i = 0; i < st.length; i++) if (typeof st[i] === "object" && prixValide(st[i].prix) !== null) parCapacite = true;
     if (parCapacite) {
-      // Produit avec des prix par capacité : seule la capacité choisie compte. Sans prix propre, c'est « Sur devis ».
-      for (i = 0; i < st.length; i++) {
-        if (typeof st[i] === "object" && st[i].nom === stockage && prixValide(st[i].prix) !== null) return st[i].prix;
-      }
+      for (i = 0; i < st.length; i++) if (typeof st[i] === "object" && st[i].nom === stockage && prixValide(st[i].prix) !== null) return st[i].prix;
       return null;
     }
     return prixValide(p.prix);
@@ -49,10 +50,11 @@
     var premierePrixee = typeof premiere === "object" && prixValide(premiere.prix) !== null;
     return premierePrixee ? "À partir de " + KYR.fcfa(mini.prix) : KYR.fcfa(mini.prix) + " (" + mini.nom + ")";
   }
-  // Tous les prix connus d'un produit (prix de base ou prix par capacité).
+  // Prix connus uniquement ; une valeur absente reste absente.
   function prixListe(p) {
+    if (Array.isArray(p.variants)) return p.variants.map(function (v) { return prixValide(v.price); }).filter(function (x) { return x !== null; });
     var liste = [], st = (p.options && p.options.stockages) || [];
-    st.forEach(function (s) { if (typeof s === "object" && prixValide(s.prix) !== null) liste.push(s.prix); });
+    st.forEach(function (x) { if (typeof x === "object" && prixValide(x.prix) !== null) liste.push(x.prix); });
     if (!liste.length && prixValide(p.prix) !== null) liste.push(p.prix);
     return liste;
   }
@@ -71,13 +73,30 @@
     if (champ === "sim") return (o.sims || []).map(function (e) { return e.nom; });
     return [];
   }
-  // Ne garde que des choix qui existent vraiment dans les options du produit.
+  function trouverVariante(p, v) {
+    if (!Array.isArray(p.variants) || !p.variants.length) return null;
+    v = v || {};
+    var correspondantes = p.variants.filter(function (r) {
+      return r.is_active !== false && (r.color || "") === (v.couleur || "") &&
+        (r.capacity || "") === (v.stockage || "") && (r.condition || "") === (v.etat || "") &&
+        (r.sim || "") === (v.sim || "");
+    });
+    if (v.variant_id) return correspondantes.filter(function (r) { return r.id === v.variant_id; })[0] || null;
+    return correspondantes.length === 1 ? correspondantes[0] : null;
+  }
+  // Ne valide que les combinaisons de variantes réellement enregistrées.
   function varianteValide(p, v) {
     var sortie = { couleur: "", stockage: "", etat: "", sim: "" };
     CHAMPS.forEach(function (c) {
       var val = v && typeof v[c] === "string" ? v[c] : "";
       if (val && valeursPossibles(p, c).indexOf(val) !== -1) sortie[c] = val;
     });
+    if (Array.isArray(p.variants)) {
+      var exacte = trouverVariante(p, sortie);
+      if (!exacte) return null;
+      sortie.variant_id = exacte.id;
+      sortie.price = prixValide(exacte.price);
+    }
     return sortie;
   }
   function lignesVariante(v) {
@@ -96,7 +115,7 @@
     return l;
   }
   function resumeVariante(v) { return partsVariante(v).join(" · "); }
-  function cleLigne(id, v) { return [id, v.couleur, v.stockage, v.etat, v.sim].join("|"); }
+  function cleLigne(id, v) { return [id, v.variant_id || "", v.couleur, v.stockage, v.etat, v.sim].join("|"); }
 
   /* ---------- panier (localStorage) ---------- */
   function lireBrut() {
@@ -110,7 +129,10 @@
       if (!(q >= 1)) return;
       var v = {};
       CHAMPS.forEach(function (c) { v[c] = l.v && typeof l.v[c] === "string" ? l.v[c].slice(0, 60) : ""; });
-      sortie.push({ id: l.id, v: v, q: Math.min(q, MAX_QTE) });
+      if (l.v && typeof l.v.variant_id === "string") v.variant_id = l.v.variant_id;
+      var p = trouver(l.id), resolue = p ? varianteValide(p, v) : null;
+      if (resolue) v = resolue;
+      sortie.push({ id: p && p.slug ? p.slug : l.id, v: v, q: Math.min(q, MAX_QTE) });
     });
     return sortie;
   }
@@ -122,6 +144,7 @@
     var p = trouver(slug);
     if (!p) return { ok: false, raison: "produit" };
     var v = varianteValide(p, variante), q = Math.max(1, Math.min(MAX_QTE, parseInt(qte, 10) || 1));
+    if (!v) return { ok: false, raison: "variante" };
     var lignes = lireBrut(), cle = cleLigne(slug, v), existe = null;
     lignes.forEach(function (l) { if (cleLigne(l.id, l.v) === cle) existe = l; });
     if (existe) existe.q = Math.min(MAX_QTE, existe.q + q);
@@ -143,16 +166,20 @@
   // Lignes prêtes à afficher. produit = null si le produit n'est plus au catalogue.
   function lignes() {
     return lireBrut().map(function (l) {
-      var p = trouver(l.id), v = p ? varianteValide(p, l.v) : l.v;
-      var unitaire = p ? prixDe(p, v.stockage) : null;
-      return { cle: cleLigne(l.id, l.v), id: l.id, produit: p, v: v, q: l.q, unitaire: unitaire, sousTotal: unitaire === null ? null : unitaire * l.q };
+      var p = trouver(l.id), v = p ? varianteValide(p, l.v) : null;
+      var indisponible = !!(p && Array.isArray(p.variants) && !v);
+      var variante = v || l.v;
+      var unitaire = p && !indisponible ? prixDe(p, variante.stockage, variante) : null;
+      return { cle: cleLigne(l.id, l.v), id: l.id, produit: p, varianteIndisponible: indisponible, v: variante, q: l.q, unitaire: unitaire, sousTotal: unitaire === null ? null : unitaire * l.q };
     });
   }
   // Le total n'est donné que si TOUTES les lignes disponibles ont un prix réel.
   function totaux(liste) {
-    var dispo = liste.filter(function (l) { return l.produit; }), somme = 0, devis = 0;
+    var dispo = liste.filter(function (l) { return l.produit && !l.varianteIndisponible; }), somme = 0, devis = 0;
     dispo.forEach(function (l) { if (l.sousTotal === null) devis++; else somme += l.sousTotal; });
-    return { nb: dispo.length, quantite: dispo.reduce(function (n, l) { return n + l.q; }, 0), sousTotal: somme, nbSurDevis: devis, complet: dispo.length > 0 && devis === 0, indisponibles: liste.length - dispo.length };
+    var absents = liste.filter(function (l) { return !l.produit; }).length;
+    var variantesIndisponibles = liste.filter(function (l) { return l.produit && l.varianteIndisponible; }).length;
+    return { nb: dispo.length, quantite: dispo.reduce(function (n, l) { return n + l.q; }, 0), sousTotal: somme, nbSurDevis: devis, complet: dispo.length > 0 && devis === 0, indisponibles: absents + variantesIndisponibles, produitsAbsents: absents, variantesIndisponibles: variantesIndisponibles };
   }
 
   /* ---------- messages WhatsApp (V2 : variantes et « Sur devis » ; jamais d'IMEI ni de donnée interne) ---------- */
@@ -170,18 +197,22 @@
     return l;
   }
   function messageProduit(p, variante, qte) {
-    var v = varianteValide(p, variante), q = Math.max(1, Math.min(MAX_QTE, parseInt(qte, 10) || 1)), u = prixDe(p, v.stockage);
+    var v = varianteValide(p, variante);
+    if (!v) return "Cette variante n’est plus disponible.";
+    var q = Math.max(1, Math.min(MAX_QTE, parseInt(qte, 10) || 1)), u = prixDe(p, v.stockage, v);
     return ENTETE + lignesMessage(p, v, q, u, 1).join("\n") + "\n\n" + (u === null ? "Merci de me confirmer le prix." : "Merci.");
   }
   function messageCommande(liste) {
-    var dispo = liste.filter(function (l) { return l.produit; }), t = totaux(liste), fin = [];
+    var dispo = liste.filter(function (l) { return l.produit && !l.varianteIndisponible; }), t = totaux(liste), fin = [];
     var corps = dispo.map(function (l, i) { return lignesMessage(l.produit, l.v, l.q, l.unitaire, i + 1).join("\n"); });
     if (dispo.length > 1 || dispo.some(function (l) { return l.q > 1; })) fin.push(t.complet ? "Total : " + KYR.fcfa(t.sousTotal) : "Total : prix à confirmer");
     return ENTETE + corps.join("\n\n") + "\n\n" + (fin.length ? fin.join("\n") + "\n\n" : "") + (t.nbSurDevis ? "Merci de me confirmer le prix." : "Merci.");
   }
   // Demande de prix pour une variante « Sur devis » (nom, capacité, couleur)
   function messageDevis(p, variante) {
-    var v = varianteValide(p, variante), s = "Bonjour Keur Yaye Rokhaya, je souhaite connaître le prix du " + p.nom;
+    var v = varianteValide(p, variante);
+    if (!v) return "Cette variante n’est plus disponible.";
+    var s = "Bonjour Keur Yaye Rokhaya, je souhaite connaître le prix du " + p.nom;
     if (v.stockage) s += " en " + v.stockage;
     if (v.couleur) s += ", couleur " + v.couleur;
     return s + ".";

@@ -272,7 +272,6 @@
        ========================================================= -->
 
   <div id="adm-app" class="adm-shell" hidden>
-
     <!-- VOILE MOBILE -->
     <div
       id="adm-voile"
@@ -280,14 +279,12 @@
       hidden
       aria-hidden="true"
     ></div>
-
-    <!-- SIDEBAR -->
+    <!-- BARRE LATÉRALE -->
     <aside
       id="adm-side"
       class="adm-side"
       aria-label="Navigation de l'administration"
     >
-
       <p class="adm-marque">
         <img
           src="logo.png"
@@ -295,33 +292,29 @@
           width="30"
           height="36"
         >
-
         <span>
           <strong>Keur Yaye Rokhaya</strong>
           <small>Administration</small>
         </span>
       </p>
-
-      <!-- Navigation générée par admin-ui.js -->
-      <nav
-        id="adm-nav"
-        aria-label="Modules"
-      ></nav>
-
+      <!-- Liste de navigation générée par admin-ui.js -->
+      <nav aria-label="Modules">
+        <ul
+          id="adm-nav"
+          class="adm-nav"
+        ></ul>
+      </nav>
       <div class="adm-user">
-
         <p
           class="adm-user-email"
           id="adm-user-email"
         ></p>
-
         <p>
           <span
             id="adm-user-role"
             class="adm-badge"
           ></span>
         </p>
-
         <button
           type="button"
           class="adm-btn adm-btn-secondaire"
@@ -329,102 +322,89 @@
         >
           Se déconnecter
         </button>
-
         <a
           class="adm-lien adm-lien-bloc"
           href="index.html"
         >
           ← Retour à la boutique
         </a>
-
       </div>
-
     </aside>
-
     <!-- CONTENU -->
     <div class="adm-corps">
-
-      <!-- BARRE MOBILE -->
-      <header class="adm-barre">
-
+      <!-- EN-TÊTE (ordinateur et mobile) -->
+      <header class="adm-topbar">
         <button
           type="button"
           id="adm-menu-btn"
-          class="adm-btn adm-btn-secondaire adm-btn-petit"
+          class="adm-btn adm-btn-secondaire adm-btn-petit adm-menu-btn"
           aria-label="Ouvrir le menu"
           aria-controls="adm-side"
           aria-expanded="false"
         >
-          ☰
+          <span
+            class="adm-burger"
+            aria-hidden="true"
+          ></span>
         </button>
-
-        <span>
-          Administration
-        </span>
-
+        <p class="adm-topbar-marque">
+          <img
+            src="logo.png"
+            alt=""
+            width="22"
+            height="26"
+          >
+          <span>Keur Yaye Rokhaya</span>
+        </p>
+        <div class="adm-topbar-droite">
+          <span class="adm-badge adm-badge--lecture" title="Cette interface sert à consulter les données. Seule la gestion des rôles (Équipe et rôles) peut modifier des informations, après confirmation.">Consultation</span>
+          <span
+            id="adm-email"
+            class="adm-topbar-email"
+          ></span>
+          <span
+            id="adm-role"
+            class="adm-badge"
+          ></span>
+          <span
+            id="adm-securite"
+            class="adm-badge"
+          ></span>
+          <button
+            type="button"
+            class="adm-btn adm-btn-secondaire adm-btn-petit adm-topbar-sortie"
+            data-action="deconnexion"
+          >
+            Se déconnecter
+          </button>
+        </div>
       </header>
-
       <main
         id="adm-contenu"
         class="adm-main"
       >
-
         <header class="adm-entete">
-
-          <p class="adm-sur-titre">
-            Administration
-          </p>
-
           <h1
             id="adm-titre-app"
             tabindex="-1"
           >
-            Bienvenue,
-            <span id="adm-email"></span>
+            Administration
           </h1>
-
-          <dl class="adm-infos">
-
-            <div>
-              <dt>Rôle</dt>
-              <dd>
-                <span
-                  id="adm-role"
-                  class="adm-badge"
-                ></span>
-              </dd>
-            </div>
-
-            <div>
-              <dt>Sécurité</dt>
-              <dd>
-                <span
-                  id="adm-securite"
-                  class="adm-badge"
-                ></span>
-              </dd>
-            </div>
-
-          </dl>
-
+          <p
+            id="adm-sous-titre"
+            class="adm-sous-titre"
+          ></p>
         </header>
-
         <!-- =====================================================
              VUE DYNAMIQUE PILOTÉE PAR admin-ui.js
              ===================================================== -->
-
         <section
           id="adm-vue"
-          aria-live="polite"
-          aria-busy="false"
+          aria-label="Contenu de la page"
         ></section>
-
       </main>
-
     </div>
-
   </div>
-
   <!-- =========================================================
        NOTIFICATIONS
        ========================================================= -->
