@@ -76,10 +76,11 @@
     var res = el("aside", "cart-summary"); res.setAttribute("aria-label", "Récapitulatif");
     res.appendChild(el("h2", "", "Récapitulatif"));
     var r1 = el("p", "sum-row"); r1.appendChild(el("span", "", "Articles")); r1.appendChild(el("b", "", String(t.quantite))); res.appendChild(r1);
-    var r2 = el("p", "sum-row"); r2.appendChild(el("span", "", t.nbSurDevis ? "Sous-total des produits avec prix" : "Sous-total")); r2.appendChild(el("b", "", KYR.fcfa(t.sousTotal))); res.appendChild(r2);
+    // Aucun sous-total « 0 FCFA » quand tous les produits sont sur devis.
+    if (t.nbSurDevis < t.nb) { var r2 = el("p", "sum-row"); r2.appendChild(el("span", "", t.nbSurDevis ? "Sous-total des produits avec prix" : "Sous-total")); r2.appendChild(el("b", "", KYR.fcfa(t.sousTotal))); res.appendChild(r2); }
     res.appendChild(el("p", "note", "Livraison : le coût et le délai vous sont donnés avant la confirmation de la commande."));
     var r3 = el("p", "sum-row sum-total"); r3.appendChild(el("span", "", "Total")); r3.appendChild(el("b", "", t.complet ? KYR.fcfa(t.sousTotal) : "Prix à confirmer")); res.appendChild(r3);
-    if (t.nbSurDevis) res.appendChild(el("p", "note warn", t.nbSurDevis + " produit" + (t.nbSurDevis > 1 ? "s sont" : " est") + " sur devis : le total n’est pas calculé, car il serait faux. L’équipe vous confirme le prix sur WhatsApp."));
+    if (t.nbSurDevis) res.appendChild(el("p", "note warn", t.nbSurDevis + " produit" + (t.nbSurDevis > 1 ? "s sont" : " est") + " sur devis : notre équipe vous confirme le prix sur WhatsApp."));
     if (t.produitsAbsents) res.appendChild(el("p", "note warn", t.produitsAbsents + " produit" + (t.produitsAbsents > 1 ? "s ne sont" : " n’est") + " plus dans la boutique et ne sera pas commandé."));
     if (t.variantesIndisponibles) res.appendChild(el("p", "note warn", t.variantesIndisponibles + " variante" + (t.variantesIndisponibles > 1 ? "s ne sont" : " n’est") + " plus disponible et ne sera pas commandée."));
 
