@@ -294,14 +294,27 @@ body.adm { padding-bottom: 0; }   /* style.css réserve de la place pour la barr
 @media (prefers-reduced-motion: reduce) { .adm-btn, .adm-nav-lien, .adm-actions-rapides a { transition: none; } .adm-squelette { animation: none; } .adm-side { transition: none; } .adm-btn:active:not(:disabled), .adm-btn-primaire:hover:not(:disabled) { transform: none; } }
 @media (prefers-reduced-transparency: reduce) { .adm-carte { background: #fff; -webkit-backdrop-filter: none; backdrop-filter: none; } }
 
-/* Formulaire de l'éditeur catalogue (fenêtre) : un champ par ligne */
-.adm-dialog form { display: grid; gap: 0.35rem; }
-.adm-dialog form > label:not(.adm-etiquette), .adm-dialog fieldset label:not(.adm-etiquette) { font-size: 0.85rem; font-weight: 700; color: var(--muted); margin-top: 0.6rem; }
-.adm-dialog form .adm-champ { width: 100%; min-width: 0; box-sizing: border-box; }
-.adm-dialog textarea.adm-champ { min-height: 6rem; resize: vertical; }
-.adm-dialog .adm-etiquette { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.6rem; }
-.adm-dialog fieldset.adm-bloc { margin: 0.6rem 0; padding: 0.8rem; border: 1px solid var(--line); border-radius: 12px; display: grid; gap: 0.35rem; min-width: 0; }
-.adm-dialog fieldset.adm-bloc legend { padding: 0 0.4rem; font-weight: 700; }
-.adm-televersement { display: grid; gap: 0.35rem; margin-top: 0.6rem; padding: 0.8rem; border: 1px dashed var(--line); border-radius: 12px; }
-.adm-televersement label { margin-top: 0; }
-.adm-apercu-image { max-width: 12rem; max-height: 12rem; object-fit: contain; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+/* ----- Facture (aperçu à l'écran et impression / PDF) ----- */
+.adm-facture { color: var(--ink); font-size: 0.95rem; line-height: 1.45; }
+.adm-facture p { margin: 0.1rem 0; }
+.adm-facture-entete { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; padding-bottom: 0.9rem; border-bottom: 2px solid var(--accent); }
+.adm-facture-boutique { font-size: 1.2rem; font-weight: 800; letter-spacing: 0.04em; color: var(--accent); }
+.adm-facture-ref { text-align: right; }
+.adm-facture-titre { font-size: 1.4rem; font-weight: 800; }
+.adm-facture-bloc { margin: 1rem 0; }
+.adm-facture-sous { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.adm-facture-table { width: 100%; border-collapse: collapse; margin: 0.6rem 0; }
+.adm-facture-table th, .adm-facture-table td { padding: 0.5rem 0.4rem; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.adm-facture-table th { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+.adm-facture-table th:nth-child(n+2), .adm-facture-num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.adm-facture-totaux { margin-left: auto; max-width: 20rem; }
+.adm-facture-totaux p { display: flex; justify-content: space-between; gap: 1rem; padding: 0.2rem 0; }
+.adm-facture-total { font-size: 1.15rem; font-weight: 800; border-top: 2px solid var(--ink); margin-top: 0.3rem; padding-top: 0.4rem; }
+.adm-facture-notes { margin-top: 1rem; padding: 0.6rem 0.8rem; border-left: 3px solid var(--accent); background: var(--tile); white-space: pre-wrap; }
+.adm-facture-pied { margin-top: 1.4rem; text-align: center; color: var(--muted); }
+@media print {
+  .adm-facture { color: #000; }
+  .adm-facture-entete { border-bottom-color: #000; }
+  .adm-facture-boutique { color: #000; }
+  .adm-facture-notes { background: none; border-left-color: #000; }
+}
