@@ -318,3 +318,13 @@ body.adm { padding-bottom: 0; }   /* style.css réserve de la place pour la barr
   .adm-facture-boutique { color: #000; }
   .adm-facture-notes { background: none; border-left-color: #000; }
 }
+
+/* ----- Formulaires dans les fenêtres (catalogue, commandes, stock, factures) : un champ par ligne ----- */
+.adm-dialog label { display: block; margin: 0.9rem 0 0.3rem; font-size: 0.85rem; font-weight: 700; color: var(--muted); }
+.adm-dialog .adm-champ { display: block; width: 100%; box-sizing: border-box; }
+.adm-dialog textarea.adm-champ { min-height: 5.5rem; resize: vertical; }
+.adm-dialog label.adm-etiquette { display: flex; align-items: center; gap: 0.5rem; margin: 0.9rem 0 0.3rem; font-size: 0.95rem; color: var(--ink); }
+.adm-dialog input[type="checkbox"] { width: 1.2rem; height: 1.2rem; flex: none; accent-color: var(--accent); }
+.adm-dialog .adm-bloc { min-width: 0; margin: 1rem 0; padding: 0.4rem 0.9rem 0.9rem; border: 1px solid var(--line); border-radius: 12px; }
+.adm-dialog .adm-bloc legend { padding: 0 0.4rem; font-weight: 800; }
+.adm-dialog .adm-bloc label { margin-top: 0.6rem; }
