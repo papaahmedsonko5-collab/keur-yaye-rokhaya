@@ -77,7 +77,7 @@
     [
       ["sku", "SKU", ""], ["capacity", "Capacité", ""], ["color", "Couleur", ""],
       ["price", "Prix (laisser vide si non défini)", "number"],
-      ["compare_at_price", "Prix comparatif (facultatif)", "number"],
+      ["compare_at_price", "Ancien prix barré, pour une promo (facultatif : laisser vide hors promo)", "number"],
       ["sim_type", "Type de SIM", ""], ["condition_label", "État", ""]
     ].forEach(function (d) {
       var wrap = document.createElement("div");
@@ -107,6 +107,7 @@
         } else v[k] = value || null;
       });
       v.is_active = bloc.querySelector('[name="is_active"]').checked;
+      if (v.compare_at_price !== null && (v.price === null || v.compare_at_price <= v.price)) throw new Error("Pour une promo, l’ancien prix barré doit être supérieur au prix. Videz-le s’il n’y a pas de promo.");
       return v;
     });
   }
@@ -127,6 +128,8 @@
     }
     if (code === "22023" && msg) return msg;
     if (code === "22P02") return "Un identifiant n’est pas valide. Fermez le formulaire, actualisez la liste puis réessayez.";
+    // Message de contrôle écrit par ce formulaire (Error simple, sans code serveur ni statut réseau) : affiché tel quel.
+    if (e && e.name === "Error" && !e.code && !e.status && msg) return msg;
     return null;
   }
 
@@ -273,6 +276,103 @@
     }
     rendre();
   }
+  /* ---------- Stock : quantités par variante, modifiables par le propriétaire (kyr_set_stock) ---------- */
+  function texteServeur(e) {
+    var brut = String((e && e.message) || "");
+    var m = /KYR_(?:INVALID|NOT_FOUND)[A-Z_]*:\s*([^\n]{3,200})/.exec(brut);
+    return m ? m[1].trim() : ui.messageErreur(e);
+  }
+  function nomVariante(l) { return l.variante && l.variante !== "—" ? l.produit + " (" + l.variante + ")" : l.produit; }
+
+  async function lireStock() {
+    var sb = window.KYR_SUPABASE;
+    var r = await Promise.all([
+      sb.from("inventory").select("variant_id,quantity,reserved_quantity,updated_at").limit(1000),
+      sb.from("product_variants").select("id,product_id,sku,capacity,color,sim_type,condition_label").limit(1000),
+      sb.from("products").select("id,name").limit(1000)
+    ]);
+    r.forEach(function (x) { if (x.error) throw x.error; });
+    var variantes = {}, produits = {};
+    (r[1].data || []).forEach(function (v) { variantes[v.id] = v; });
+    (r[2].data || []).forEach(function (p) { produits[p.id] = p; });
+    return (r[0].data || []).map(function (i) {
+      var v = variantes[i.variant_id] || {}, p = produits[v.product_id] || {};
+      var q = Number(i.quantity) || 0, res = Number(i.reserved_quantity) || 0;
+      return {
+        produit: p.name || "—",
+        variante: [v.capacity, v.color, v.condition_label, v.sim_type].filter(Boolean).join(" · ") || "—",
+        sku: v.sku || "", quantity: q, reserved_quantity: res, disponible: Math.max(0, q - res),
+        updated_at: i.updated_at, variant_id: i.variant_id
+      };
+    }).sort(function (a, b) { return (a.produit + a.variante).localeCompare(b.produit + b.variante, "fr"); });
+  }
+
+  function dialogueStock(ligne, rafraichir) {
+    var zone = ui.el("div");
+    zone.appendChild(ui.el("p", { text: nomVariante(ligne) }));
+    zone.appendChild(ui.el("p", { class: "adm-note", text: "Quantité actuelle : " + ligne.quantity + " · Réservé : " + ligne.reserved_quantity + ". Saisissez la quantité réellement comptée en boutique." }));
+    var q = ui.el("input", { type: "number", class: "adm-champ", id: "adm-stock-qte", min: "0", step: "1", inputmode: "numeric" });
+    q.value = String(ligne.quantity);
+    var motif = ui.el("input", { type: "text", class: "adm-champ", id: "adm-stock-motif", maxlength: "200", placeholder: "Ex. : réception fournisseur, inventaire" });
+    zone.appendChild(ui.el("label", { for: "adm-stock-qte", text: "Nouvelle quantité" })); zone.appendChild(q);
+    zone.appendChild(ui.el("label", { for: "adm-stock-motif", text: "Motif (facultatif)" })); zone.appendChild(motif);
+    var erreur = ui.el("div", { "aria-live": "polite" });
+    zone.appendChild(erreur);
+    var envoi = false;
+    function bloquer(oui) { Array.prototype.forEach.call(document.querySelectorAll("#adm-dialog-actions button"), function (b) { b.disabled = oui; }); }
+    async function enregistrer() {
+      if (envoi) return;
+      erreur.textContent = "";
+      var v = q.value.trim(), n = Number(v), msg = null;
+      if (!/^[0-9]{1,7}$/.test(v) || n > 1000000) msg = "La quantité doit être un entier entre 0 et 1 000 000.";
+      else if (n < ligne.reserved_quantity) msg = "La quantité ne peut pas être inférieure au stock réservé (" + ligne.reserved_quantity + ").";
+      if (msg) { erreur.appendChild(ui.el("p", { class: "adm-etat adm-etat-erreur", role: "alert", text: msg })); return; }
+      envoi = true; bloquer(true);
+      try {
+        var r = await window.KYR_SUPABASE.rpc("kyr_set_stock", { p_variant_id: ligne.variant_id, p_quantity: n, p_reason: motif.value.trim() || null });
+        if (r.error) throw r.error;
+        document.getElementById("adm-dialog").close();
+        ui.toast(n === ligne.quantity ? "Quantité inchangée." : "Stock mis à jour : " + n + ".", n === ligne.quantity ? "info" : "succes");
+        rafraichir();
+      } catch (e) {
+        var k = null;
+        if (window.KYR_ADMIN && window.KYR_ADMIN.reagirErreur) { try { k = await window.KYR_ADMIN.reagirErreur(e); } catch (x) { k = null; } }
+        if (k !== "UNAUTHENTICATED" && k !== "MFA_REQUIRED") {
+          erreur.textContent = "";
+          erreur.appendChild(ui.el("p", { class: "adm-etat adm-etat-erreur", role: "alert", text: texteServeur(e) }));
+        }
+      } finally { envoi = false; bloquer(false); }
+    }
+    ui.dialogue({ titre: "Modifier le stock", corps: zone, actions: [{ libelle: "Enregistrer", principal: true, garder: true, clic: enregistrer }, { libelle: "Fermer" }] });
+  }
+
+  function stock(corps, ctx) {
+    var proprietaire = ctx.role === "owner", lignes = [];
+    corps.textContent = "";
+    corps.appendChild(ui.el("p", { class: "adm-intro", text: proprietaire
+      ? "Quantité en boutique de chaque variante. Disponible = quantité moins réservé. « Modifier » enregistre la quantité comptée."
+      : "Quantité en boutique de chaque variante (consultation). Seul le propriétaire modifie le stock." }));
+    var filtre = ui.el("input", { type: "search", class: "adm-champ", placeholder: "Produit, capacité, couleur ou référence", "aria-label": "Filtrer le stock", maxlength: "60" });
+    corps.appendChild(ui.el("div", { class: "adm-barre-outils" }, [ui.el("label", { class: "adm-etiquette" }, [ui.el("span", { text: "Filtrer" }), filtre])]));
+    var zone = ui.el("div", { class: "adm-resultat", "aria-live": "polite" });
+    corps.appendChild(zone);
+    function dessiner() {
+      var t = filtre.value.trim().toLowerCase();
+      var vues = lignes.filter(function (l) { return !t || (l.produit + " " + l.variante + " " + l.sku).toLowerCase().indexOf(t) !== -1; });
+      zone.textContent = "";
+      if (vues.length === 0) { ui.vide(zone, lignes.length ? "Aucune variante ne correspond." : "Aucune ligne de stock."); return; }
+      zone.appendChild(ui.tableau(vues, {
+        colonnes: ["produit", "variante", "sku", "quantity", "reserved_quantity", "disponible", "updated_at"], masquer: ["variant_id"],
+        libelles: { produit: "Produit", variante: "Variante", sku: "Référence", quantity: "Quantité", reserved_quantity: "Réservé", disponible: "Disponible", updated_at: "Mis à jour le" },
+        legende: "Stock par variante",
+        actions: proprietaire ? [{ libelle: "Modifier", clic: function (l) { dialogueStock(l, charge); } }] : null
+      }));
+    }
+    function charge() { ui.charger(ctx, zone, lireStock, function (res) { lignes = res; dessiner(); }); }
+    filtre.addEventListener("input", dessiner);
+    charge();
+  }
+
   ui.enregistrer("catalogue", {
 
     /* =========================
@@ -380,30 +480,7 @@
        STOCK
        ========================= */
 
-    stock: vue(
-      "inventory",
-      "Stock global",
-      "Quantités de stock réellement enregistrées dans Supabase.",
-      {
-        taille: 25,
-        tri: ["updated_at"],
-        colonnes: [
-          "id",
-          "variant_id",
-          "quantity",
-          "reserved_quantity",
-          "updated_at"
-        ],
-        libelles: {
-          id: "ID",
-          variant_id: "Variante",
-          quantity: "Quantité",
-          reserved_quantity: "Réservé",
-          updated_at: "Mis à jour le"
-        },
-        legende: "Stock global"
-      }
-    ),
+    stock: stock,
 
     /* =========================
        INVENTAIRE / IMEI
