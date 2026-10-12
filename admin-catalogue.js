@@ -70,6 +70,81 @@
     return input;
   }
 
+  /* ---------- Photo du produit : envoi vers le stockage Supabase (bucket public « product-images ») ---------- */
+  var DOSSIER_PHOTOS = "product-images";
+  var PHOTO_MAX_OCTETS = 15 * 1024 * 1024;   // photo d'origine ; elle est réduite avant l'envoi
+  var PHOTO_COTE_MAX = 1600;
+
+  // Réduit la photo (1600 px max) et la convertit en WebP (JPEG si le navigateur ne sait pas) : légère, rapide à charger, orientation respectée.
+  async function preparerPhoto(fichier) {
+    if (!fichier || !/^image\/(jpeg|png|webp)$/.test(fichier.type)) throw new Error("Format non accepté : choisissez une photo JPG, PNG ou WebP.");
+    if (fichier.size > PHOTO_MAX_OCTETS) throw new Error("Photo trop lourde (15 Mo maximum).");
+    var image;
+    try { image = await createImageBitmap(fichier); } catch (e) { throw new Error("Cette photo ne peut pas être lue. Essayez une autre image."); }
+    var ratio = Math.min(1, PHOTO_COTE_MAX / Math.max(image.width, image.height));
+    var canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(image.width * ratio)); canvas.height = Math.max(1, Math.round(image.height * ratio));
+    var ctx = canvas.getContext("2d");
+    function versBlob(type, qualite) { return new Promise(function (ok) { canvas.toBlob(ok, type, qualite); }); }
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+    var blob = await versBlob("image/webp", 0.85);
+    if (!blob || blob.type !== "image/webp") {
+      ctx.globalCompositeOperation = "destination-over"; ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+      blob = await versBlob("image/jpeg", 0.88);
+    }
+    if (!blob) throw new Error("Impossible de préparer la photo.");
+    return blob;
+  }
+
+  function messagePhoto(e) {
+    var brut = String((e && (e.message || e.error)) || ""), statut = String((e && (e.statusCode || e.status)) || "");
+    if (/Format non accepté|trop lourde|ne peut pas être lue|Impossible de préparer/.test(brut)) return brut;
+    if (/Bucket not found/i.test(brut)) return "Le stockage des photos n’est pas encore activé. Contactez le support.";
+    if (/row-level security|unauthorized|not allowed/i.test(brut) || statut === "403" || statut === "401") return "Envoi refusé : seul le propriétaire, connecté avec la double authentification, peut ajouter des photos.";
+    if (/exceeded|too large|payload/i.test(brut) || statut === "413") return "Photo trop lourde pour le serveur.";
+    if (/mime|type/i.test(brut) && /not supported|not allowed|invalid/i.test(brut)) return "Format non accepté par le serveur.";
+    return "L’envoi de la photo a échoué. Vérifiez la connexion puis réessayez.";
+  }
+
+  function champPhoto(form, valeur) {
+    var url = champ(form, "image_url", "Adresse de la photo (remplie automatiquement après l’envoi)", valeur, "text");
+    var id = "adm-photo-" + Math.random().toString(36).slice(2, 8);
+    var fichier = document.createElement("input");
+    fichier.type = "file"; fichier.id = id; fichier.className = "adm-champ"; fichier.accept = "image/jpeg,image/png,image/webp";
+    var etat = ui.el("p", { class: "adm-note", "aria-live": "polite" });
+    var apercu = document.createElement("img");
+    apercu.className = "adm-apercu-photo"; apercu.alt = "Aperçu de la photo"; apercu.hidden = true;
+    apercu.addEventListener("error", function () { apercu.hidden = true; });
+    function majApercu() {
+      var v = url.value.trim();
+      if (v && !/^(javascript|data):/i.test(v)) { apercu.src = v; apercu.hidden = false; } else { apercu.removeAttribute("src"); apercu.hidden = true; }
+    }
+    function actions(bloquer) { Array.prototype.forEach.call(document.querySelectorAll("#adm-dialog-actions button"), function (b) { b.disabled = bloquer; }); }
+    url.addEventListener("change", majApercu);
+    fichier.addEventListener("change", async function () {
+      var f = fichier.files && fichier.files[0];
+      if (!f) return;
+      fichier.disabled = true; actions(true); etat.textContent = "Préparation de la photo…";
+      try {
+        var blob = await preparerPhoto(f);
+        etat.textContent = "Envoi de la photo…";
+        var ext = blob.type === "image/webp" ? "webp" : "jpg";
+        var chemin = "products/" + Date.now() + "-" + Math.random().toString(36).slice(2, 10) + "." + ext;
+        var depot = window.KYR_SUPABASE.storage.from(DOSSIER_PHOTOS);
+        var r = await depot.upload(chemin, blob, { contentType: blob.type, cacheControl: "31536000", upsert: false });
+        if (r.error) throw r.error;
+        url.value = depot.getPublicUrl(chemin).data.publicUrl;
+        majApercu();
+        etat.textContent = "Photo envoyée. Cliquez sur « Enregistrer » pour l’associer au produit.";
+      } catch (e) { etat.textContent = messagePhoto(e); }
+      finally { fichier.value = ""; fichier.disabled = false; actions(false); }
+    });
+    form.appendChild(ui.el("label", { for: id, text: "Envoyer une photo (JPG, PNG ou WebP)" }));
+    form.appendChild(fichier); form.appendChild(etat); form.appendChild(apercu);
+    majApercu();
+    return url;
+  }
+
   function champsVariante(zone, v) {
     var bloc = document.createElement("fieldset"); bloc.className = "adm-bloc";
     bloc.dataset.variantId = v && v.id ? v.id : "";
@@ -156,7 +231,7 @@
       selecteur(form, "brand_id", "Marque", refs[0].data || [], product && product.brand_id);
       selecteur(form, "category_id", "Catégorie", refs[1].data || [], product && product.category_id);
       champ(form, "description", "Description", product && product.description, "textarea");
-      champ(form, "image_url", "Image (chemin ou URL existante ; aucun téléversement configuré)", product && product.image_url, "text");
+      champPhoto(form, product && product.image_url);
       caseACocher(form, "is_active", "Produit actif", !product || product.is_active === true);
       caseACocher(form, "is_featured", "Produit mis en avant", product && product.is_featured === true);
       var zoneVariants = ui.el("div", { class: "adm-pile" });

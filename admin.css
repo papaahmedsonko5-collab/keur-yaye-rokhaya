@@ -328,3 +328,6 @@ body.adm { padding-bottom: 0; }   /* style.css réserve de la place pour la barr
 .adm-dialog .adm-bloc { min-width: 0; margin: 1rem 0; padding: 0.4rem 0.9rem 0.9rem; border: 1px solid var(--line); border-radius: 12px; }
 .adm-dialog .adm-bloc legend { padding: 0 0.4rem; font-weight: 800; }
 .adm-dialog .adm-bloc label { margin-top: 0.6rem; }
+
+/* Aperçu de la photo produit */
+.adm-apercu-photo { display: block; max-width: 12rem; max-height: 12rem; margin: 0.5rem 0; object-fit: contain; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
