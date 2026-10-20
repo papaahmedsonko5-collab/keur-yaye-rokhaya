@@ -47,3 +47,10 @@ Les prix, les produits, les services et le contact restent toujours répondus pa
 
 Ce code a été testé avec de fausses réponses (voir les tests décrits dans le rapport) mais **jamais avec une vraie clé ni sur un vrai projet Supabase**.
 Fais un essai de bout en bout avant de brancher `apiUrl` sur le site.
+
+## Tests
+
+    node --test tests/js/*.test.js     # catalogue, panier, messages WhatsApp, pages
+    bash tests/sql/run.sh              # migrations + droits, sur un Postgres local JETABLE (jamais la production)
+
+Les mêmes tests tournent sur GitHub à chaque pull request (`.github/workflows/tests.yml`).
